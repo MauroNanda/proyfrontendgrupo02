@@ -1,21 +1,118 @@
-// Estilos globales.
-//
-// Fase 0: importamos Bootstrap 5 default. Cuando llegue la fase de diseño,
-// se va a agregar `src/styles/_variables.scss` con overrides ANTES del import
-// de Bootstrap para customizar la paleta, tipografía, radius, etc.
-//
-// Estructura prevista (post-diseño):
-//   @use 'styles/variables' as *;   // tokens custom
-//   @use 'bootstrap/scss/bootstrap';
-//   @use 'styles/utilities';        // utilidades propias
+// Estilos globales — Convoca
+// Variables custom van ANTES del import de Bootstrap para overridearlo.
 
+@use 'sass:color';
+@use 'styles/variables' as *;
 @use 'bootstrap/scss/bootstrap';
 
-html, body {
+// ── Tipografía (Google Fonts importado en index.html) ──
+
+h1,
+h2,
+h3,
+.display-1,
+.display-2,
+.display-3 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  color: $convoca-text-dark;
+}
+
+h4,
+h5,
+h6 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  color: $convoca-text-dark;
+}
+
+// ── Layout base ──
+
+html,
+body {
   height: 100%;
 }
 
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background-color: $convoca-background;
+  color: $convoca-text-dark;
+}
+
+// ── Utilidades propias ──
+
+.text-muted {
+  color: $convoca-text-muted !important;
+}
+
+.bg-surface {
+  background-color: $convoca-surface;
+}
+
+.border-convoca {
+  border-color: $convoca-border !important;
+}
+
+// ── Botón Accent (CTA) ──
+
+.btn-accent {
+  background-color: $convoca-accent;
+  color: $convoca-text-dark;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+
+  &:hover {
+    background-color: color.adjust($convoca-accent, $lightness: -8%);
+    color: $convoca-text-dark;
+  }
+
+  &:focus {
+    box-shadow: 0 0 0 0.25rem rgba($convoca-accent, 0.4);
+  }
+}
+
+// ── Cards ──
+
+.card {
+  border: 1px solid $convoca-border;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  background-color: #ffffff;
+}
+
+// ── Badge pill ──
+
+.badge-pill {
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+// ── Sidebar admin ──
+
+.sidebar {
+  width: 240px;
+  min-height: 100vh;
+  background-color: $convoca-primary-dark;
+  color: #ffffff;
+
+  .nav-link {
+    color: rgba(255, 255, 255, 0.75);
+    border-radius: 8px;
+    padding: 10px 16px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      color: #ffffff;
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    &.active {
+      color: #ffffff;
+      background-color: rgba(255, 255, 255, 0.15);
+      border-left: 3px solid $convoca-accent;
+    }
+  }
 }
