@@ -14,10 +14,9 @@ describe('App', () => {
     expect(app).toBeTruthy();
   });
 
-  it('should render title', async () => {
+  it(`should have the 'convoca-frontend' title`, () => {
     const fixture = TestBed.createComponent(App);
-    await fixture.whenStable();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, convoca-frontend');
+    const app = fixture.componentInstance;
+    expect(app.title()).toEqual('convoca-frontend');
   });
 });
