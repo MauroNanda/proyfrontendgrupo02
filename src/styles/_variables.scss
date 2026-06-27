@@ -1,0 +1,75 @@
+// ============================================================
+// Variables del Design System — Convoca
+// Paleta "Arctic Reflection" + Accent Ámbar + Semánticos.
+// Se importa ANTES de Bootstrap para overridear sus defaults.
+// ============================================================
+
+// ── Paleta principal ──
+$convoca-primary: #5289ad;
+$convoca-primary-dark: #243c4c;
+$convoca-accent: #e8a838;
+$convoca-background: #f4fcfb;
+$convoca-surface: #e8f0f1;
+$convoca-text-dark: #1a2e38;
+$convoca-text-muted: #698696;
+$convoca-border: #acbcbf;
+
+// ── Semánticos ──
+$convoca-success: #22c55e;
+$convoca-danger: #ef4444;
+$convoca-warning: #f59e0b;
+$convoca-info: #3b82f6;
+
+// ── Overrides de Bootstrap ──
+$primary: $convoca-primary;
+$secondary: $convoca-primary-dark;
+$success: $convoca-success;
+$danger: $convoca-danger;
+$warning: $convoca-warning;
+$info: $convoca-info;
+$light: $convoca-background;
+$dark: $convoca-primary-dark;
+
+$body-bg: $convoca-background;
+$body-color: $convoca-text-dark;
+
+$font-family-sans-serif:
+  'Inter',
+  system-ui,
+  -apple-system,
+  'Segoe UI',
+  Roboto,
+  sans-serif;
+
+$border-radius: 8px;
+$border-radius-sm: 6px;
+$border-radius-lg: 12px;
+$border-radius-pill: 20px;
+
+$border-color: $convoca-border;
+
+$input-border-color: $convoca-border;
+$input-focus-border-color: $convoca-primary;
+
+$btn-border-radius: 8px;
+$btn-border-radius-sm: 6px;
+$btn-border-radius-lg: 10px;
+
+$card-border-radius: 12px;
+$card-border-color: $convoca-border;
+
+$navbar-light-bg: #ffffff;
+
+// ── Espaciado (escala base 4px) ──
+$spacer: 1rem;
+$spacers: (
+  0: 0,
+  1: 0.25rem,
+  2: 0.5rem,
+  3: 0.75rem,
+  4: 1rem,
+  5: 1.5rem,
+  6: 2rem,
+  7: 3rem,
+  8: 4rem,
+);
