@@ -4,6 +4,7 @@
 @use 'sass:color';
 @use 'styles/variables' as *;
 @use 'bootstrap/scss/bootstrap';
+@import 'bootstrap-icons/font/bootstrap-icons.css';
 
 // ── Tipografía (Google Fonts importado en index.html) ──
 
@@ -37,6 +38,23 @@ body {
   margin: 0;
   background-color: $convoca-background;
   color: $convoca-text-dark;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// ── Selección de texto ──
+
+::selection {
+  background-color: rgba($convoca-primary, 0.15);
+  color: $convoca-text-dark;
+}
+
+// ── Links ──
+
+a {
+  transition:
+    color 0.15s ease,
+    opacity 0.15s ease;
 }
 
 // ── Utilidades propias ──
@@ -53,7 +71,17 @@ body {
   border-color: $convoca-border !important;
 }
 
-// ── Botón Accent (CTA) ──
+.transition-base {
+  transition: all 0.2s ease;
+}
+
+// ── Botones (refinamiento enterprise) ──
+
+.btn {
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  transition: all 0.2s ease;
+}
 
 .btn-accent {
   background-color: $convoca-accent;
@@ -72,13 +100,45 @@ body {
   }
 }
 
+// ── Inputs (focus suave) ──
+
+.form-control:focus,
+.form-select:focus {
+  box-shadow: 0 0 0 3px rgba($convoca-primary, 0.12);
+}
+
 // ── Cards ──
 
 .card {
-  border: 1px solid $convoca-border;
+  border: 1px solid rgba($convoca-border, 0.5);
   border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   background-color: #ffffff;
+  transition: box-shadow 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+}
+
+// ── Tables ──
+
+.table {
+  --bs-table-border-color: #{rgba($convoca-border, 0.4)};
+
+  thead th {
+    background-color: $convoca-surface;
+    font-weight: 600;
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: $convoca-text-muted;
+    border-bottom-width: 1px;
+  }
+
+  td {
+    vertical-align: middle;
+  }
 }
 
 // ── Badge pill ──
@@ -99,20 +159,49 @@ body {
   color: #ffffff;
 
   .nav-link {
-    color: rgba(255, 255, 255, 0.75);
+    color: rgba(255, 255, 255, 0.65);
     border-radius: 8px;
     padding: 10px 16px;
+    font-size: 0.875rem;
+    font-weight: 500;
     transition: all 0.2s ease;
+
+    i {
+      font-size: 1.1rem;
+      width: 20px;
+      text-align: center;
+    }
 
     &:hover {
       color: #ffffff;
-      background-color: rgba(255, 255, 255, 0.1);
+      background-color: rgba(255, 255, 255, 0.08);
     }
 
     &.active {
       color: #ffffff;
-      background-color: rgba(255, 255, 255, 0.15);
+      background-color: rgba(255, 255, 255, 0.12);
       border-left: 3px solid $convoca-accent;
+      padding-left: 13px;
     }
+  }
+}
+
+// ── Scrollbar (Webkit) ──
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba($convoca-border, 0.6);
+  border-radius: 3px;
+
+  &:hover {
+    background-color: $convoca-text-muted;
   }
 }
