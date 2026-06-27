@@ -2,80 +2,77 @@ import { Component } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 
 // Layout PÚBLICO — envuelve las rutas del Asistente.
-// Navbar con logo, búsqueda, campana de notificaciones y avatar.
-// Diseño basado en mockups (pantalla 1: Landing).
+// Navbar con logo, búsqueda, notificaciones y acciones de auth.
 
 @Component({
   selector: 'app-public-layout',
   imports: [RouterOutlet, RouterLink, RouterLinkActive],
   template: `
-    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm sticky-top">
+    <nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top">
       <div class="container">
         <!-- Logo -->
-        <a class="navbar-brand d-flex align-items-center gap-2 fw-bold" routerLink="/">
+        <a class="navbar-brand d-flex align-items-center gap-2" routerLink="/">
           <span class="navbar-logo">C</span>
-          <span>convoca</span>
-          <span class="badge bg-primary bg-opacity-10 text-primary ms-1" style="font-size: 10px;"
-            >BETA</span
-          >
+          <span class="brand-text">convoca</span>
         </a>
 
         <!-- Toggler mobile -->
         <button
-          class="navbar-toggler"
+          class="navbar-toggler border-0"
           type="button"
           data-bs-toggle="collapse"
           data-bs-target="#navbarPublic"
         >
-          <span class="navbar-toggler-icon"></span>
+          <i class="bi bi-list fs-4"></i>
         </button>
 
         <!-- Nav items -->
         <div class="collapse navbar-collapse" id="navbarPublic">
           <!-- Buscador central -->
-          <div class="mx-auto" style="max-width: 400px; width: 100%;">
+          <div class="mx-auto search-wrapper">
             <div class="input-group input-group-sm">
-              <span class="input-group-text bg-white border-end-0">
-                <i class="bi bi-search text-muted"></i>
-                🔍
+              <span class="input-group-text search-icon">
+                <i class="bi bi-search"></i>
               </span>
               <input
                 type="text"
-                class="form-control border-start-0"
+                class="form-control search-input"
                 placeholder="Buscar eventos, talleres, charlas..."
               />
             </div>
           </div>
 
           <!-- Acciones -->
-          <div class="d-flex align-items-center gap-3 ms-auto">
+          <div class="d-flex align-items-center gap-2 ms-auto">
             <a
               routerLink="/eventos"
-              routerLinkActive="fw-semibold text-primary"
-              class="nav-link text-muted d-none d-lg-block"
+              routerLinkActive="active"
+              class="nav-link nav-item-custom d-none d-lg-block"
               >Eventos</a
             >
-            <button class="btn btn-link position-relative p-1" title="Notificaciones">
-              🔔
-              <span
-                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                style="font-size: 9px;"
-                >3</span
-              >
+
+            <button class="btn btn-icon position-relative" title="Notificaciones">
+              <i class="bi bi-bell"></i>
+              <span class="notification-dot"></span>
             </button>
-            <a class="btn btn-outline-primary btn-sm" routerLink="/login">Ingresar</a>
-            <a class="btn btn-accent btn-sm" routerLink="/registro">Registrarme</a>
+
+            <div class="nav-separator d-none d-lg-block"></div>
+
+            <a class="btn btn-outline-secondary btn-sm" routerLink="/login">Ingresar</a>
+            <a class="btn btn-primary btn-sm" routerLink="/registro">Registrarme</a>
           </div>
         </div>
       </div>
     </nav>
 
-    <main>
+    <main class="app-main">
       <router-outlet />
     </main>
 
-    <footer class="border-top mt-5 py-4 text-center text-muted small bg-white">
-      <div class="container">&copy; 2025 Convoca · Facultad de Ingeniería · UNJu</div>
+    <footer class="app-footer">
+      <div class="container">
+        <span>&copy; 2026 Convoca · Facultad de Ingeniería · UNJu</span>
+      </div>
     </footer>
   `,
   styles: [
@@ -93,9 +90,113 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
         font-size: 16px;
         font-family: 'Space Grotesk', sans-serif;
       }
-      .navbar-brand {
+
+      .brand-text {
         font-family: 'Space Grotesk', sans-serif;
-        font-size: 1.25rem;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--bs-dark);
+      }
+
+      .search-wrapper {
+        max-width: 360px;
+        width: 100%;
+      }
+
+      .search-icon {
+        background-color: #e2e8f0;
+        border: none;
+        color: #698696;
+        font-size: 0.8rem;
+      }
+
+      .search-input {
+        background-color: #e2e8f0;
+        border: none;
+        font-size: 0.8125rem;
+
+        &::placeholder {
+          color: #acbcbf;
+        }
+
+        &:focus {
+          background-color: #fff;
+          border: 1px solid rgba(82, 137, 173, 0.3);
+          box-shadow: 0 0 0 3px rgba(82, 137, 173, 0.08);
+        }
+      }
+
+      .app-main {
+        flex: 1;
+      }
+
+      :host {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+
+      .nav-item-custom {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #698696;
+        padding: 6px 12px;
+        border-radius: 6px;
+        transition: all 0.15s ease;
+
+        &:hover,
+        &.active {
+          color: var(--bs-primary);
+          background-color: rgba(82, 137, 173, 0.06);
+        }
+      }
+
+      .btn-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        border: none;
+        background: transparent;
+        color: #698696;
+        font-size: 1.15rem;
+        transition: all 0.15s ease;
+
+        &:hover {
+          background-color: rgba(82, 137, 173, 0.08);
+          color: var(--bs-primary);
+        }
+      }
+
+      .notification-dot {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: var(--bs-danger);
+        border: 2px solid white;
+      }
+
+      .nav-separator {
+        width: 1px;
+        height: 24px;
+        background-color: #acbcbf;
+        opacity: 0.4;
+        margin: 0 4px;
+      }
+
+      .app-footer {
+        border-top: 1px solid rgba(172, 188, 191, 0.3);
+        padding: 1.25rem 0;
+        text-align: center;
+        font-size: 0.8125rem;
+        color: #698696;
+        background-color: white;
+        margin-top: auto;
       }
     `,
   ],
