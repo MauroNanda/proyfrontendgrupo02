@@ -1,0 +1,216 @@
+<div class="container py-5">
+  <!-- Spinner de Carga -->
+  <div *ngIf="loading()" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+    <p class="text-muted mt-2">Cargando detalles del evento...</p>
+  </div>
+
+  <!-- Error general -->
+  <div
+    *ngIf="!loading() && error()"
+    class="alert alert-danger shadow-sm rounded-4 p-4 text-center my-4"
+  >
+    <i class="bi bi-exclamation-triangle-fill fs-1 text-danger mb-3 d-block"></i>
+    <h4>Hubo un problema</h4>
+    <p class="text-muted mb-3">{{ error() }}</p>
+    <a routerLink="/" class="btn btn-primary btn-sm px-4">Volver al inicio</a>
+  </div>
+
+  <!-- Detalles del Evento -->
+  <div *ngIf="!loading() && !error() && evento()" class="row g-4 animate-fade-in">
+    <!-- Columna Principal: Detalles -->
+    <div class="col-lg-8">
+      <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-glass">
+        <!-- Badge de estado de publicación -->
+        <span
+          class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-2 fs-7 fw-semibold align-self-start mb-3"
+        >
+          {{ evento()!.estado }}
+        </span>
+
+        <!-- Título -->
+        <h1 class="display-6 fw-bold mb-4 text-dark-blue">{{ evento()!.titulo }}</h1>
+
+        <!-- Info Grid -->
+        <div class="row row-cols-1 row-cols-md-2 g-3 mb-4">
+          <div class="col d-flex align-items-start gap-3">
+            <div class="icon-box bg-primary-light text-primary rounded-3 p-2">
+              <i class="bi bi-calendar-event fs-5"></i>
+            </div>
+            <div>
+              <small class="text-muted d-block uppercase-track">Fecha del evento</small>
+              <span class="fw-semibold text-dark-blue">{{
+                evento()!.createdAt | date: "EEEE, d 'de' MMMM, y"
+              }}</span>
+            </div>
+          </div>
+
+          <div class="col d-flex align-items-start gap-3">
+            <div class="icon-box bg-success-light text-success rounded-3 p-2">
+              <i class="bi bi-people fs-5"></i>
+            </div>
+            <div>
+              <small class="text-muted d-block uppercase-track">Cupo máximo</small>
+              <span class="fw-semibold text-dark-blue">{{ evento()!.cupo_maximo }} asistentes</span>
+            </div>
+          </div>
+        </div>
+
+        <hr class="my-4 text-muted opacity-25" />
+
+        <!-- Descripción ficticia / detalles -->
+        <h3 class="h5 fw-bold mb-3 text-dark-blue">Acerca de este evento</h3>
+        <p class="text-secondary leading-relaxed mb-4">
+          Te invitamos a formar parte de esta increíble jornada de aprendizaje y colaboración. En
+          este evento podrás conectar con profesionales de la industria, ampliar tus conocimientos
+          académicos y compartir ideas innovadoras.
+        </p>
+        <p class="text-secondary leading-relaxed mb-0">
+          No te olvides de registrar tu inscripción de forma anticipada. Los cupos son limitados. Si
+          el cupo se encuentra completo, ingresarás automáticamente en nuestra lista de espera y
+          serás promovido si se liberan vacantes.
+        </p>
+      </div>
+    </div>
+
+    <!-- Columna Lateral: Inscripción -->
+    <div class="col-lg-4">
+      <!-- Card de Inscripción -->
+      <div class="card border-0 shadow-sm rounded-4 p-4 text-center bg-glass border-highlight">
+        <h3 class="h5 fw-bold mb-3 text-dark-blue">Inscripción</h3>
+
+        <!-- Usuario Autenticado -->
+        <div *ngIf="authService.isLoggedIn(); else noAuthTemplate">
+          <!-- Detalle de estado de inscripción -->
+          <div class="mb-4">
+            <small class="text-muted d-block mb-2 uppercase-track">Tu estado actual</small>
+
+            <div [ngSwitch]="inscripcion().estado">
+              <div
+                *ngSwitchCase="'CONFIRMADO'"
+                class="status-badge bg-success-light text-success rounded-pill py-2 px-3 d-inline-flex align-items-center gap-2"
+              >
+                <i class="bi bi-check-circle-fill"></i>
+                <span class="fw-bold">Inscripción Confirmada</span>
+              </div>
+              <div
+                *ngSwitchCase="'ESPERA'"
+                class="status-badge bg-warning-light text-warning rounded-pill py-2 px-3 d-inline-flex align-items-center gap-2"
+              >
+                <i class="bi bi-hourglass-split"></i>
+                <span class="fw-bold">En Lista de Espera</span>
+              </div>
+              <div
+                *ngSwitchCase="'ASISTIO'"
+                class="status-badge bg-primary-light text-primary rounded-pill py-2 px-3 d-inline-flex align-items-center gap-2"
+              >
+                <i class="bi bi-bookmark-check-fill"></i>
+                <span class="fw-bold">Asistencia Registrada</span>
+              </div>
+              <div
+                *ngSwitchCase="'CANCELADO'"
+                class="status-badge bg-secondary-light text-secondary rounded-pill py-2 px-3 d-inline-flex align-items-center gap-2"
+              >
+                <i class="bi bi-x-circle-fill"></i>
+                <span class="fw-bold">Inscripción Cancelada</span>
+              </div>
+              <div
+                *ngSwitchDefault
+                class="status-badge bg-secondary-light text-secondary rounded-pill py-2 px-3 d-inline-flex align-items-center gap-2"
+              >
+                <i class="bi bi-info-circle-fill"></i>
+                <span class="fw-bold">No Inscripto</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Botones de Acción -->
+          <div class="d-grid gap-2 mb-4">
+            <!-- Caso: No inscripto / Cancelado -->
+            <button
+              *ngIf="!inscripcion().inscrito || inscripcion().estado === 'CANCELADO'"
+              (click)="inscribirse()"
+              [disabled]="actionLoading()"
+              class="btn btn-primary btn-lg rounded-3 shadow-sm d-flex align-items-center justify-content-center gap-2"
+            >
+              <span
+                *ngIf="actionLoading()"
+                class="spinner-border spinner-border-sm"
+                role="status"
+                aria-hidden="true"
+              ></span>
+              <i *ngIf="!actionLoading()" class="bi bi-plus-circle"></i>
+              <span>Inscribirme al evento</span>
+            </button>
+
+            <!-- Caso: Confirmado o Lista de Espera -->
+            <button
+              *ngIf="
+                inscripcion().inscrito &&
+                (inscripcion().estado === 'CONFIRMADO' || inscripcion().estado === 'ESPERA')
+              "
+              (click)="cancelarInscripcion()"
+              [disabled]="actionLoading()"
+              class="btn btn-outline-danger btn-lg rounded-3 d-flex align-items-center justify-content-center gap-2"
+            >
+              <span
+                *ngIf="actionLoading()"
+                class="spinner-border spinner-border-sm"
+                role="status"
+                aria-hidden="true"
+              ></span>
+              <i *ngIf="!actionLoading()" class="bi bi-trash"></i>
+              <span>Cancelar inscripción</span>
+            </button>
+
+            <!-- Caso: Asistió (No puede cancelar) -->
+            <button
+              *ngIf="inscripcion().estado === 'ASISTIO'"
+              [disabled]="true"
+              class="btn btn-success btn-lg rounded-3 d-flex align-items-center justify-content-center gap-2"
+            >
+              <i class="bi bi-check-lg"></i>
+              <span>¡Asististe al evento!</span>
+            </button>
+          </div>
+
+          <!-- Pase de Ingreso (QR) si está CONFIRMADO o ASISTIO -->
+          <div
+            *ngIf="inscripcion().estado === 'CONFIRMADO' || inscripcion().estado === 'ASISTIO'"
+            class="qr-section mt-4 p-3 bg-white rounded-4 border border-light shadow-sm animate-scale-up"
+          >
+            <h4 class="h6 fw-bold mb-3 text-dark-blue">
+              <i class="bi bi-qr-code-scan me-1 text-primary"></i>
+              Tu Pase de Ingreso
+            </h4>
+            <div class="qr-container bg-light p-2 rounded-3 mb-3 d-inline-block">
+              <img
+                [src]="getQrUrl()"
+                alt="Código QR de Check-in"
+                class="img-fluid rounded-2"
+                style="max-height: 180px"
+              />
+            </div>
+            <p class="small text-muted mb-0">
+              Presentá este código QR el día del evento para registrar tu asistencia.
+            </p>
+          </div>
+        </div>
+
+        <!-- Usuario No Autenticado -->
+        <ng-template #noAuthTemplate>
+          <div class="alert alert-info py-3 px-4 rounded-3 text-start small mb-4">
+            <i class="bi bi-info-circle-fill me-2"></i>
+            Inicia sesión o regístrate en Convoca para poder reservar tu lugar en este evento.
+          </div>
+          <div class="d-grid gap-2">
+            <a routerLink="/login" class="btn btn-primary rounded-3">Iniciar Sesión</a>
+            <a routerLink="/registro" class="btn btn-outline-secondary rounded-3">Crear Cuenta</a>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</div>
