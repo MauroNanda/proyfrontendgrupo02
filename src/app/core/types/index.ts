@@ -10,3 +10,14 @@ export interface AuthResponse {
   token: string;
   usuario: Usuario;
 }
+
+export interface LoginCredentials {
+  email: string;
+  password: string;
+}
+
+export interface RegistroCredentials {
+  nombre: string;
+  email: string;
+  password: string;
+}

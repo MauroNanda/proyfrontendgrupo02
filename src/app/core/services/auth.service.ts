@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { AuthResponse, Usuario } from '../types';
+import { AuthResponse, LoginCredentials, RegistroCredentials, Usuario } from '../types';
 
 @Injectable({
   providedIn: 'root',
@@ -29,19 +29,19 @@ export class AuthService {
   /**
    * Inicia sesión con email y contraseña.
    */
-  login(credenciales: { email: string; password: string }): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credenciales).pipe(
-      tap((res) => this.guardarSesion(res))
-    );
+  login(credenciales: LoginCredentials): Observable<AuthResponse> {
+    return this.http
+      .post<AuthResponse>(`${this.apiUrl}/login`, credenciales)
+      .pipe(tap((res) => this.guardarSesion(res)));
   }
 
   /**
    * Registra un nuevo usuario.
    */
-  registro(datos: any): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/registro`, datos).pipe(
-      tap((res) => this.guardarSesion(res))
-    );
+  registro(datos: RegistroCredentials): Observable<AuthResponse> {
+    return this.http
+      .post<AuthResponse>(`${this.apiUrl}/registro`, datos)
+      .pipe(tap((res) => this.guardarSesion(res)));
   }
 
   /**
@@ -52,6 +52,23 @@ export class AuthService {
     localStorage.removeItem('usuario');
     this.token.set(null);
     this.currentUser.set(null);
+    this.router.navigate(['/']);
+  }
+
+  /**
+   * Redirige según rol tras login o registro exitoso.
+   */
+  redirigirPostAuth(returnUrl?: string | null): void {
+    if (returnUrl && returnUrl !== '/login' && returnUrl !== '/registro') {
+      this.router.navigateByUrl(returnUrl);
+      return;
+    }
+
+    if (this.isAdmin()) {
+      this.router.navigate(['/admin']);
+      return;
+    }
+
     this.router.navigate(['/']);
   }
 

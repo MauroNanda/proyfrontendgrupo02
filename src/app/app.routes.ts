@@ -33,9 +33,10 @@ export const routes: Routes = [
             (m) => m.TestLoginComponent,
           ),
       },
-      // T-01-3: cargar login + registro.
-      // T-02-3: cargar /eventos y /eventos/:id.
-      // T-01-3 (perfil): cargar /perfil.
+      {
+        path: '',
+        loadChildren: () => import('./features/auth/auth.routes').then((m) => m.authRoutes),
+      },
     ],
   },
   {
@@ -44,7 +45,18 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./layouts/admin-layout/admin-layout.component').then((m) => m.AdminLayoutComponent),
     children: [
-      // T-05-4 (dashboard), T-02-5 (event-manager), T-03-5 (attendee-list).
+      {
+        path: '',
+        pathMatch: 'full',
+        redirectTo: 'dashboard',
+      },
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./features/admin/dashboard-placeholder/dashboard-placeholder.component').then(
+            (m) => m.DashboardPlaceholderComponent,
+          ),
+      },
     ],
   },
   { path: '**', redirectTo: '' },
