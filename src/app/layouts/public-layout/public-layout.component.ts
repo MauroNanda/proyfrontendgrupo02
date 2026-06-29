@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { AuthService } from '../../core/services/auth.service';
 
 // Layout PÚBLICO — envuelve las rutas del Asistente.
 // Navbar con logo, búsqueda, notificaciones y acciones de auth.
@@ -58,8 +59,24 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 
             <div class="nav-separator d-none d-lg-block"></div>
 
-            <a class="btn btn-outline-secondary btn-sm" routerLink="/login">Ingresar</a>
-            <a class="btn btn-primary btn-sm" routerLink="/registro">Registrarme</a>
+            @if (authService.isLoggedIn()) {
+              <span class="user-greeting d-none d-lg-inline small text-muted">
+                {{ authService.currentUser()?.nombre }}
+              </span>
+              @if (authService.isAdmin()) {
+                <a class="btn btn-outline-primary btn-sm" routerLink="/admin">Admin</a>
+              }
+              <button
+                type="button"
+                class="btn btn-outline-secondary btn-sm"
+                (click)="authService.logout()"
+              >
+                Salir
+              </button>
+            } @else {
+              <a class="btn btn-outline-secondary btn-sm" routerLink="/login">Ingresar</a>
+              <a class="btn btn-primary btn-sm" routerLink="/registro">Registrarme</a>
+            }
           </div>
         </div>
       </div>
@@ -189,6 +206,13 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
         margin: 0 4px;
       }
 
+      .user-greeting {
+        max-width: 140px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
       .app-footer {
         border-top: 1px solid rgba(172, 188, 191, 0.3);
         padding: 1.25rem 0;
@@ -201,4 +225,6 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
     `,
   ],
 })
-export class PublicLayoutComponent {}
+export class PublicLayoutComponent {
+  readonly authService = inject(AuthService);
+}
