@@ -18,7 +18,12 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
       if (error.status === 401) {
         mensajeError = 'Sesión expirada o no autorizada';
-        authService.logout();
+        const isAuthAttempt = req.url.includes('/auth/login') || req.url.includes('/auth/registro');
+        if (!isAuthAttempt) {
+          authService.logout();
+        } else {
+          mensajeError = error.error?.error?.message || 'Credenciales inválidas';
+        }
       } else if (error.error && error.error.error && error.error.error.message) {
         // Formato estándar de errores del backend: { error: { message: "..." } }
         mensajeError = error.error.error.message;
@@ -29,6 +34,6 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       toastService.error(mensajeError);
 
       return throwError(() => error);
-    })
+    }),
   );
 };
