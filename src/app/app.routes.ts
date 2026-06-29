@@ -20,6 +20,20 @@ export const routes: Routes = [
           import('./features/public/home/home.component').then((m) => m.HomeComponent),
       },
       {
+        path: 'eventos/:id',
+        loadComponent: () =>
+          import('./features/public/event-detail/event-detail.component').then(
+            (m) => m.EventDetailComponent,
+          ),
+      },
+      {
+        path: 'test-login',
+        loadComponent: () =>
+          import('./features/public/test-login/test-login.component').then(
+            (m) => m.TestLoginComponent,
+          ),
+      },
+      {
         path: '',
         loadChildren: () => import('./features/auth/auth.routes').then((m) => m.authRoutes),
       },
