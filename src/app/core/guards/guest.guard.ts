@@ -2,13 +2,14 @@ import { CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 
-export const roleGuard: CanActivateFn = (_route, _state) => {
+/** Redirige al home si el usuario ya tiene sesión (login/registro). */
+export const guestGuard: CanActivateFn = () => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  if (authService.isAdmin()) {
-    return true;
+  if (authService.isLoggedIn()) {
+    return router.createUrlTree(['/']);
   }
 
-  return router.createUrlTree(['/']);
+  return true;
 };

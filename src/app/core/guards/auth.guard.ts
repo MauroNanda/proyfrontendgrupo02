@@ -1,13 +1,16 @@
 import { CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
+import { AuthService } from '../services/auth.service';
 
-// Auth guard — esqueleto (Fase 0).
-// Tarea T-01-3 lo completa: verificar si hay usuario logueado en AuthService.
-// Si no hay sesión, redirigir a /login.
+export const authGuard: CanActivateFn = (_route, state) => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
 
-export const authGuard: CanActivateFn = (_route, _state) => {
-  const _router = inject(Router);
-  // TODO (T-01-3): const isLogged = inject(AuthService).isLoggedIn();
-  // if (!isLogged) { router.navigateByUrl('/login'); return false; }
-  return true;
+  if (authService.isLoggedIn()) {
+    return true;
+  }
+
+  return router.createUrlTree(['/login'], {
+    queryParams: { returnUrl: state.url },
+  });
 };
