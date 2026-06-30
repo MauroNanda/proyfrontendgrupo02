@@ -20,4 +20,8 @@ export class EventoService {
   obtenerPorId(id: string): Observable<Evento> {
     return this.api.get<Evento>(`/eventos/${id}`);
   }
+
+  obtenerTodos(): Observable<Evento[]> {
+    return this.api.get<Evento[]>('/eventos');
+  }
 }
