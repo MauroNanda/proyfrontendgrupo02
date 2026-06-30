@@ -1,0 +1,36 @@
+<h2>Eventos</h2>
+
+<div class="filtros">
+  <label for="estado">Estado:</label>
+
+  <select id="estado" [(ngModel)]="filtroEstado" (change)="filtrarEventos()">
+    <option value="">Todos</option>
+    <option value="PUBLICADO">PUBLICADO</option>
+    <option value="BORRADOR">BORRADOR</option>
+    <option value="CANCELADO">CANCELADO</option>
+  </select>
+</div>
+
+<div class="catalogo">
+  <div class="card" *ngFor="let evento of eventosFiltrados">
+    <h3>{{ evento.titulo }}</h3>
+
+    <p><strong>👥 Cupo:</strong> {{ evento.cupo_maximo }}</p>
+
+    <p>
+      <strong>Estado:</strong>
+
+      <span
+        [ngClass]="{
+          publicado: evento.estado === 'PUBLICADO',
+          borrador: evento.estado === 'BORRADOR',
+          cancelado: evento.estado === 'CANCELADO',
+        }"
+      >
+        {{ evento.estado }}
+      </span>
+    </p>
+
+    <a class="btn-detalle" [routerLink]="['/eventos', evento.id]"> Ver detalle </a>
+  </div>
+</div>
