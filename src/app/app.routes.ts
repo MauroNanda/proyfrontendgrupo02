@@ -37,6 +37,13 @@ export const routes: Routes = [
         path: '',
         loadChildren: () => import('./features/auth/auth.routes').then((m) => m.authRoutes),
       },
+      {
+        path: 'eventos',
+        loadComponent: () =>
+          import('./features/public/event-catalog/event-catalog.component').then(
+            (m) => m.EventCatalogComponent,
+          ),
+      },
     ],
   },
   {
