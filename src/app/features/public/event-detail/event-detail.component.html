@@ -32,6 +32,7 @@
 
         <!-- Título -->
         <h1 class="display-6 fw-bold mb-4 text-dark-blue">{{ evento()!.titulo }}</h1>
+        <app-countdown [fecha]="evento()!.createdAt"></app-countdown>
 
         <!-- Info Grid -->
         <div class="row row-cols-1 row-cols-md-2 g-3 mb-4">
