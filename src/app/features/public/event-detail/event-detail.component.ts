@@ -6,10 +6,12 @@ import { InscripcionService, InscripcionEstado } from '../../../core/services/in
 import { AuthService } from '../../../core/services/auth.service';
 import { ToastService } from '../../../core/services/toast.service';
 
+import { CountdownComponent } from '../../../shared/components/countdown/countdown.component';
+
 @Component({
   selector: 'app-event-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, CountdownComponent],
   templateUrl: './event-detail.component.html',
   styleUrls: ['./event-detail.component.scss'],
 })
