@@ -188,7 +188,8 @@
             </h4>
             <div class="qr-container bg-light p-2 rounded-3 mb-3 d-inline-block">
               <img
-                [src]="getQrUrl()"
+                *ngIf="qrCodeDataUrl()"
+                [src]="qrCodeDataUrl()"
                 alt="Código QR de Check-in"
                 class="img-fluid rounded-2"
                 style="max-height: 180px"
