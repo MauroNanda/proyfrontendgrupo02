@@ -1,0 +1,23 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="p-4">
+  <div class="mb-3">
+    <label class="form-label" style="color: #698696">Nombre de la categoría</label>
+    <input
+      formControlName="nombre"
+      class="form-control"
+      style="border: 1px solid #acbcbf; border-radius: 8px"
+    />
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label" style="color: #698696">Descripción</label>
+    <textarea
+      formControlName="descripcion"
+      class="form-control"
+      style="border: 1px solid #acbcbf; border-radius: 8px"
+    ></textarea>
+  </div>
+
+  <button type="submit" class="btn" style="background-color: #5289ad; color: #fff">
+    Guardar Categoría
+  </button>
+</form>
