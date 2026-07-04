@@ -53,4 +53,34 @@ export class InscripcionService {
       qr_token: qrToken,
     });
   }
+
+  /**
+   * Obtiene la lista de inscriptos para un evento específico (solo Organizador).
+   */
+  obtenerInscriptosPorEvento(
+    eventoId: string,
+    filtros?: { estado?: string; search?: string; limit?: number; page?: number },
+  ): Observable<{ count: number; rows: any[]; stats?: any }> {
+    const params: any = {};
+    if (filtros) {
+      if (filtros.estado) params.estado = filtros.estado;
+      if (filtros.search) params.search = filtros.search;
+      if (filtros.limit) params.limit = filtros.limit.toString();
+      if (filtros.page) params.page = filtros.page.toString();
+    }
+    return this.api.get<{ count: number; rows: any[]; stats?: any }>(
+      `/inscripciones/evento/${eventoId}`,
+      params,
+    );
+  }
+
+  /**
+   * Realiza el check-in manual de un inscripto (solo Organizador).
+   */
+  checkInManual(id: string): Observable<{ message: string; inscripcion: Inscripcion }> {
+    return this.api.post<{ message: string; inscripcion: Inscripcion }>(
+      `/inscripciones/${id}/check-in-manual`,
+      {},
+    );
+  }
 }

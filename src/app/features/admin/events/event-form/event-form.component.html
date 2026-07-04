@@ -1,0 +1,128 @@
+<div>
+  <!-- Header -->
+  <div class="d-flex align-items-center gap-3 mb-4">
+    <a
+      routerLink="/admin/eventos"
+      class="btn-back d-flex align-items-center gap-1 text-muted font-sm text-decoration-none"
+    >
+      <i class="bi bi-arrow-left"></i> Volver
+    </a>
+    <div class="vr opacity-25"></div>
+    <div>
+      <h1 class="h3 fw-bold text-dark-blue cv-serif mb-0">
+        {{ editando() ? 'Editar Evento' : 'Nuevo Evento' }}
+      </h1>
+    </div>
+  </div>
+
+  <!-- Skeleton cargando -->
+  <div *ngIf="cargando()" class="text-center py-5">
+    <div class="spinner-border spinner-border-sm text-primary" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+    <p class="text-muted small mt-2 mb-0">Cargando datos del evento...</p>
+  </div>
+
+  <!-- Formulario -->
+  <div *ngIf="!cargando()" class="card border rounded-4 bg-white p-4 shadow-xs">
+    <form [formGroup]="formulario" (ngSubmit)="guardar()" novalidate>
+      <div class="row g-3">
+        <!-- Título -->
+        <div class="col-12">
+          <label class="form-label label-corporate" for="titulo">Título *</label>
+          <input
+            id="titulo"
+            class="form-control input-corporate"
+            formControlName="titulo"
+            placeholder="Nombre del evento"
+            [class.is-invalid]="
+              formulario.controls.titulo.invalid && formulario.controls.titulo.touched
+            "
+          />
+          <div class="invalid-feedback">El título es obligatorio.</div>
+        </div>
+
+        <!-- Descripción -->
+        <div class="col-12">
+          <label class="form-label label-corporate" for="descripcion">Descripción</label>
+          <textarea
+            id="descripcion"
+            class="form-control input-corporate"
+            formControlName="descripcion"
+            rows="3"
+            placeholder="Descripción del evento (opcional)"
+          ></textarea>
+        </div>
+
+        <!-- Fecha y Ubicación -->
+        <div class="col-md-6">
+          <label class="form-label label-corporate" for="fecha">Fecha y hora *</label>
+          <input
+            id="fecha"
+            type="datetime-local"
+            class="form-control input-corporate"
+            formControlName="fecha"
+            [class.is-invalid]="
+              formulario.controls.fecha.invalid && formulario.controls.fecha.touched
+            "
+          />
+          <div class="invalid-feedback">La fecha es obligatoria.</div>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label label-corporate" for="ubicacion">Ubicación *</label>
+          <input
+            id="ubicacion"
+            class="form-control input-corporate"
+            formControlName="ubicacion"
+            placeholder="Ej: Aula 101, Campus Norte"
+            [class.is-invalid]="
+              formulario.controls.ubicacion.invalid && formulario.controls.ubicacion.touched
+            "
+          />
+          <div class="invalid-feedback">La ubicación es obligatoria.</div>
+        </div>
+
+        <!-- Cupo y Estado -->
+        <div class="col-md-6">
+          <label class="form-label label-corporate" for="cupo_maximo">Cupo máximo *</label>
+          <input
+            id="cupo_maximo"
+            type="number"
+            class="form-control input-corporate"
+            formControlName="cupo_maximo"
+            min="1"
+            [class.is-invalid]="
+              formulario.controls.cupo_maximo.invalid && formulario.controls.cupo_maximo.touched
+            "
+          />
+          <div class="invalid-feedback">El cupo debe ser mayor a 0.</div>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label label-corporate" for="estado">Estado *</label>
+          <select id="estado" class="form-select input-corporate" formControlName="estado">
+            <option value="BORRADOR">Borrador</option>
+            <option value="PUBLICADO">Publicado</option>
+            <option value="CANCELADO">Cancelado</option>
+          </select>
+        </div>
+
+        <!-- Acciones -->
+        <div class="col-12 d-flex justify-content-end gap-2 pt-2 border-top mt-2">
+          <a routerLink="/admin/eventos" class="btn btn-outline-secondary rounded-3 px-4 font-sm">
+            Cancelar
+          </a>
+          <button
+            type="submit"
+            class="btn btn-primary-accent rounded-3 px-4 font-sm fw-semibold d-flex align-items-center gap-2"
+            [disabled]="loading()"
+          >
+            <span *ngIf="loading()" class="spinner-border spinner-border-sm" role="status"></span>
+            {{ loading() ? 'Guardando...' : editando() ? 'Guardar cambios' : 'Crear evento' }}
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

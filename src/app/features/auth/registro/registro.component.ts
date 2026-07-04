@@ -23,18 +23,20 @@ function passwordsMatch(control: AbstractControl): ValidationErrors | null {
   imports: [ReactiveFormsModule, RouterLink],
   template: `
     <div class="container auth-wrapper">
-      <div class="card auth-card">
+      <div class="card auth-card border shadow-xs rounded-4">
         <div class="card-body p-4 p-md-5">
-          <h1 class="auth-title">Crear cuenta</h1>
+          <h1 class="auth-title cv-serif">Crear cuenta</h1>
           <p class="auth-subtitle">Registrate para inscribirte en eventos</p>
 
           <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
             <div class="mb-3">
-              <label for="nombre" class="form-label">Nombre completo</label>
+              <label for="nombre" class="form-label font-xs fw-semibold text-muted"
+                >Nombre completo</label
+              >
               <input
                 id="nombre"
                 type="text"
-                class="form-control"
+                class="form-control rounded-3 py-2 font-sm"
                 formControlName="nombre"
                 autocomplete="name"
                 [class.is-invalid]="nombreInvalid"
@@ -45,11 +47,42 @@ function passwordsMatch(control: AbstractControl): ValidationErrors | null {
             </div>
 
             <div class="mb-3">
-              <label for="email" class="form-label">Correo electrónico</label>
+              <label for="username" class="form-label font-xs fw-semibold text-muted"
+                >Nombre de usuario</label
+              >
+              <input
+                id="username"
+                type="text"
+                class="form-control rounded-3 py-2 font-sm"
+                formControlName="username"
+                autocomplete="username"
+                placeholder="Ej: jperez"
+                [class.is-invalid]="usernameInvalid"
+              />
+              <div class="form-text font-xxs text-muted mt-1">
+                Con esto vas a ingresar al sistema.
+              </div>
+              @if (usernameInvalid) {
+                <div class="invalid-feedback">
+                  @if (form.controls.username.errors?.['required']) {
+                    El nombre de usuario es obligatorio
+                  } @else if (form.controls.username.errors?.['minlength']) {
+                    Mínimo 3 caracteres
+                  } @else if (form.controls.username.errors?.['pattern']) {
+                    Solo letras, números y guiones bajos
+                  }
+                </div>
+              }
+            </div>
+
+            <div class="mb-3">
+              <label for="email" class="form-label font-xs fw-semibold text-muted"
+                >Correo electrónico</label
+              >
               <input
                 id="email"
                 type="email"
-                class="form-control"
+                class="form-control rounded-3 py-2 font-sm"
                 formControlName="email"
                 autocomplete="email"
                 [class.is-invalid]="emailInvalid"
@@ -66,11 +99,13 @@ function passwordsMatch(control: AbstractControl): ValidationErrors | null {
             </div>
 
             <div class="mb-3">
-              <label for="password" class="form-label">Contraseña</label>
+              <label for="password" class="form-label font-xs fw-semibold text-muted"
+                >Contraseña</label
+              >
               <input
                 id="password"
                 type="password"
-                class="form-control"
+                class="form-control rounded-3 py-2 font-sm"
                 formControlName="password"
                 autocomplete="new-password"
                 [class.is-invalid]="passwordInvalid"
@@ -87,11 +122,13 @@ function passwordsMatch(control: AbstractControl): ValidationErrors | null {
             </div>
 
             <div class="mb-4">
-              <label for="confirmPassword" class="form-label">Confirmar contraseña</label>
+              <label for="confirmPassword" class="form-label font-xs fw-semibold text-muted"
+                >Confirmar contraseña</label
+              >
               <input
                 id="confirmPassword"
                 type="password"
-                class="form-control"
+                class="form-control rounded-3 py-2 font-sm"
                 formControlName="confirmPassword"
                 autocomplete="new-password"
                 [class.is-invalid]="confirmInvalid"
@@ -107,7 +144,11 @@ function passwordsMatch(control: AbstractControl): ValidationErrors | null {
               }
             </div>
 
-            <button type="submit" class="btn btn-primary w-100" [disabled]="loading()">
+            <button
+              type="submit"
+              class="btn btn-primary w-100 py-2 rounded-3 fw-semibold font-sm"
+              [disabled]="loading()"
+            >
               @if (loading()) {
                 <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
                 Registrando...
@@ -117,9 +158,25 @@ function passwordsMatch(control: AbstractControl): ValidationErrors | null {
             </button>
           </form>
 
-          <p class="text-center mt-4 mb-0 small text-muted">
+          <!-- Divider -->
+          <div class="d-flex align-items-center my-4">
+            <hr class="flex-grow-1 text-muted opacity-25 m-0" />
+            <span class="mx-2 font-xxs text-muted text-uppercase tracking-wider">o</span>
+            <hr class="flex-grow-1 text-muted opacity-25 m-0" />
+          </div>
+
+          <!-- Google OAuth Button -->
+          <button
+            type="button"
+            class="btn btn-outline-secondary w-100 py-2 rounded-3 d-flex align-items-center justify-content-center gap-2 font-sm fw-semibold bg-white border-light text-dark-blue shadow-xs"
+          >
+            <i class="bi bi-google text-danger"></i>
+            Registrarse con Google
+          </button>
+
+          <p class="text-center mt-4 mb-0 font-xs text-muted">
             ¿Ya tienes cuenta?
-            <a routerLink="/login" class="auth-link">Ingresar</a>
+            <a routerLink="/login" class="auth-link font-xs text-decoration-none">Ingresar</a>
           </p>
         </div>
       </div>
@@ -129,28 +186,83 @@ function passwordsMatch(control: AbstractControl): ValidationErrors | null {
     `
       .auth-wrapper {
         max-width: 440px;
-        padding: 2rem 0 3rem;
+        padding: 3rem 0 4rem;
       }
 
       .auth-card {
-        border: none;
-        box-shadow: 0 4px 24px rgba(36, 60, 76, 0.08);
+        border-color: #e2e8f0 !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+        background-color: #ffffff;
       }
 
       .auth-title {
-        font-family: 'Space Grotesk', sans-serif;
-        font-size: 1.5rem;
+        font-family: 'IBM Plex Serif', Georgia, serif !important;
+        font-size: 1.75rem;
         font-weight: 700;
         margin-bottom: 0.25rem;
+        color: #243c4c;
       }
 
       .auth-subtitle {
         color: #698696;
+        font-size: 0.875rem;
         margin-bottom: 1.5rem;
       }
 
       .auth-link {
-        font-weight: 500;
+        font-weight: 600;
+        color: #5289ad;
+        &:hover {
+          color: #437190;
+        }
+      }
+
+      .font-xs {
+        font-size: 0.8125rem !important;
+      }
+
+      .font-xxs {
+        font-size: 0.725rem !important;
+      }
+
+      .font-sm {
+        font-size: 0.875rem !important;
+      }
+
+      .text-dark-blue {
+        color: #1a2e38 !important;
+      }
+
+      .shadow-xs {
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+      }
+
+      .border-light {
+        border-color: #e2e8f0 !important;
+      }
+
+      .form-control {
+        border: 1px solid #cbd5e1;
+        transition:
+          border-color 0.15s ease,
+          box-shadow 0.15s ease;
+        &:focus {
+          border-color: #5289ad;
+          box-shadow: 0 0 0 3px rgba(82, 137, 173, 0.15);
+        }
+      }
+
+      .btn-primary {
+        background-color: #5289ad;
+        border-color: #5289ad;
+        &:hover {
+          background-color: #437190;
+          border-color: #437190;
+        }
+      }
+
+      .cv-serif {
+        font-family: 'IBM Plex Serif', Georgia, serif !important;
       }
     `,
   ],
@@ -165,6 +277,10 @@ export class RegistroComponent {
   readonly form = this.fb.nonNullable.group(
     {
       nombre: ['', Validators.required],
+      username: [
+        '',
+        [Validators.required, Validators.minLength(3), Validators.pattern(/^[a-zA-Z0-9_]+$/)],
+      ],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', Validators.required],
@@ -174,6 +290,11 @@ export class RegistroComponent {
 
   get nombreInvalid(): boolean {
     const c = this.form.controls.nombre;
+    return c.invalid && (c.dirty || c.touched);
+  }
+
+  get usernameInvalid(): boolean {
+    const c = this.form.controls.username;
     return c.invalid && (c.dirty || c.touched);
   }
 
@@ -200,10 +321,10 @@ export class RegistroComponent {
     }
 
     this.loading.set(true);
-    const { nombre, email, password } = this.form.getRawValue();
+    const { nombre, username, email, password } = this.form.getRawValue();
 
     this.authService
-      .registro({ nombre, email, password })
+      .registro({ nombre, username, email, password })
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: () => {
