@@ -64,6 +64,11 @@ export const routes: Routes = [
             (m) => m.DashboardPlaceholderComponent,
           ),
       },
+      {
+        path: 'test-export',
+        loadComponent: () =>
+          import('./features/admin/test-export/test-export/test-export').then((m) => m.TestExport),
+      },
     ],
   },
   { path: '**', redirectTo: '' },
