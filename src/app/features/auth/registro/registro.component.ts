@@ -47,6 +47,35 @@ function passwordsMatch(control: AbstractControl): ValidationErrors | null {
             </div>
 
             <div class="mb-3">
+              <label for="username" class="form-label font-xs fw-semibold text-muted"
+                >Nombre de usuario</label
+              >
+              <input
+                id="username"
+                type="text"
+                class="form-control rounded-3 py-2 font-sm"
+                formControlName="username"
+                autocomplete="username"
+                placeholder="Ej: jperez"
+                [class.is-invalid]="usernameInvalid"
+              />
+              <div class="form-text font-xxs text-muted mt-1">
+                Con esto vas a ingresar al sistema.
+              </div>
+              @if (usernameInvalid) {
+                <div class="invalid-feedback">
+                  @if (form.controls.username.errors?.['required']) {
+                    El nombre de usuario es obligatorio
+                  } @else if (form.controls.username.errors?.['minlength']) {
+                    Mínimo 3 caracteres
+                  } @else if (form.controls.username.errors?.['pattern']) {
+                    Solo letras, números y guiones bajos
+                  }
+                </div>
+              }
+            </div>
+
+            <div class="mb-3">
               <label for="email" class="form-label font-xs fw-semibold text-muted"
                 >Correo electrónico</label
               >
@@ -248,6 +277,10 @@ export class RegistroComponent {
   readonly form = this.fb.nonNullable.group(
     {
       nombre: ['', Validators.required],
+      username: [
+        '',
+        [Validators.required, Validators.minLength(3), Validators.pattern(/^[a-zA-Z0-9_]+$/)],
+      ],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', Validators.required],
@@ -257,6 +290,11 @@ export class RegistroComponent {
 
   get nombreInvalid(): boolean {
     const c = this.form.controls.nombre;
+    return c.invalid && (c.dirty || c.touched);
+  }
+
+  get usernameInvalid(): boolean {
+    const c = this.form.controls.username;
     return c.invalid && (c.dirty || c.touched);
   }
 
@@ -283,10 +321,10 @@ export class RegistroComponent {
     }
 
     this.loading.set(true);
-    const { nombre, email, password } = this.form.getRawValue();
+    const { nombre, username, email, password } = this.form.getRawValue();
 
     this.authService
-      .registro({ nombre, email, password })
+      .registro({ nombre, username, email, password })
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: () => {
