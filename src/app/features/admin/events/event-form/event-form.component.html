@@ -1,0 +1,51 @@
+<div class="container mt-4">
+  <h2>
+    {{ editando ? 'Editar Evento' : 'Nuevo Evento' }}
+  </h2>
+
+  <form [formGroup]="formulario" (ngSubmit)="guardar()">
+    <div class="mb-3">
+      <label>Título</label>
+
+      <input class="form-control" formControlName="titulo" />
+    </div>
+
+    <div class="mb-3">
+      <label>Descripción</label>
+
+      <textarea class="form-control" formControlName="descripcion"> </textarea>
+    </div>
+
+    <div class="mb-3">
+      <label>Fecha</label>
+
+      <input type="datetime-local" class="form-control" formControlName="fecha" />
+    </div>
+
+    <div class="mb-3">
+      <label>Ubicación</label>
+
+      <input class="form-control" formControlName="ubicacion" />
+    </div>
+
+    <div class="mb-3">
+      <label>Cupo máximo</label>
+
+      <input type="number" class="form-control" formControlName="cupo_maximo" />
+    </div>
+
+    <div class="mb-3">
+      <label>Estado</label>
+
+      <select class="form-select" formControlName="estado">
+        <option value="BORRADOR">BORRADOR</option>
+
+        <option value="PUBLICADO">PUBLICADO</option>
+
+        <option value="CANCELADO">CANCELADO</option>
+      </select>
+    </div>
+
+    <button class="btn btn-success" type="submit">Guardar</button>
+  </form>
+</div>
