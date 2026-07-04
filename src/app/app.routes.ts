@@ -64,6 +64,11 @@ export const routes: Routes = [
             (m) => m.DashboardPlaceholderComponent,
           ),
       },
+      {
+        path: 'categorias',
+        loadChildren: () =>
+          import('./features/admin/categories/category.routes').then((m) => m.CATEGORY_ROUTES),
+      },
     ],
   },
   { path: '**', redirectTo: '' },
