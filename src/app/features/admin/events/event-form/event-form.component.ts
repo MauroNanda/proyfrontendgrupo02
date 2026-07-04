@@ -1,14 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 
 import { Evento, EventoService } from '../../../../core/services/evento.service';
+import { ToastService } from '../../../../core/services/toast.service';
 
 @Component({
   selector: 'app-event-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './event-form.component.html',
   styleUrl: './event-form.component.css',
 })
@@ -17,8 +18,11 @@ export class EventFormComponent implements OnInit {
   private eventoService = inject(EventoService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private toastService = inject(ToastService);
 
-  editando = false;
+  readonly editando = signal(false);
+  readonly loading = signal(false);
+  readonly cargando = signal(false);
   idEvento = '';
 
   formulario = this.fb.group({
@@ -34,17 +38,25 @@ export class EventFormComponent implements OnInit {
     this.idEvento = this.route.snapshot.paramMap.get('id') || '';
 
     if (this.idEvento) {
-      this.editando = true;
+      this.editando.set(true);
+      this.cargando.set(true);
 
-      this.eventoService.obtenerPorId(this.idEvento).subscribe((evento) => {
-        this.formulario.patchValue({
-          titulo: evento.titulo,
-          descripcion: evento.descripcion,
-          fecha: evento.fecha?.substring(0, 16),
-          ubicacion: evento.ubicacion,
-          cupo_maximo: evento.cupo_maximo,
-          estado: evento.estado,
-        });
+      this.eventoService.obtenerPorId(this.idEvento).subscribe({
+        next: (evento) => {
+          this.formulario.patchValue({
+            titulo: evento.titulo,
+            descripcion: evento.descripcion,
+            fecha: evento.fecha?.substring(0, 16),
+            ubicacion: evento.ubicacion,
+            cupo_maximo: evento.cupo_maximo,
+            estado: evento.estado,
+          });
+          this.cargando.set(false);
+        },
+        error: () => {
+          this.toastService.error('No se pudo cargar el evento');
+          this.cargando.set(false);
+        },
       });
     }
   }
@@ -55,19 +67,31 @@ export class EventFormComponent implements OnInit {
       return;
     }
 
-    if (this.editando) {
+    this.loading.set(true);
+
+    if (this.editando()) {
       this.eventoService
         .actualizar(this.idEvento, this.formulario.getRawValue() as Partial<Evento>)
-        .subscribe(() => {
-          alert('Evento actualizado');
-
-          this.router.navigate(['/admin/eventos']);
+        .subscribe({
+          next: () => {
+            this.toastService.success('Evento actualizado correctamente');
+            this.router.navigate(['/admin/eventos']);
+          },
+          error: () => {
+            this.toastService.error('Error al actualizar el evento');
+            this.loading.set(false);
+          },
         });
     } else {
-      this.eventoService.crear(this.formulario.getRawValue() as Partial<Evento>).subscribe(() => {
-        alert('Evento creado');
-
-        this.router.navigate(['/admin/eventos']);
+      this.eventoService.crear(this.formulario.getRawValue() as Partial<Evento>).subscribe({
+        next: () => {
+          this.toastService.success('Evento creado correctamente');
+          this.router.navigate(['/admin/eventos']);
+        },
+        error: () => {
+          this.toastService.error('Error al crear el evento');
+          this.loading.set(false);
+        },
       });
     }
   }

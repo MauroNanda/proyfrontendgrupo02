@@ -36,4 +36,8 @@ export class EventoService {
   actualizar(id: string, datos: Partial<Evento>): Observable<Evento> {
     return this.api.put<Evento>(`/eventos/${id}`, datos);
   }
+
+  eliminar(id: string): Observable<void> {
+    return this.api.delete<void>(`/eventos/${id}`);
+  }
 }
