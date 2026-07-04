@@ -64,6 +64,12 @@ export const routes: Routes = [
             (m) => m.DashboardPlaceholderComponent,
           ),
       },
+
+      {
+        path: 'eventos',
+        loadChildren: () =>
+          import('./features/admin/events/event.routes').then((m) => m.EVENT_ROUTES),
+      },
     ],
   },
   { path: '**', redirectTo: '' },
