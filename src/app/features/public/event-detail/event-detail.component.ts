@@ -7,6 +7,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { ToastService } from '../../../core/services/toast.service';
 
 import { CountdownComponent } from '../../../shared/components/countdown/countdown.component';
+import * as QRCode from 'qrcode';
 
 @Component({
   selector: 'app-event-detail',
@@ -29,6 +30,7 @@ export class EventDetailComponent implements OnInit {
     estado: null,
     qr_token: null,
   });
+  readonly qrCodeDataUrl = signal<string>('');
   readonly loading = signal(true);
   readonly actionLoading = signal(false);
   readonly error = signal<string | null>(null);
@@ -69,6 +71,7 @@ export class EventDetailComponent implements OnInit {
     this.inscripcionService.obtenerEstado(eventoId).subscribe({
       next: (estado) => {
         this.inscripcion.set(estado);
+        this.generarQrLocal(estado.qr_token);
         this.loading.set(false);
       },
       error: (err) => {
@@ -147,9 +150,18 @@ export class EventDetailComponent implements OnInit {
     });
   }
 
-  getQrUrl(): string {
-    const token = this.inscripcion().qr_token;
-    if (!token) return '';
-    return `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${token}`;
+  private generarQrLocal(token: string | null): void {
+    if (!token) {
+      this.qrCodeDataUrl.set('');
+      return;
+    }
+    QRCode.toDataURL(token, { width: 200, margin: 1 })
+      .then((url) => {
+        this.qrCodeDataUrl.set(url);
+      })
+      .catch((err) => {
+        console.error('Error generando QR local:', err);
+        this.qrCodeDataUrl.set('');
+      });
   }
 }
