@@ -39,4 +39,9 @@ export class EventCatalogComponent implements OnInit {
 
     this.eventosFiltrados = this.eventos.filter((evento) => evento.estado === this.filtroEstado);
   }
+
+  cambiarFiltro(estado: string): void {
+    this.filtroEstado = estado;
+    this.filtrarEventos();
+  }
 }

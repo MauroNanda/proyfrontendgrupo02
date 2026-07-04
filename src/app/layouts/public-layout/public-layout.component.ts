@@ -101,7 +101,7 @@ import { AuthService } from '../../core/services/auth.service';
         width: 32px;
         height: 32px;
         border-radius: 8px;
-        background-color: var(--bs-primary);
+        background-color: #5289ad;
         color: white;
         font-weight: 700;
         font-size: 16px;

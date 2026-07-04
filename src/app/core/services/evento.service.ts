@@ -5,6 +5,9 @@ import { Observable } from 'rxjs';
 export interface Evento {
   id: string;
   titulo: string;
+  descripcion?: string;
+  fecha?: string;
+  ubicacion?: string;
   cupo_maximo: number;
   estado: 'BORRADOR' | 'PUBLICADO' | 'CANCELADO';
   createdAt: string;

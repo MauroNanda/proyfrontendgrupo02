@@ -1,36 +1,128 @@
-<h2>Eventos</h2>
+<div class="container py-5 min-vh-100">
+  <div class="d-flex justify-content-between align-items-center gap-3 mb-4 flex-wrap">
+    <div>
+      <h1 class="h2 fw-bold text-dark-blue cv-serif mb-1">Catálogo de Eventos</h1>
+      <p class="text-muted small mb-0">
+        Explorá y registrate en los eventos y actividades de tu facultad.
+      </p>
+    </div>
+  </div>
 
-<div class="filtros">
-  <label for="estado">Estado:</label>
+  <!-- Barra de Filtros / Chips -->
+  <div class="d-flex gap-2 mb-4 flex-wrap border-bottom pb-3">
+    <button
+      (click)="cambiarFiltro('')"
+      class="btn btn-sm rounded-pill font-xs px-3 py-1.5"
+      [ngClass]="filtroEstado === '' ? 'btn-primary' : 'btn-light-chip text-muted-blue'"
+    >
+      Todos
+    </button>
+    <button
+      (click)="cambiarFiltro('PUBLICADO')"
+      class="btn btn-sm rounded-pill font-xs px-3 py-1.5"
+      [ngClass]="filtroEstado === 'PUBLICADO' ? 'btn-primary' : 'btn-light-chip text-muted-blue'"
+    >
+      Publicados
+    </button>
+    <button
+      (click)="cambiarFiltro('BORRADOR')"
+      class="btn btn-sm rounded-pill font-xs px-3 py-1.5"
+      [ngClass]="filtroEstado === 'BORRADOR' ? 'btn-primary' : 'btn-light-chip text-muted-blue'"
+    >
+      Borradores
+    </button>
+    <button
+      (click)="cambiarFiltro('CANCELADO')"
+      class="btn btn-sm rounded-pill font-xs px-3 py-1.5"
+      [ngClass]="filtroEstado === 'CANCELADO' ? 'btn-primary' : 'btn-light-chip text-muted-blue'"
+    >
+      Cancelados
+    </button>
+  </div>
 
-  <select id="estado" [(ngModel)]="filtroEstado" (change)="filtrarEventos()">
-    <option value="">Todos</option>
-    <option value="PUBLICADO">PUBLICADO</option>
-    <option value="BORRADOR">BORRADOR</option>
-    <option value="CANCELADO">CANCELADO</option>
-  </select>
-</div>
+  <!-- Grid de Eventos -->
+  <div class="row g-4">
+    <!-- Empty State -->
+    <div *ngIf="eventosFiltrados.length === 0" class="col-12 text-center py-5">
+      <i class="bi bi-calendar4-week text-muted opacity-50 display-5"></i>
+      <p class="text-muted small mt-2 mb-0">No se encontraron eventos cargados en este estado.</p>
+    </div>
 
-<div class="catalogo">
-  <div class="card" *ngFor="let evento of eventosFiltrados">
-    <h3>{{ evento.titulo }}</h3>
-
-    <p><strong>👥 Cupo:</strong> {{ evento.cupo_maximo }}</p>
-
-    <p>
-      <strong>Estado:</strong>
-
-      <span
-        [ngClass]="{
-          publicado: evento.estado === 'PUBLICADO',
-          borrador: evento.estado === 'BORRADOR',
-          cancelado: evento.estado === 'CANCELADO',
-        }"
+    <!-- Cards -->
+    <div *ngFor="let evento of eventosFiltrados" class="col-12 col-md-6 col-lg-4">
+      <div
+        class="card border shadow-xs rounded-4 p-3 bg-white h-100 d-flex flex-column justify-content-between event-card"
       >
-        {{ evento.estado }}
-      </span>
-    </p>
+        <div>
+          <!-- Tag / Estado -->
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <span class="category-badge font-xxs fw-bold text-uppercase">
+              <i class="bi bi-bookmark-fill me-1"></i> Evento
+            </span>
+            <div [ngSwitch]="evento.estado">
+              <span
+                *ngSwitchCase="'PUBLICADO'"
+                class="badge bg-asistio text-asistio rounded-pill px-2.5 py-1 font-xxs"
+              >
+                Publicado
+              </span>
+              <span
+                *ngSwitchCase="'BORRADOR'"
+                class="badge bg-espera text-espera rounded-pill px-2.5 py-1 font-xxs"
+              >
+                Borrador
+              </span>
+              <span
+                *ngSwitchCase="'CANCELADO'"
+                class="badge bg-cancelado text-cancelado rounded-pill px-2.5 py-1 font-xxs"
+              >
+                Cancelado
+              </span>
+            </div>
+          </div>
 
-    <a class="btn-detalle" [routerLink]="['/eventos', evento.id]"> Ver detalle </a>
+          <!-- Título -->
+          <h3 class="h5 fw-bold text-dark-blue cv-serif mb-2">{{ evento.titulo }}</h3>
+
+          <!-- Meta Info -->
+          <div class="d-flex flex-column gap-1.5 text-muted font-xs mb-4">
+            <span>
+              <i class="bi bi-calendar-event text-primary me-1.5"></i>
+              {{ evento.fecha | date: 'dd/MM/yyyy HH:mm' }}
+            </span>
+            <span>
+              <i class="bi bi-geo-alt text-primary me-1.5"></i>
+              {{ evento.ubicacion || 'Lugar por definir' }}
+            </span>
+          </div>
+        </div>
+
+        <div>
+          <!-- Cupo / Aforo -->
+          <div class="d-flex justify-content-between font-xs mb-1.5">
+            <span class="text-muted fw-semibold">Cupo disponible</span>
+            <span class="text-dark-blue fw-bold">{{ evento.cupo_maximo }} lugares</span>
+          </div>
+          <div class="progress mb-4" style="height: 6px">
+            <div
+              class="progress-bar bg-primary-accent"
+              role="progressbar"
+              style="width: 100%"
+              aria-valuenow="100"
+              aria-valuemin="0"
+              aria-valuemax="100"
+            ></div>
+          </div>
+
+          <!-- CTA -->
+          <a
+            [routerLink]="['/eventos', evento.id]"
+            class="btn-primary-accent text-decoration-none w-100 text-center justify-content-center py-2 rounded-3 fw-semibold font-sm"
+          >
+            Ver detalle
+          </a>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
