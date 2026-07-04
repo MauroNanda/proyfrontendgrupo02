@@ -65,6 +65,11 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'eventos',
+        loadChildren: () =>
+          import('./features/admin/events/event.routes').then((m) => m.EVENT_ROUTES),
+      },
+      {
         path: 'eventos/:id/inscriptos',
         loadComponent: () =>
           import('./features/admin/attendees/attendee-list.component').then(
