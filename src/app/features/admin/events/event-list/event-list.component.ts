@@ -26,7 +26,7 @@ export class EventListComponent implements OnInit {
 
   cargarEventos(): void {
     this.loading.set(true);
-    this.eventoService.obtenerTodos().subscribe({
+    this.eventoService.obtenerTodos({ todos: true }).subscribe({
       next: (data) => {
         this.eventos.set(data);
         this.loading.set(false);

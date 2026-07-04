@@ -25,8 +25,8 @@ export class EventoService {
     return this.api.get<Evento>(`/eventos/${id}`);
   }
 
-  obtenerTodos(): Observable<Evento[]> {
-    return this.api.get<Evento[]>('/eventos');
+  obtenerTodos(params?: { todos?: boolean }): Observable<Evento[]> {
+    return this.api.get<Evento[]>('/eventos', params as Record<string, string | number | boolean>);
   }
 
   crear(datos: Partial<Evento>): Observable<Evento> {
