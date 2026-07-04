@@ -17,26 +17,21 @@ import { finalize } from 'rxjs';
 
           <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
             <div class="mb-3">
-              <label for="email" class="form-label font-xs fw-semibold text-muted"
-                >Correo electrónico</label
+              <label for="username" class="form-label font-xs fw-semibold text-muted"
+                >Usuario</label
               >
               <input
-                id="email"
-                type="email"
+                id="username"
+                type="text"
                 class="form-control rounded-3 py-2 font-sm"
-                formControlName="email"
-                autocomplete="email"
-                [class.is-invalid]="emailInvalid"
-                aria-describedby="emailError"
+                formControlName="username"
+                autocomplete="username"
+                placeholder="Ej: admin"
+                [class.is-invalid]="usernameInvalid"
+                aria-describedby="usernameError"
               />
-              @if (emailInvalid) {
-                <div id="emailError" class="invalid-feedback">
-                  @if (form.controls.email.errors?.['required']) {
-                    El correo es obligatorio
-                  } @else if (form.controls.email.errors?.['email']) {
-                    Ingresa un correo válido
-                  }
-                </div>
+              @if (usernameInvalid) {
+                <div id="usernameError" class="invalid-feedback">El usuario es obligatorio</div>
               }
             </div>
 
@@ -190,12 +185,12 @@ export class LoginComponent {
   readonly loading = signal(false);
 
   readonly form = this.fb.nonNullable.group({
-    email: ['', [Validators.required, Validators.email]],
+    username: ['', Validators.required],
     password: ['', Validators.required],
   });
 
-  get emailInvalid(): boolean {
-    const c = this.form.controls.email;
+  get usernameInvalid(): boolean {
+    const c = this.form.controls.username;
     return c.invalid && (c.dirty || c.touched);
   }
 
