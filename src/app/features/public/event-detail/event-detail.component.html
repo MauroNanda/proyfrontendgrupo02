@@ -31,8 +31,8 @@
         </span>
 
         <!-- Título -->
-        <h1 class="display-6 fw-bold mb-4 text-dark-blue">{{ evento()!.titulo }}</h1>
-        <app-countdown [fecha]="evento()!.createdAt"></app-countdown>
+        <h1 class="display-6 fw-bold mb-4 text-dark-blue cv-serif">{{ evento()!.titulo }}</h1>
+        <app-countdown [fecha]="evento()!.fecha || ''"></app-countdown>
 
         <!-- Info Grid -->
         <div class="row row-cols-1 row-cols-md-2 g-3 mb-4">
@@ -43,7 +43,7 @@
             <div>
               <small class="text-muted d-block uppercase-track">Fecha del evento</small>
               <span class="fw-semibold text-dark-blue">{{
-                evento()!.createdAt | date: "EEEE, d 'de' MMMM, y"
+                evento()!.fecha | date: "EEEE, d 'de' MMMM, y" : 'es' | titlecase
               }}</span>
             </div>
           </div>

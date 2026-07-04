@@ -105,3 +105,19 @@ $dark-blue: #1e293b;
     transform: scale(1);
   }
 }
+
+.cv-serif {
+  font-family: 'IBM Plex Serif', Georgia, serif !important;
+}
+
+.btn-primary {
+  background-color: #5289ad !important;
+  border-color: #5289ad !important;
+  color: #ffffff !important;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background-color: #437190 !important;
+    border-color: #437190 !important;
+  }
+}

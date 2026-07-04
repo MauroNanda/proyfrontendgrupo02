@@ -1,0 +1,355 @@
+<div>
+  <!-- Breadcrumb -->
+  <div class="small text-muted mb-2">
+    <span>Mis eventos</span>
+    <i class="bi bi-chevron-right mx-2 font-xxs"></i>
+    <span class="fw-semibold text-secondary">Inscriptos</span>
+  </div>
+
+  <!-- Header del Evento -->
+  <div class="d-flex justify-content-between align-items-start gap-3 mb-4 flex-wrap">
+    <div>
+      <h1 class="h2 fw-bold text-dark-blue cv-serif mb-1">
+        {{ evento()?.titulo || 'Cargando evento...' }}
+      </h1>
+      <div class="d-flex gap-3 text-muted small flex-wrap">
+        <span>
+          <i class="bi bi-calendar-event text-primary me-1.5"></i>
+          {{ evento()?.fecha | date: 'EEEE d MMM · HH:mm' : 'es' | titlecase }}
+        </span>
+        <span>
+          <i class="bi bi-geo-alt text-primary me-1.5"></i>
+          {{ evento()?.ubicacion || 'Ubicación no especificada' }}
+        </span>
+      </div>
+    </div>
+    <button
+      class="btn btn-outline-secondary rounded-3 px-3 py-2 d-flex align-items-center gap-2 font-sm shadow-xs bg-white"
+    >
+      <i class="bi bi-download"></i> Exportar
+    </button>
+  </div>
+
+  <!-- KPIs de Control -->
+  <div class="row g-3 mb-4">
+    <!-- Inscriptos Totales -->
+    <div class="col-12 col-sm-6 col-md-3">
+      <div class="card border-light shadow-xs rounded-4 p-3 bg-white">
+        <div class="d-flex align-items-center gap-2 text-muted font-sm fw-semibold mb-2">
+          <i class="bi bi-people text-primary font-md"></i>
+          Inscriptos totales
+        </div>
+        <div class="h2 fw-bold text-dark-blue cv-serif mb-0">{{ inscriptosTotales() }}</div>
+      </div>
+    </div>
+
+    <!-- Aforo -->
+    <div class="col-12 col-sm-6 col-md-3">
+      <div class="card border-light shadow-xs rounded-4 p-3 bg-white">
+        <div class="d-flex align-items-center gap-2 text-muted font-sm fw-semibold mb-2">
+          <i class="bi bi-door-closed text-primary font-md"></i>
+          Aforo
+        </div>
+        <div class="h2 fw-bold text-dark-blue cv-serif mb-0">
+          {{ evento()?.cupo_maximo || 0 }}
+        </div>
+        <div
+          class="font-xxs fw-semibold mt-1"
+          [ngClass]="
+            inscriptosTotales() >= (evento()?.cupo_maximo || 0) ? 'text-danger' : 'text-success'
+          "
+        >
+          {{
+            inscriptosTotales() >= (evento()?.cupo_maximo || 0)
+              ? 'Sin cupos · lista activa'
+              : 'Cupos disponibles'
+          }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Check-in -->
+    <div class="col-12 col-sm-6 col-md-3">
+      <div class="card border-light shadow-xs rounded-4 p-3 bg-white">
+        <div class="d-flex align-items-center gap-2 text-muted font-sm fw-semibold mb-2">
+          <i class="bi bi-patch-check text-success font-md"></i>
+          Check-in
+        </div>
+        <div class="h2 fw-bold text-success cv-serif mb-0">
+          {{ stats().ASISTIO || 0
+          }}<span class="text-muted font-sm fw-normal">/{{ evento()?.cupo_maximo || 0 }}</span>
+        </div>
+        <!-- Progress Bar -->
+        <div class="progress mt-2" style="height: 5px">
+          <div
+            class="progress-bar bg-success"
+            role="progressbar"
+            [style.width.%]="checkinPct()"
+            [aria-valuenow]="checkinPct()"
+            aria-valuemin="0"
+            aria-valuemax="100"
+          ></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- En Espera -->
+    <div class="col-12 col-sm-6 col-md-3">
+      <div class="card border-light shadow-xs rounded-4 p-3 bg-white">
+        <div class="d-flex align-items-center gap-2 text-muted font-sm fw-semibold mb-2">
+          <i class="bi bi-hourglass-split text-warning font-md"></i>
+          En espera
+        </div>
+        <div class="h2 fw-bold text-warning cv-serif mb-0">{{ stats().ESPERA || 0 }}</div>
+        <div class="font-xxs text-muted mt-1">FIFO · lista automatizada</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenedor Tabla / Filtros -->
+  <div class="card border-light shadow-xs rounded-4 overflow-hidden bg-white mb-4">
+    <!-- Barra de Filtros / Pestañas (Chips) -->
+    <div class="p-3 border-bottom d-flex align-items-center gap-3 flex-wrap">
+      <!-- Buscador -->
+      <div class="position-relative flex-grow-1" style="min-width: 250px">
+        <i class="bi bi-search position-absolute start-3 top-50 translate-middle-y text-muted"></i>
+        <input
+          type="text"
+          class="form-control ps-5 border-light rounded-3 bg-light-gray font-sm text-dark-blue search-input"
+          placeholder="Buscar por nombre o email..."
+          [(ngModel)]="search"
+          (keyup.enter)="buscar()"
+        />
+      </div>
+
+      <!-- Filtro por Chips -->
+      <div class="d-flex gap-2 flex-wrap">
+        <button
+          (click)="filtrarEstado('')"
+          class="btn btn-sm rounded-pill font-xs px-3 py-1.5 d-flex align-items-center gap-1.5"
+          [ngClass]="estadoFiltro() === '' ? 'btn-primary' : 'btn-light-chip text-muted-blue'"
+        >
+          Todos
+          <span
+            class="badge rounded-pill font-xxs bg-chip-count"
+            [ngClass]="estadoFiltro() === '' ? 'text-bg-light text-primary' : 'text-bg-secondary'"
+            >{{ inscriptosTotales() }}</span
+          >
+        </button>
+        <button
+          (click)="filtrarEstado('CONFIRMADO')"
+          class="btn btn-sm rounded-pill font-xs px-3 py-1.5 d-flex align-items-center gap-1.5"
+          [ngClass]="
+            estadoFiltro() === 'CONFIRMADO' ? 'btn-primary' : 'btn-light-chip text-muted-blue'
+          "
+        >
+          Confirmados
+          <span
+            class="badge rounded-pill font-xxs bg-chip-count"
+            [ngClass]="
+              estadoFiltro() === 'CONFIRMADO' ? 'text-bg-light text-primary' : 'text-bg-secondary'
+            "
+            >{{ stats().CONFIRMADO || 0 }}</span
+          >
+        </button>
+        <button
+          (click)="filtrarEstado('ESPERA')"
+          class="btn btn-sm rounded-pill font-xs px-3 py-1.5 d-flex align-items-center gap-1.5"
+          [ngClass]="estadoFiltro() === 'ESPERA' ? 'btn-primary' : 'btn-light-chip text-muted-blue'"
+        >
+          En espera
+          <span
+            class="badge rounded-pill font-xxs bg-chip-count"
+            [ngClass]="
+              estadoFiltro() === 'ESPERA' ? 'text-bg-light text-primary' : 'text-bg-secondary'
+            "
+            >{{ stats().ESPERA || 0 }}</span
+          >
+        </button>
+        <button
+          (click)="filtrarEstado('ASISTIO')"
+          class="btn btn-sm rounded-pill font-xs px-3 py-1.5 d-flex align-items-center gap-1.5"
+          [ngClass]="
+            estadoFiltro() === 'ASISTIO' ? 'btn-primary' : 'btn-light-chip text-muted-blue'
+          "
+        >
+          Asistió
+          <span
+            class="badge rounded-pill font-xxs bg-chip-count"
+            [ngClass]="
+              estadoFiltro() === 'ASISTIO' ? 'text-bg-light text-primary' : 'text-bg-secondary'
+            "
+            >{{ stats().ASISTIO || 0 }}</span
+          >
+        </button>
+        <button
+          (click)="filtrarEstado('CANCELADO')"
+          class="btn btn-sm rounded-pill font-xs px-3 py-1.5 d-flex align-items-center gap-1.5"
+          [ngClass]="
+            estadoFiltro() === 'CANCELADO' ? 'btn-primary' : 'btn-light-chip text-muted-blue'
+          "
+        >
+          Cancelados
+          <span
+            class="badge rounded-pill font-xxs bg-chip-count"
+            [ngClass]="
+              estadoFiltro() === 'CANCELADO' ? 'text-bg-light text-primary' : 'text-bg-secondary'
+            "
+            >{{ stats().CANCELADO || 0 }}</span
+          >
+        </button>
+      </div>
+    </div>
+
+    <!-- Spinner de Carga -->
+    <div *ngIf="loading()" class="text-center py-5">
+      <div class="spinner-border text-primary spinner-border-sm" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+      <p class="text-muted small mt-2 mb-0">Cargando lista de inscriptos...</p>
+    </div>
+
+    <!-- Tabla -->
+    <div *ngIf="!loading()">
+      <!-- Cabecera de la tabla -->
+      <div
+        class="row mx-0 py-2.5 px-4 bg-light-gray border-bottom font-xs fw-bold text-muted text-uppercase tracking-wider"
+      >
+        <div class="col-5 ps-0">Asistente</div>
+        <div class="col-2">Estado</div>
+        <div class="col-3">Inscripción</div>
+        <div class="col-2 text-end pe-0">Acción</div>
+      </div>
+
+      <!-- Cuerpo de la tabla / Empty State -->
+      <div *ngIf="inscriptos().length === 0" class="text-center py-5">
+        <i class="bi bi-people text-muted opacity-50 display-6"></i>
+        <p class="text-muted small mt-2 mb-0">
+          No se encontraron inscripciones para esta búsqueda.
+        </p>
+      </div>
+
+      <!-- Filas -->
+      <div
+        *ngFor="let item of inscriptos(); let i = index"
+        class="row mx-0 py-3 px-4 border-bottom align-items-center table-row"
+      >
+        <!-- Asistente Info -->
+        <div class="col-5 ps-0 d-flex align-items-center gap-3 min-w-0">
+          <div
+            class="avatar-bubble flex-none d-flex align-items-center justify-content-center text-white fw-bold"
+            [style.background-color]="obtenerColorAvatar(item.usuario?.nombre)"
+          >
+            {{ obtenerIniciales(item.usuario?.nombre) }}
+          </div>
+          <div class="min-w-0">
+            <div class="fw-semibold text-dark-blue font-sm text-truncate">
+              {{ item.usuario?.nombre || 'Usuario Desconocido' }}
+            </div>
+            <div class="text-muted font-xs text-truncate">{{ item.usuario?.email || '-' }}</div>
+          </div>
+        </div>
+
+        <!-- Estado Badge -->
+        <div class="col-2">
+          <div [ngSwitch]="item.estado">
+            <span
+              *ngSwitchCase="'CONFIRMADO'"
+              class="badge bg-confirmado text-confirmado rounded-pill px-2.5 py-1 d-inline-flex align-items-center gap-1"
+            >
+              <i class="bi bi-patch-check"></i> Confirmado
+            </span>
+            <span
+              *ngSwitchCase="'ESPERA'"
+              class="badge bg-espera text-espera rounded-pill px-2.5 py-1 d-inline-flex align-items-center gap-1"
+            >
+              <i class="bi bi-hourglass-split"></i> En Espera
+            </span>
+            <span
+              *ngSwitchCase="'ASISTIO'"
+              class="badge bg-asistio text-asistio rounded-pill px-2.5 py-1 d-inline-flex align-items-center gap-1"
+            >
+              <i class="bi bi-check-circle"></i> Asistió
+            </span>
+            <span
+              *ngSwitchCase="'CANCELADO'"
+              class="badge bg-cancelado text-cancelado rounded-pill px-2.5 py-1 d-inline-flex align-items-center gap-1"
+            >
+              <i class="bi bi-x-circle"></i> Cancelado
+            </span>
+          </div>
+        </div>
+
+        <!-- Fecha de Inscripción -->
+        <div class="col-3 text-muted font-sm">
+          {{ item.createdAt | date: 'dd/MM/yyyy HH:mm' }}
+        </div>
+
+        <!-- Acciones -->
+        <div class="col-2 text-end pe-0">
+          <button
+            *ngIf="item.estado === 'CONFIRMADO'"
+            (click)="checkInManual(item.id, item.usuario?.nombre)"
+            [disabled]="actionLoading()"
+            class="btn btn-sm btn-primary rounded-3 px-3 py-1.5 font-xs fw-semibold d-inline-flex align-items-center gap-1 shadow-xs"
+          >
+            <i class="bi bi-box-arrow-in-right"></i> Check-in
+          </button>
+          <span
+            *ngIf="item.estado === 'ASISTIO'"
+            class="badge bg-asistio-badge text-asistio rounded-3 px-3 py-1.5 font-xs fw-semibold d-inline-flex align-items-center gap-1"
+          >
+            <i class="bi bi-check2"></i> Presente
+          </span>
+          <span
+            *ngIf="item.estado === 'ESPERA' || item.estado === 'CANCELADO'"
+            class="text-muted opacity-50"
+            >—</span
+          >
+        </div>
+      </div>
+    </div>
+
+    <!-- Paginación -->
+    <div
+      *ngIf="!loading() && totalPages > 1"
+      class="py-3 px-4 d-flex justify-content-between align-items-center flex-wrap gap-2"
+    >
+      <div class="font-xs text-muted">
+        Mostrando página {{ page() }} de {{ totalPages }} (Total: {{ count() }} inscriptos)
+      </div>
+      <nav aria-label="Paginación">
+        <ul class="pagination pagination-sm mb-0 rounded-3 overflow-hidden border-light shadow-xs">
+          <li class="page-item" [class.disabled]="page() === 1">
+            <button
+              class="page-link py-1.5 px-2.5 bg-white border-light text-muted"
+              (click)="cambiarPagina(page() - 1)"
+            >
+              <i class="bi bi-chevron-left"></i>
+            </button>
+          </li>
+          <li
+            *ngFor="let p of [].constructor(totalPages); let i = index"
+            class="page-item"
+            [class.active]="page() === i + 1"
+          >
+            <button
+              class="page-link py-1.5 px-3 border-light font-xs fw-semibold"
+              (click)="cambiarPagina(i + 1)"
+            >
+              {{ i + 1 }}
+            </button>
+          </li>
+          <li class="page-item" [class.disabled]="page() === totalPages">
+            <button
+              class="page-link py-1.5 px-2.5 bg-white border-light text-muted"
+              (click)="cambiarPagina(page() + 1)"
+            >
+              <i class="bi bi-chevron-right"></i>
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</div>

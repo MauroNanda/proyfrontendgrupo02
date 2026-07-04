@@ -64,6 +64,13 @@ export const routes: Routes = [
             (m) => m.DashboardPlaceholderComponent,
           ),
       },
+      {
+        path: 'eventos/:id/inscriptos',
+        loadComponent: () =>
+          import('./features/admin/attendees/attendee-list.component').then(
+            (m) => m.AttendeeListComponent,
+          ),
+      },
     ],
   },
   { path: '**', redirectTo: '' },
