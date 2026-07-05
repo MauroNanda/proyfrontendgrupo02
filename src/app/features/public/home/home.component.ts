@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { timeout } from 'rxjs';
 import { ApiService } from '../../../core/services/api.service';
 import { AuthService } from '../../../core/services/auth.service';
 
@@ -282,15 +283,22 @@ export class HomeComponent implements OnInit {
   readonly error = signal<string | null>(null);
 
   ngOnInit(): void {
-    this.api.get<HealthResponse>('/health').subscribe({
-      next: (res) => {
-        this.health.set(res);
-        this.loading.set(false);
-      },
-      error: (err) => {
-        this.error.set(err?.message || 'No se pudo conectar al backend');
-        this.loading.set(false);
-      },
-    });
+    this.api
+      .get<HealthResponse>('/health')
+      .pipe(timeout(8000)) // Evita quedar en "cargando" indefinido si el backend no responde.
+      .subscribe({
+        next: (res) => {
+          this.health.set(res);
+          this.loading.set(false);
+        },
+        error: (err) => {
+          const mensaje =
+            err?.name === 'TimeoutError'
+              ? 'El backend no respondió a tiempo'
+              : err?.message || 'No se pudo conectar al backend';
+          this.error.set(mensaje);
+          this.loading.set(false);
+        },
+      });
   }
 }

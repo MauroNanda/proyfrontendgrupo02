@@ -1,3 +1,8 @@
-<div class="countdown">
+<div
+  class="countdown"
+  role="timer"
+  aria-live="polite"
+  [attr.aria-label]="'Cuenta regresiva para el evento: ' + tiempo()"
+>
   ⏳ <strong>{{ tiempo() }}</strong>
 </div>
