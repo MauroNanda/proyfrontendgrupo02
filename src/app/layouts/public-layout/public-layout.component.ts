@@ -1,8 +1,11 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit, OnDestroy } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { Subject, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
 import { AuthService } from '../../core/services/auth.service';
 import { NotificacionService, Notificacion } from '../../core/services/notificacion.service';
+import { EventoService, Evento } from '../../core/services/evento.service';
 
 // Layout PÚBLICO — envuelve las rutas del Asistente.
 // Navbar con logo, búsqueda, notificaciones y acciones de auth.
@@ -32,7 +35,7 @@ import { NotificacionService, Notificacion } from '../../core/services/notificac
         <!-- Nav items -->
         <div class="collapse navbar-collapse" id="navbarPublic">
           <!-- Buscador central -->
-          <div class="mx-auto search-wrapper">
+          <div class="mx-auto search-wrapper position-relative">
             <div class="input-group input-group-sm">
               <span class="input-group-text search-icon">
                 <i class="bi bi-search"></i>
@@ -41,7 +44,53 @@ import { NotificacionService, Notificacion } from '../../core/services/notificac
                 type="text"
                 class="form-control search-input"
                 placeholder="Buscar eventos, talleres, charlas..."
+                [value]="queryText()"
+                (input)="onSearchInput($event)"
+                (focus)="onSearchFocus()"
+                (blur)="onSearchBlur()"
               />
+            </div>
+
+            <!-- Panel de Sugerencias -->
+            <div
+              *ngIf="showSuggestions() && sugerencias().length > 0"
+              class="suggestions-panel shadow-lg border rounded-4 bg-white p-2"
+            >
+              <div
+                *ngFor="let item of sugerencias()"
+                class="suggestion-item p-2 rounded-3 d-flex align-items-center gap-2"
+                [routerLink]="['/eventos', item.id]"
+                (mousedown)="selectSuggestion(item)"
+              >
+                <i class="bi bi-calendar-event text-muted-blue font-sm"></i>
+                <div class="flex-grow-1 min-w-0">
+                  <div class="font-xs fw-semibold text-dark-blue text-truncate">
+                    {{ item.titulo }}
+                  </div>
+                  <div class="font-xxs text-muted" *ngIf="item.fecha">
+                    {{ item.fecha | date: 'd MMM y · HH:mm' }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Sugerencias Loading o Empty State -->
+            <div
+              *ngIf="
+                showSuggestions() &&
+                queryText().length >= 3 &&
+                sugerencias().length === 0 &&
+                !loadingSuggestions()
+              "
+              class="suggestions-panel shadow-lg border rounded-4 bg-white p-3 text-center text-muted font-xs"
+            >
+              No se encontraron eventos.
+            </div>
+            <div
+              *ngIf="showSuggestions() && loadingSuggestions()"
+              class="suggestions-panel shadow-lg border rounded-4 bg-white p-3 text-center text-muted font-xs"
+            >
+              <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
             </div>
           </div>
 
@@ -409,22 +458,119 @@ import { NotificacionService, Notificacion } from '../../core/services/notificac
         background-color: white;
         margin-top: auto;
       }
+
+      .suggestions-panel {
+        position: absolute;
+        top: 36px;
+        left: 0;
+        width: 100%;
+        z-index: 1100;
+        max-height: 280px;
+        overflow-y: auto;
+        box-shadow:
+          0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+      }
+
+      .suggestion-item {
+        cursor: pointer;
+        transition: background-color 0.15s ease;
+        text-decoration: none;
+        &:hover {
+          background-color: #f1f5f9;
+        }
+      }
+
+      .text-muted-blue {
+        color: #698696;
+      }
     `,
   ],
 })
-export class PublicLayoutComponent implements OnInit {
+export class PublicLayoutComponent implements OnInit, OnDestroy {
   readonly authService = inject(AuthService);
   private readonly notifService = inject(NotificacionService);
+  private readonly eventoService = inject(EventoService);
 
   readonly showNotifications = signal(false);
   readonly notificaciones = signal<Notificacion[]>([]);
   readonly unreadCount = signal(0);
   readonly loadingNotifs = signal(false);
 
+  // Autocomplete Signals y RxJS
+  readonly queryText = signal('');
+  readonly sugerencias = signal<Evento[]>([]);
+  readonly showSuggestions = signal(false);
+  readonly loadingSuggestions = signal(false);
+  private readonly searchSubject = new Subject<string>();
+  private searchSubscription?: Subscription;
+
   ngOnInit(): void {
     if (this.authService.isLoggedIn()) {
       this.cargarNotificaciones();
     }
+
+    this.searchSubscription = this.searchSubject
+      .pipe(
+        debounceTime(350),
+        distinctUntilChanged(),
+        switchMap((term) => {
+          if (term.length < 3) {
+            this.sugerencias.set([]);
+            this.loadingSuggestions.set(false);
+            return [];
+          }
+          this.loadingSuggestions.set(true);
+          return this.eventoService.obtenerTodos({ search: term });
+        }),
+      )
+      .subscribe({
+        next: (results) => {
+          this.sugerencias.set(results);
+          this.loadingSuggestions.set(false);
+        },
+        error: (err) => {
+          console.error('Error al buscar sugerencias:', err);
+          this.loadingSuggestions.set(false);
+        },
+      });
+  }
+
+  ngOnDestroy(): void {
+    if (this.searchSubscription) {
+      this.searchSubscription.unsubscribe();
+    }
+  }
+
+  onSearchInput(event: Event): void {
+    const val = (event.target as HTMLInputElement).value;
+    this.queryText.set(val);
+    if (val.length >= 3) {
+      this.showSuggestions.set(true);
+      this.searchSubject.next(val);
+    } else {
+      this.sugerencias.set([]);
+      this.showSuggestions.set(false);
+    }
+  }
+
+  onSearchFocus(): void {
+    if (this.queryText().length >= 3) {
+      this.showSuggestions.set(true);
+    }
+  }
+
+  onSearchBlur(): void {
+    // Retrasar cierre para que haga efecto el routerLink en el click
+    setTimeout(() => {
+      this.showSuggestions.set(false);
+    }, 200);
+  }
+
+  selectSuggestion(item: Evento): void {
+    this.queryText.set('');
+    this.sugerencias.set([]);
+    this.showSuggestions.set(false);
   }
 
   cargarNotificaciones(): void {

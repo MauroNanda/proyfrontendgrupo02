@@ -25,7 +25,11 @@ export class EventoService {
     return this.api.get<Evento>(`/eventos/${id}`);
   }
 
-  obtenerTodos(params?: { todos?: boolean }): Observable<Evento[]> {
+  obtenerTodos(params?: {
+    todos?: boolean;
+    search?: string;
+    categoria?: string;
+  }): Observable<Evento[]> {
     return this.api.get<Evento[]>('/eventos', params as Record<string, string | number | boolean>);
   }
 
