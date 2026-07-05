@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EventoService, Evento } from '../../../core/services/evento.service';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -12,23 +13,34 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './event-catalog.component.css',
 })
 export class EventCatalogComponent implements OnInit {
+  private readonly eventoService = inject(EventoService);
+  private readonly destroyRef = inject(DestroyRef);
+
   eventos: Evento[] = [];
   eventosFiltrados: Evento[] = [];
 
   filtroEstado = '';
 
-  constructor(private eventoService: EventoService) {}
+  readonly cargando = signal(true);
+  readonly error = signal(false);
 
   ngOnInit(): void {
-    this.eventoService.obtenerTodos().subscribe({
-      next: (data) => {
-        this.eventos = data;
-        this.eventosFiltrados = data;
-      },
-      error: (err) => {
-        console.log('Error cargando eventos', err);
-      },
-    });
+    this.cargando.set(true);
+    this.eventoService
+      .obtenerTodos()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (data) => {
+          this.eventos = data;
+          this.eventosFiltrados = data;
+          this.cargando.set(false);
+        },
+        error: (err) => {
+          console.error('Error cargando eventos', err);
+          this.error.set(true);
+          this.cargando.set(false);
+        },
+      });
   }
 
   filtrarEventos() {
@@ -43,5 +55,10 @@ export class EventCatalogComponent implements OnInit {
   cambiarFiltro(estado: string): void {
     this.filtroEstado = estado;
     this.filtrarEventos();
+  }
+
+  // trackBy para evitar re-render completo del grid al filtrar.
+  trackByEventoId(_index: number, evento: Evento): string {
+    return evento.id;
   }
 }

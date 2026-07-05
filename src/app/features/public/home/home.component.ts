@@ -1,6 +1,8 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { timeout } from 'rxjs';
 import { ApiService } from '../../../core/services/api.service';
+import { AuthService } from '../../../core/services/auth.service';
 
 // Página HOME de la vista Asistente.
 // Fase 0: hace un GET /api/health al backend para verificar end-to-end.
@@ -37,9 +39,15 @@ type HealthResponse = {
               Explorar eventos
               <i class="bi bi-arrow-right ms-1"></i>
             </a>
-            <a routerLink="/registro" class="btn-outline-accent text-decoration-none">
-              Crear una cuenta
-            </a>
+            @if (!authService.isLoggedIn()) {
+              <a routerLink="/registro" class="btn-outline-accent text-decoration-none">
+                Crear una cuenta
+              </a>
+            } @else if (authService.isAdmin()) {
+              <a routerLink="/admin" class="btn-outline-accent text-decoration-none">
+                <i class="bi bi-speedometer2 me-1"></i> Panel Organizador
+              </a>
+            }
           </div>
           <div class="d-flex gap-4 mt-4 flex-wrap text-muted small">
             <span><b class="cv-serif text-dark-blue font-md">+2.400</b> estudiantes</span>
@@ -268,21 +276,29 @@ type HealthResponse = {
 })
 export class HomeComponent implements OnInit {
   private readonly api = inject(ApiService);
+  protected readonly authService = inject(AuthService);
 
   readonly health = signal<HealthResponse | null>(null);
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
 
   ngOnInit(): void {
-    this.api.get<HealthResponse>('/health').subscribe({
-      next: (res) => {
-        this.health.set(res);
-        this.loading.set(false);
-      },
-      error: (err) => {
-        this.error.set(err?.message || 'No se pudo conectar al backend');
-        this.loading.set(false);
-      },
-    });
+    this.api
+      .get<HealthResponse>('/health')
+      .pipe(timeout(8000)) // Evita quedar en "cargando" indefinido si el backend no responde.
+      .subscribe({
+        next: (res) => {
+          this.health.set(res);
+          this.loading.set(false);
+        },
+        error: (err) => {
+          const mensaje =
+            err?.name === 'TimeoutError'
+              ? 'El backend no respondió a tiempo'
+              : err?.message || 'No se pudo conectar al backend';
+          this.error.set(mensaje);
+          this.loading.set(false);
+        },
+      });
   }
 }

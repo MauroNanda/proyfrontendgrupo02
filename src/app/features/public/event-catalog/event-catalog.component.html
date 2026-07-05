@@ -33,8 +33,24 @@
     </button>
   </div>
 
+  <!-- Spinner de carga -->
+  <div *ngIf="cargando()" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Cargando eventos...</span>
+    </div>
+    <p class="text-muted small mt-2 mb-0">Cargando eventos...</p>
+  </div>
+
+  <!-- Estado de error -->
+  <div *ngIf="!cargando() && error()" class="col-12 text-center py-5">
+    <i class="bi bi-exclamation-triangle text-danger opacity-75 display-5"></i>
+    <p class="text-muted small mt-2 mb-0">
+      No se pudieron cargar los eventos. Intentá de nuevo más tarde.
+    </p>
+  </div>
+
   <!-- Grid de Eventos -->
-  <div class="row g-4">
+  <div *ngIf="!cargando() && !error()" class="row g-4">
     <!-- Empty State -->
     <div *ngIf="eventosFiltrados.length === 0" class="col-12 text-center py-5">
       <i class="bi bi-calendar4-week text-muted opacity-50 display-5"></i>
@@ -42,7 +58,10 @@
     </div>
 
     <!-- Cards -->
-    <div *ngFor="let evento of eventosFiltrados" class="col-12 col-md-6 col-lg-4">
+    <div
+      *ngFor="let evento of eventosFiltrados; trackBy: trackByEventoId"
+      class="col-12 col-md-6 col-lg-4"
+    >
       <div
         class="card border shadow-xs rounded-4 p-3 bg-white h-100 d-flex flex-column justify-content-between event-card"
       >

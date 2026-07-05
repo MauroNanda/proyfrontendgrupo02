@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { AuthService } from '../../core/services/auth.service';
 
 // Layout ADMIN — envuelve las rutas del Organizador (/admin/*).
 // Sidebar fija con navegación + área de contenido principal.
@@ -7,19 +9,19 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
   selector: 'app-admin-layout',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule],
   template: `
     <div class="d-flex" style="min-height: 100vh;">
       <!-- Sidebar -->
       <aside class="sidebar d-flex flex-column">
         <!-- Logo -->
-        <div class="sidebar-header">
+        <a class="sidebar-header text-decoration-none text-white" routerLink="/admin/dashboard">
           <span class="sidebar-logo">C</span>
           <div>
             <div class="sidebar-brand">convoca</div>
             <div class="sidebar-label">ORGANIZADOR</div>
           </div>
-        </div>
+        </a>
 
         <!-- Navegación principal -->
         <nav class="nav flex-column gap-1 px-3 flex-grow-1">
@@ -49,35 +51,39 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
           </a>
           <a
             class="nav-link d-flex align-items-center gap-2"
-            routerLink="/admin/crear-evento"
+            routerLink="/admin/eventos/crear"
             routerLinkActive="active"
           >
             <i class="bi bi-plus-lg"></i> Crear Evento
-          </a>
-          <a
-            class="nav-link d-flex align-items-center gap-2"
-            routerLink="/admin/inscriptos"
-            routerLinkActive="active"
-          >
-            <i class="bi bi-people"></i> Inscriptos
           </a>
 
           <span class="sidebar-section-title mt-3">Análisis</span>
           <a
             class="nav-link d-flex align-items-center gap-2"
-            routerLink="/admin/reportes"
+            routerLink="/admin/test-export"
             routerLinkActive="active"
           >
             <i class="bi bi-graph-up"></i> Reportes
           </a>
+
+          <span class="sidebar-section-title mt-3">Sitio</span>
+          <a class="nav-link d-flex align-items-center gap-2" routerLink="/">
+            <i class="bi bi-arrow-left-square"></i> Volver al Sitio
+          </a>
         </nav>
 
         <!-- Usuario -->
-        <div class="sidebar-user">
-          <span class="sidebar-avatar">U</span>
+        <div class="sidebar-user" *ngIf="authService.currentUser()">
+          <span class="sidebar-avatar">
+            {{ obtenerInicial(authService.currentUser()?.nombre) }}
+          </span>
           <div>
-            <div class="fw-semibold small">Usuario</div>
-            <div class="sidebar-role">Organizador</div>
+            <div class="fw-semibold small text-truncate" style="max-width: 140px;">
+              {{ authService.currentUser()?.nombre }}
+            </div>
+            <div class="sidebar-role">
+              {{ authService.currentUser()?.rol | titlecase }}
+            </div>
           </div>
         </div>
       </aside>
@@ -166,4 +172,11 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
     `,
   ],
 })
-export class AdminLayoutComponent {}
+export class AdminLayoutComponent {
+  protected readonly authService = inject(AuthService);
+
+  obtenerInicial(nombre: string | undefined): string {
+    if (!nombre) return 'U';
+    return nombre.charAt(0).toUpperCase();
+  }
+}
