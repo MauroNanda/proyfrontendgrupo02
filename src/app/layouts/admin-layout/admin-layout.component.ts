@@ -42,6 +42,13 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
           </a>
           <a
             class="nav-link d-flex align-items-center gap-2"
+            routerLink="/admin/categorias"
+            routerLinkActive="active"
+          >
+            <i class="bi bi-tags"></i> Categorías
+          </a>
+          <a
+            class="nav-link d-flex align-items-center gap-2"
             routerLink="/admin/crear-evento"
             routerLinkActive="active"
           >
@@ -76,7 +83,7 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
       </aside>
 
       <!-- Contenido principal -->
-      <main class="flex-grow-1 p-4" style="background-color: var(--bs-light);">
+      <main class="flex-grow-1 p-4" style="background-color: #f1f5f9;">
         <router-outlet />
       </main>
     </div>

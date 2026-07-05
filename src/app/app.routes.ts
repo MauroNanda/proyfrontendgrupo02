@@ -69,6 +69,23 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/admin/test-export/test-export/test-export').then((m) => m.TestExport),
       },
+      {
+        path: 'categorias',
+        loadChildren: () =>
+          import('./features/admin/categories/category.routes').then((m) => m.CATEGORY_ROUTES),
+      },
+      {
+        path: 'eventos',
+        loadChildren: () =>
+          import('./features/admin/events/event.routes').then((m) => m.EVENT_ROUTES),
+      },
+      {
+        path: 'eventos/:id/inscriptos',
+        loadComponent: () =>
+          import('./features/admin/attendees/attendee-list.component').then(
+            (m) => m.AttendeeListComponent,
+          ),
+      },
     ],
   },
   { path: '**', redirectTo: '' },

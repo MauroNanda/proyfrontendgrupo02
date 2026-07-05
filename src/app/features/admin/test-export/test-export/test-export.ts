@@ -2,7 +2,6 @@ import { Component, Injectable } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ExportService } from '../../../../core/services/export.service';
 
-@Injectable()
 @Component({
   selector: 'app-test-export',
   standalone: true,
