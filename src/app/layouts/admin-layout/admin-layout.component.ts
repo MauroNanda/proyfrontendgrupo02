@@ -49,23 +49,16 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
           </a>
           <a
             class="nav-link d-flex align-items-center gap-2"
-            routerLink="/admin/crear-evento"
+            routerLink="/admin/eventos/crear"
             routerLinkActive="active"
           >
             <i class="bi bi-plus-lg"></i> Crear Evento
-          </a>
-          <a
-            class="nav-link d-flex align-items-center gap-2"
-            routerLink="/admin/inscriptos"
-            routerLinkActive="active"
-          >
-            <i class="bi bi-people"></i> Inscriptos
           </a>
 
           <span class="sidebar-section-title mt-3">Análisis</span>
           <a
             class="nav-link d-flex align-items-center gap-2"
-            routerLink="/admin/reportes"
+            routerLink="/admin/test-export"
             routerLinkActive="active"
           >
             <i class="bi bi-graph-up"></i> Reportes
