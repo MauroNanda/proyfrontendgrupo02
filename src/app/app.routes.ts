@@ -60,8 +60,8 @@ export const routes: Routes = [
       {
         path: 'dashboard',
         loadComponent: () =>
-          import('./features/admin/dashboard-placeholder/dashboard-placeholder.component').then(
-            (m) => m.DashboardPlaceholderComponent,
+          import('./features/admin/dashboard/dashboard.component').then(
+            (m) => m.DashboardComponent,
           ),
       },
       {
