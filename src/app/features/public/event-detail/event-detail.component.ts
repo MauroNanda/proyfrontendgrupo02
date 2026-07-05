@@ -5,6 +5,7 @@ import { EventoService, Evento } from '../../../core/services/evento.service';
 import { InscripcionService, InscripcionEstado } from '../../../core/services/inscripcion.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { ToastService } from '../../../core/services/toast.service';
+import { ExportService } from '../../../core/services/export.service';
 
 import { CountdownComponent } from '../../../shared/components/countdown/countdown.component';
 import * as QRCode from 'qrcode';
@@ -23,6 +24,7 @@ export class EventDetailComponent implements OnInit {
   private inscripcionService = inject(InscripcionService);
   protected authService = inject(AuthService);
   private toastService = inject(ToastService);
+  private exportService = inject(ExportService);
 
   readonly evento = signal<Evento | null>(null);
   readonly inscripcion = signal<InscripcionEstado>({
@@ -163,5 +165,14 @@ export class EventDetailComponent implements OnInit {
         console.error('Error generando QR local:', err);
         this.qrCodeDataUrl.set('');
       });
+  }
+
+  descargarPdf(): void {
+    const eventTitle = this.evento()?.titulo || 'pase_acceso';
+    this.exportService.descargarPdf(
+      'ticket-access-pass',
+      `ticket_${eventTitle.toLowerCase().replace(/\s+/g, '_')}`,
+    );
+    this.toastService.success('Pase descargado en PDF');
   }
 }

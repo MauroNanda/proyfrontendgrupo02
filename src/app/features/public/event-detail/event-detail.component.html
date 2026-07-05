@@ -180,6 +180,7 @@
           <!-- Pase de Ingreso (QR) si está CONFIRMADO o ASISTIO -->
           <div
             *ngIf="inscripcion().estado === 'CONFIRMADO' || inscripcion().estado === 'ASISTIO'"
+            id="ticket-access-pass"
             class="qr-section mt-4 p-3 bg-white rounded-4 border border-light shadow-sm animate-scale-up"
           >
             <h4 class="h6 fw-bold mb-3 text-dark-blue">
@@ -195,9 +196,16 @@
                 style="max-height: 180px"
               />
             </div>
-            <p class="small text-muted mb-0">
+            <p class="small text-muted mb-3">
               Presentá este código QR el día del evento para registrar tu asistencia.
             </p>
+            <button
+              (click)="descargarPdf()"
+              class="btn btn-outline-primary btn-sm rounded-3 w-100 fw-semibold d-flex align-items-center justify-content-center gap-2"
+            >
+              <i class="bi bi-file-earmark-pdf"></i>
+              Descargar Pase (PDF)
+            </button>
           </div>
         </div>
 
