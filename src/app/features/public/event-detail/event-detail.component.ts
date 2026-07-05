@@ -158,10 +158,10 @@ export class EventDetailComponent implements OnInit {
       return;
     }
     QRCode.toDataURL(token, { width: 200, margin: 1 })
-      .then((url) => {
+      .then((url: string) => {
         this.qrCodeDataUrl.set(url);
       })
-      .catch((err) => {
+      .catch((err: unknown) => {
         console.error('Error generando QR local:', err);
         this.qrCodeDataUrl.set('');
       });
