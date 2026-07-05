@@ -70,6 +70,11 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
           >
             <i class="bi bi-graph-up"></i> Reportes
           </a>
+
+          <span class="sidebar-section-title mt-3">Sitio</span>
+          <a class="nav-link d-flex align-items-center gap-2" routerLink="/">
+            <i class="bi bi-arrow-left-square"></i> Volver al Sitio
+          </a>
         </nav>
 
         <!-- Usuario -->

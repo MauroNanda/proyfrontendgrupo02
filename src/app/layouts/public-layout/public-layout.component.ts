@@ -64,14 +64,19 @@ import { AuthService } from '../../core/services/auth.service';
                 {{ authService.currentUser()?.nombre }}
               </span>
               @if (authService.isAdmin()) {
-                <a class="btn btn-outline-primary btn-sm" routerLink="/admin">Admin</a>
+                <a
+                  class="btn btn-outline-primary btn-sm d-flex align-items-center gap-2"
+                  routerLink="/admin"
+                >
+                  <i class="bi bi-speedometer2"></i> Panel
+                </a>
               }
               <button
                 type="button"
-                class="btn btn-outline-secondary btn-sm"
+                class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-2"
                 (click)="authService.logout()"
               >
-                Salir
+                <i class="bi bi-box-arrow-right"></i> Salir
               </button>
             } @else {
               <a class="btn btn-outline-secondary btn-sm" routerLink="/login">Ingresar</a>
