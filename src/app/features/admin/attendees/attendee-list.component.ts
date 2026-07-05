@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { InscripcionService } from '../../../core/services/inscripcion.service';
 import { EventoService, Evento } from '../../../core/services/evento.service';
 import { ToastService } from '../../../core/services/toast.service';
+import { ExportService } from '../../../core/services/export.service';
 
 @Component({
   selector: 'app-attendee-list',
@@ -18,6 +19,7 @@ export class AttendeeListComponent implements OnInit {
   private inscripcionService = inject(InscripcionService);
   private eventoService = inject(EventoService);
   private toastService = inject(ToastService);
+  private exportService = inject(ExportService);
 
   eventoId = '';
   readonly evento = signal<Evento | null>(null);
@@ -151,5 +153,27 @@ export class AttendeeListComponent implements OnInit {
     if (p < 1 || p > this.totalPages) return;
     this.page.set(p);
     this.cargarInscriptos();
+  }
+
+  exportarExcel(): void {
+    if (this.inscriptos().length === 0) {
+      this.toastService.error('No hay inscriptos para exportar');
+      return;
+    }
+
+    const dataToExport = this.inscriptos().map((item, idx) => ({
+      Nº: idx + 1,
+      Nombre: item.usuario?.nombre || 'Desconocido',
+      Email: item.usuario?.email || 'Sin email',
+      'Fecha Inscripción': item.createdAt ? new Date(item.createdAt).toLocaleString('es-ES') : '',
+      Estado: item.estado,
+    }));
+
+    const eventTitle = this.evento()?.titulo || 'evento';
+    this.exportService.exportarExcel(
+      dataToExport,
+      `inscriptos_${eventTitle.toLowerCase().replace(/\s+/g, '_')}`,
+    );
+    this.toastService.success('Listado exportado correctamente');
   }
 }
