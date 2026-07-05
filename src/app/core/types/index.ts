@@ -4,6 +4,7 @@ export interface Usuario {
   email: string;
   rol?: 'ORGANIZADOR' | 'ASISTENTE';
   avatarUrl?: string;
+  two_factor_enabled?: boolean;
 }
 
 export interface AuthResponse {

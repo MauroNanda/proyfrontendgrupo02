@@ -100,4 +100,33 @@ export class AuthService {
       }
     }
   }
+
+  /**
+   * Verifica el código 2FA enviado por el usuario.
+   */
+  verificar2FA(email: string, codigo: string): Observable<AuthResponse> {
+    return this.http
+      .post<AuthResponse>(`${this.apiUrl}/2fa/verify`, { email, codigo })
+      .pipe(tap((res) => this.guardarSesion(res)));
+  }
+
+  /**
+   * Guarda el token de Google tras el callback.
+   */
+  guardarToken(token: string): void {
+    // Si tu respuesta del callback incluye el usuario, deberías obtenerlo también aquí
+    localStorage.setItem('token', token);
+    this.token.set(token);
+    // Nota: Si el backend envía el usuario en el callback, deberías guardarlo aquí
+  }
+
+  /**
+   * Configura el estado del 2FA (activar/desactivar).
+   */
+  configurar2FA(habilitar: boolean): Observable<{ message: string; two_factor_enabled: boolean }> {
+    return this.http.post<{ message: string; two_factor_enabled: boolean }>(
+      `${this.apiUrl}/2fa/config`,
+      { habilitar },
+    );
+  }
 }

@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink, ActivatedRoute } from '@angular/router';
+import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { finalize } from 'rxjs';
@@ -77,6 +77,7 @@ import { finalize } from 'rxjs';
           <!-- Google OAuth Button -->
           <button
             type="button"
+            (click)="iniciarGoogle()"
             class="btn btn-outline-secondary w-100 py-2 rounded-3 d-flex align-items-center justify-content-center gap-2 font-sm fw-semibold bg-white border-light text-dark-blue shadow-xs"
           >
             <i class="bi bi-google text-danger"></i>
@@ -181,6 +182,7 @@ export class LoginComponent {
   private readonly authService = inject(AuthService);
   private readonly toastService = inject(ToastService);
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
 
   readonly loading = signal(false);
 
@@ -212,10 +214,20 @@ export class LoginComponent {
       .login(this.form.getRawValue())
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
-        next: () => {
+        next: (res: any) => {
+          if (res.requiere2FA) {
+            localStorage.setItem('login_email', this.form.value.username!);
+            this.toastService.info('Se ha enviado un código a tu correo');
+            this.router.navigate(['/auth/2fa']); // Redirigimos al componente 2FA
+            return;
+          }
           this.toastService.success('Sesión iniciada correctamente');
           this.authService.redirigirPostAuth(returnUrl);
         },
       });
+  }
+
+  iniciarGoogle(): void {
+    window.location.href = 'http://localhost:3000/api/auth/google';
   }
 }
