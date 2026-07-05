@@ -65,6 +65,11 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'test-export',
+        loadComponent: () =>
+          import('./features/admin/test-export/test-export/test-export').then((m) => m.TestExport),
+      },
+      {
         path: 'categorias',
         loadChildren: () =>
           import('./features/admin/categories/category.routes').then((m) => m.CATEGORY_ROUTES),
