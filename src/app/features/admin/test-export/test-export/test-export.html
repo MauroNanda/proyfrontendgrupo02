@@ -1,63 +1,98 @@
-<div class="container mt-5">
-  <div class="card shadow-sm mb-4">
-    <div class="card-header bg-dark text-white">
-      <h3 class="m-0">Panel de Depuración — Ticket T-07</h3>
-    </div>
-    <div class="card-body">
-      <p class="text-muted">
-        Presioná los botones para comprobar los criterios de aceptación de exportación.
-      </p>
-
-      <button class="btn btn-success me-3" (click)="testExcel()">
-        <i class="bi bi-file-earmark-excel"></i> Probar Exportar a Excel
-      </button>
-      <button class="btn btn-primary" (click)="testPdf()">
-        <i class="bi bi-file-earmark-pdf"></i> Probar Descargar Ticket (PDF)
-      </button>
-    </div>
+<div class="container py-4">
+  <!-- Header -->
+  <div class="mb-4">
+    <h1 class="h2 fw-bold text-dark-blue cv-serif mb-1">Depuración de Exportaciones</h1>
+    <p class="text-muted small mb-0">
+      Verificá la descarga del listado en formato Excel y la exportación de pases oficiales (PDF).
+    </p>
   </div>
 
-  <div class="d-flex justify-content-center">
-    <div
-      id="ticket-enterprise-preview"
-      class="border p-4 bg-white shadow"
-      style="width: 500px; border-radius: 12px"
-    >
-      <div class="text-center border-bottom pb-3 mb-3">
-        <h4 class="text-uppercase font-weight-bold tracking-wide m-0 text-primary">
-          Pase de Acceso Oficial
-        </h4>
-        <small class="text-muted">Gestión Global de Eventos S.A.</small>
-      </div>
+  <div class="row g-4">
+    <!-- Panel Control -->
+    <div class="col-lg-5">
+      <div class="card border rounded-4 shadow-xs bg-white p-4 h-100">
+        <h3 class="h5 fw-bold text-dark-blue cv-serif mb-3">Acciones de Prueba</h3>
+        <p class="text-muted font-xs mb-4">
+          Hacé clic en los botones para descargar archivos autogenerados con datos simulados.
+        </p>
 
-      <div class="row mb-3">
-        <div class="col-7">
-          <label class="text-muted d-block small m-0">EVENTO</label>
-          <strong class="d-block text-dark">Conferencia Anual de Tech 2026</strong>
-
-          <label class="text-muted d-block small mt-2 m-0">ASISTENTE</label>
-          <strong class="d-block text-dark">Sebastian Villalba</strong>
-        </div>
-        <div class="col-5 text-end d-flex align-items-center justify-content-end">
-          <div
-            class="border d-flex align-items-center justify-content-center bg-light"
-            style="
-              width: 100px;
-              height: 100px;
-              font-size: 11px;
-              font-weight: bold;
-              border-style: dashed !important;
-            "
+        <div class="d-flex flex-column gap-3">
+          <button
+            class="btn btn-excel w-100 py-2.5 rounded-3 fw-semibold font-sm text-start px-3 d-flex align-items-center justify-content-between"
+            (click)="testExcel()"
           >
-            [ QR CODE ]
+            <span><i class="bi bi-file-earmark-excel me-2"></i> Exportar a Excel</span>
+            <i class="bi bi-download"></i>
+          </button>
+
+          <button
+            class="btn btn-pdf w-100 py-2.5 rounded-3 fw-semibold font-sm text-start px-3 d-flex align-items-center justify-content-between"
+            (click)="testPdf()"
+          >
+            <span><i class="bi bi-file-earmark-pdf me-2"></i> Descargar Ticket (PDF)</span>
+            <i class="bi bi-download"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ticket Preview -->
+    <div class="col-lg-7">
+      <div class="card border rounded-4 shadow-xs bg-white p-4">
+        <h3 class="h5 fw-bold text-dark-blue cv-serif mb-3">Vista Previa del Pase</h3>
+        <p class="text-muted font-xs mb-4">
+          Este contenedor se convertirá en imagen con escala 2x para evitar pixelado en el PDF.
+        </p>
+
+        <div class="d-flex justify-content-center bg-light-gray p-4 rounded-4 border border-dashed">
+          <!-- Ticket Enterprise Box -->
+          <div
+            id="ticket-enterprise-preview"
+            class="ticket-box bg-white shadow-sm border rounded-4 p-4"
+          >
+            <!-- Cabecera Ticket -->
+            <div class="text-center border-bottom pb-3 mb-4">
+              <span class="ticket-badge font-xxs fw-bold text-uppercase tracking-wider"
+                >PASE OFICIAL</span
+              >
+              <h4 class="h4 fw-bold text-dark-blue cv-serif m-0 mt-1">
+                Convocatoria Universitaria
+              </h4>
+              <small class="text-muted-blue font-xxs">Gestión Global de Eventos S.A.</small>
+            </div>
+
+            <!-- Contenido Ticket -->
+            <div class="row align-items-center mb-4">
+              <div class="col-7">
+                <div class="mb-3">
+                  <span class="ticket-label">EVENTO</span>
+                  <span class="ticket-value">Conferencia Anual de Tech 2026</span>
+                </div>
+
+                <div>
+                  <span class="ticket-label">ASISTENTE</span>
+                  <span class="ticket-value">Sebastian Villalba</span>
+                </div>
+              </div>
+
+              <div class="col-5 d-flex justify-content-end">
+                <div
+                  class="qr-placeholder d-flex flex-column align-items-center justify-content-center gap-1"
+                >
+                  <i class="bi bi-qr-code"></i>
+                  <span class="font-xxs tracking-wider fw-bold text-uppercase">QR SCAN</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Código barra / UUID -->
+            <div class="ticket-footer text-center rounded-3 p-2 bg-light-gray border">
+              <span class="font-xxs text-muted-blue text-uppercase tracking-wider">
+                Código Único de Entrada: <strong class="text-dark-blue">UUID-943CC9-2026</strong>
+              </span>
+            </div>
           </div>
         </div>
-      </div>
-
-      <div class="bg-light p-2 text-center rounded border">
-        <span class="small text-secondary"
-          >Código Único de Entrada: <strong>UUID-943CC9-2026</strong></span
-        >
       </div>
     </div>
   </div>

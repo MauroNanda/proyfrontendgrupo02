@@ -1,0 +1,101 @@
+.cv-serif {
+  font-family: 'IBM Plex Serif', Georgia, serif !important;
+}
+
+.text-dark-blue {
+  color: #243c4c !important;
+}
+
+.text-muted-blue {
+  color: #698696 !important;
+}
+
+.bg-light-gray {
+  background-color: #f8fafc !important;
+}
+
+.shadow-xs {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+}
+
+.font-sm {
+  font-size: 0.875rem !important;
+}
+
+.font-xs {
+  font-size: 0.8125rem !important;
+}
+
+.font-xxs {
+  font-size: 0.7rem !important;
+}
+
+.tracking-wider {
+  letter-spacing: 0.06em;
+}
+
+.card {
+  border-color: #e2e8f0 !important;
+}
+
+.btn-excel {
+  background-color: #107c41;
+  color: #ffffff;
+  border: none;
+  transition: background-color 0.15s ease;
+  &:hover {
+    background-color: #0d6333;
+    color: #ffffff;
+  }
+}
+
+.btn-pdf {
+  background-color: #5289ad;
+  color: #ffffff;
+  border: none;
+  transition: background-color 0.15s ease;
+  &:hover {
+    background-color: #437190;
+    color: #ffffff;
+  }
+}
+
+.ticket-box {
+  width: 440px;
+  border-color: #e2e8f0 !important;
+}
+
+.ticket-badge {
+  background-color: rgba(82, 137, 173, 0.09) !important;
+  color: #5289ad !important;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+}
+
+.ticket-label {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #698696;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.15rem;
+}
+
+.ticket-value {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #243c4c;
+}
+
+.qr-placeholder {
+  width: 90px;
+  height: 90px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+  background-color: #f8fafc;
+  color: #698696;
+  i {
+    font-size: 1.75rem;
+  }
+}
