@@ -44,6 +44,12 @@ export const routes: Routes = [
             (m) => m.EventCatalogComponent,
           ),
       },
+      {
+        path: 'perfil',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./features/user/perfil/perfil.component').then((m) => m.PerfilComponent),
+      },
     ],
   },
   {

@@ -104,6 +104,13 @@ import { ToastService } from '../../core/services/toast.service';
               class="nav-link nav-item-custom d-none d-lg-block"
               >Eventos</a
             >
+            <a
+              *ngIf="authService.isLoggedIn()"
+              routerLink="/perfil"
+              routerLinkActive="active"
+              class="nav-link nav-item-custom d-none d-lg-block"
+              >Mis Inscripciones</a
+            >
 
             <!-- Contenedor Campana + Dropdown -->
             <div class="position-relative" *ngIf="authService.isLoggedIn()">
@@ -212,9 +219,16 @@ import { ToastService } from '../../core/services/toast.service';
             <div class="nav-separator d-none d-lg-block"></div>
 
             @if (authService.isLoggedIn()) {
-              <span class="user-greeting d-none d-lg-inline small text-muted">
-                {{ authService.currentUser()?.nombre }}
-              </span>
+              <a
+                routerLink="/perfil"
+                class="text-decoration-none d-flex align-items-center gap-1.5 me-2 text-muted-blue hover-primary"
+                title="Mi Perfil"
+              >
+                <i class="bi bi-person-circle fs-5"></i>
+                <span class="user-greeting d-none d-lg-inline small font-xs fw-semibold">
+                  {{ authService.currentUser()?.nombre }}
+                </span>
+              </a>
               @if (authService.isAdmin()) {
                 <a
                   class="btn btn-outline-primary btn-sm d-flex align-items-center gap-2"
