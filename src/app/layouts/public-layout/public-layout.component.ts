@@ -251,7 +251,7 @@ import { ToastService } from '../../core/services/toast.service';
         <div class="d-flex align-items-center gap-3">
           <span class="font-xxs text-muted">Canales de difusión:</span>
           <a
-            href="https://t.me/+F7z_P689S-0xODQx"
+            href="https://t.me/convoca_unju_2026"
             target="_blank"
             class="text-decoration-none text-muted-blue d-flex align-items-center gap-1 font-xxs fw-semibold"
             title="Telegram"
