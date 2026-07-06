@@ -1,8 +1,11 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink, ActivatedRoute } from '@angular/router';
+import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { ToastService } from '../../../core/services/toast.service';
+import { AuthResponse } from '../../../core/types';
+import { environment } from '../../../../environments/environment';
 import { finalize } from 'rxjs';
 
 @Component({
@@ -77,6 +80,7 @@ import { finalize } from 'rxjs';
           <!-- Google OAuth Button -->
           <button
             type="button"
+            (click)="iniciarGoogle()"
             class="btn btn-outline-secondary w-100 py-2 rounded-3 d-flex align-items-center justify-content-center gap-2 font-sm fw-semibold bg-white border-light text-dark-blue shadow-xs"
           >
             <i class="bi bi-google text-danger"></i>
@@ -181,6 +185,8 @@ export class LoginComponent {
   private readonly authService = inject(AuthService);
   private readonly toastService = inject(ToastService);
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly loading = signal(false);
 
@@ -210,12 +216,29 @@ export class LoginComponent {
 
     this.authService
       .login(this.form.getRawValue())
-      .pipe(finalize(() => this.loading.set(false)))
+      .pipe(
+        finalize(() => this.loading.set(false)),
+        takeUntilDestroyed(this.destroyRef),
+      )
       .subscribe({
-        next: () => {
+        next: (res: AuthResponse) => {
+          if (res.requiere2FA) {
+            // sessionStorage (no localStorage): el email queda solo en la pestaña.
+            sessionStorage.setItem('login_email', res.email ?? this.form.value.username!);
+            this.toastService.info('Se ha enviado un código a tu correo');
+            this.router.navigate(['/auth/2fa']); // Redirigimos al componente 2FA
+            return;
+          }
           this.toastService.success('Sesión iniciada correctamente');
           this.authService.redirigirPostAuth(returnUrl);
         },
+        error: () =>
+          this.toastService.error('No pudimos iniciar sesión. Revisá tu usuario y contraseña.'),
       });
+  }
+
+  iniciarGoogle(): void {
+    // Base del backend desde environment (no hardcodear host/protocolo).
+    window.location.href = `${environment.apiUrl}/auth/google`;
   }
 }
