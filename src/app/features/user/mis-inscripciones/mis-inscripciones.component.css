@@ -1,0 +1,125 @@
+.cv-serif {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+}
+
+.text-dark-blue {
+  color: #243c4c !important;
+}
+
+.text-muted-blue {
+  color: #698696 !important;
+}
+
+.shadow-xs {
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+}
+
+.font-sm {
+  font-size: 0.875rem !important;
+}
+
+.font-xs {
+  font-size: 0.8125rem !important;
+}
+
+.font-xxs {
+  font-size: 0.725rem !important;
+}
+
+.category-badge {
+  display: inline-flex;
+  align-items: center;
+  background: #e8f0f5;
+  color: #3f6f8f;
+  padding: 4px 9px;
+  border-radius: 6px;
+  letter-spacing: 0.4px;
+}
+
+.event-card {
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.event-card:hover {
+  transform: translateY(-4px);
+  border-color: #5289ad !important;
+  box-shadow: 0 12px 24px -10px rgba(82, 137, 173, 0.25) !important;
+}
+
+.bg-asistio {
+  background-color: rgba(34, 197, 94, 0.09) !important;
+}
+
+.text-asistio {
+  color: #166534 !important;
+}
+
+.bg-espera {
+  background-color: rgba(245, 158, 11, 0.09) !important;
+}
+
+.text-espera {
+  color: #92400e !important;
+}
+
+.bg-cancelado {
+  background-color: rgba(148, 163, 184, 0.09) !important;
+}
+
+.text-cancelado {
+  color: #475569 !important;
+}
+
+.btn-primary-accent {
+  background-color: #5289ad;
+  color: #ffffff;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  transition: background-color 0.15s ease;
+}
+
+.btn-primary-accent:hover {
+  background-color: #437190;
+  color: #ffffff;
+}
+
+.custom-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(26, 46, 56, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  backdrop-filter: blur(4px);
+}
+
+.custom-modal-content {
+  width: 100%;
+  max-width: 400px;
+  border-radius: 16px;
+  background: white;
+  animation: scaleUp 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes scaleUp {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.ticket-border {
+  border: 2px dashed #acbcbf;
+}

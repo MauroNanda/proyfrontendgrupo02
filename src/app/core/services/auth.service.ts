@@ -135,4 +135,20 @@ export class AuthService {
       { habilitar },
     );
   }
+
+  /**
+   * Actualiza los datos del perfil (nombre).
+   */
+  actualizarPerfil(nombre: string): Observable<{ message: string; usuario: Usuario }> {
+    return this.http
+      .put<{ message: string; usuario: Usuario }>(`${this.apiUrl}/perfil`, { nombre })
+      .pipe(
+        tap((res) => {
+          if (res.usuario) {
+            localStorage.setItem('usuario', JSON.stringify(res.usuario));
+            this.currentUser.set(res.usuario);
+          }
+        }),
+      );
+  }
 }

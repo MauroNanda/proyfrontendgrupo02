@@ -78,7 +78,7 @@ import { AuthService } from '../../core/services/auth.service';
             {{ obtenerInicial(authService.currentUser()?.nombre) }}
           </span>
           <div>
-            <div class="fw-semibold small text-truncate" style="max-width: 140px;">
+            <div class="fw-semibold small text-truncate" style="max-width: 155px;">
               {{ authService.currentUser()?.nombre }}
             </div>
             <div class="sidebar-role">

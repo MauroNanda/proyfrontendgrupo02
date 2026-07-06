@@ -9,28 +9,54 @@
   </div>
 
   <!-- Barra de Filtros / Chips -->
-  <div class="d-flex gap-2 mb-4 flex-wrap border-bottom pb-3">
-    <button
-      (click)="cambiarFiltro('')"
-      class="btn btn-sm rounded-pill font-xs px-3 py-1.5"
-      [ngClass]="filtroEstado === '' ? 'btn-primary' : 'btn-light-chip text-muted-blue'"
-    >
-      Todos
-    </button>
-    <button
-      (click)="cambiarFiltro('PUBLICADO')"
-      class="btn btn-sm rounded-pill font-xs px-3 py-1.5"
-      [ngClass]="filtroEstado === 'PUBLICADO' ? 'btn-primary' : 'btn-light-chip text-muted-blue'"
-    >
-      Publicados
-    </button>
-    <button
-      (click)="cambiarFiltro('CANCELADO')"
-      class="btn btn-sm rounded-pill font-xs px-3 py-1.5"
-      [ngClass]="filtroEstado === 'CANCELADO' ? 'btn-primary' : 'btn-light-chip text-muted-blue'"
-    >
-      Cancelados
-    </button>
+  <div class="d-flex flex-column gap-3 mb-4 border-bottom pb-3">
+    <!-- Fila Estados -->
+    <div class="d-flex gap-2 align-items-center flex-wrap">
+      <span class="text-muted font-xs fw-semibold me-2">Estado:</span>
+      <button
+        (click)="cambiarFiltro('')"
+        class="btn btn-sm rounded-pill font-xs px-3 py-1.5"
+        [ngClass]="filtroEstado === '' ? 'btn-primary' : 'btn-light-chip text-muted-blue'"
+      >
+        Todos
+      </button>
+      <button
+        (click)="cambiarFiltro('PUBLICADO')"
+        class="btn btn-sm rounded-pill font-xs px-3 py-1.5"
+        [ngClass]="filtroEstado === 'PUBLICADO' ? 'btn-primary' : 'btn-light-chip text-muted-blue'"
+      >
+        Publicados
+      </button>
+      <button
+        (click)="cambiarFiltro('CANCELADO')"
+        class="btn btn-sm rounded-pill font-xs px-3 py-1.5"
+        [ngClass]="filtroEstado === 'CANCELADO' ? 'btn-primary' : 'btn-light-chip text-muted-blue'"
+      >
+        Cancelados
+      </button>
+    </div>
+
+    <!-- Fila Categorías -->
+    <div class="d-flex gap-2 align-items-center flex-wrap" *ngIf="categorias.length > 0">
+      <span class="text-muted font-xs fw-semibold me-2">Categoría:</span>
+      <button
+        (click)="cambiarFiltroCategoria('')"
+        class="btn btn-sm rounded-pill font-xs px-3 py-1.5"
+        [ngClass]="filtroCategoria === '' ? 'btn-primary' : 'btn-light-chip text-muted-blue'"
+      >
+        Todas
+      </button>
+      <button
+        *ngFor="let cat of categorias"
+        (click)="cambiarFiltroCategoria(cat.nombre)"
+        class="btn btn-sm rounded-pill font-xs px-3 py-1.5"
+        [ngClass]="
+          filtroCategoria === cat.nombre ? 'btn-primary' : 'btn-light-chip text-muted-blue'
+        "
+      >
+        {{ cat.nombre }}
+      </button>
+    </div>
   </div>
 
   <!-- Spinner de carga -->
@@ -68,7 +94,16 @@
         <div>
           <!-- Tag / Estado -->
           <div class="d-flex justify-content-between align-items-center mb-3">
-            <span class="category-badge font-xxs fw-bold text-uppercase">
+            <span
+              class="category-badge font-xxs fw-bold text-uppercase"
+              *ngIf="evento.categorias && evento.categorias.length > 0"
+            >
+              <i class="bi bi-bookmark-fill me-1"></i> {{ evento.categorias[0].nombre }}
+            </span>
+            <span
+              class="category-badge font-xxs fw-bold text-uppercase"
+              *ngIf="!evento.categorias || evento.categorias.length === 0"
+            >
               <i class="bi bi-bookmark-fill me-1"></i> Evento
             </span>
             <div [ngSwitch]="evento.estado">

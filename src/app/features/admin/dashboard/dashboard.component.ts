@@ -198,6 +198,42 @@ const ESTADO_COLORES: Record<string, string> = {
               </div>
             </div>
           </div>
+
+          <!-- Estado del Sistema (Trasladado desde el home público) -->
+          <div class="col-12">
+            <div class="card border-0 shadow-sm bg-white">
+              <div class="card-body p-3">
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                  <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-hdd-network text-primary fs-5"></i>
+                    <h6 class="fw-semibold mb-0">Operatividad del Servidor</h6>
+                  </div>
+
+                  <div class="d-flex align-items-center gap-3 flex-wrap font-xs">
+                    <div class="d-flex align-items-center gap-1.5">
+                      <span class="text-muted">API:</span>
+                      <span class="badge bg-success-subtle text-success rounded-pill px-2.5 py-1"
+                        >OK</span
+                      >
+                    </div>
+                    <div class="d-flex align-items-center gap-1.5">
+                      <span class="text-muted">Base de datos:</span>
+                      <span class="badge bg-success-subtle text-success rounded-pill px-2.5 py-1"
+                        >UP</span
+                      >
+                    </div>
+                    <div class="d-flex align-items-center gap-1.5">
+                      <span class="text-muted">Entorno:</span>
+                      <span
+                        class="badge bg-light text-dark-blue border font-xxs rounded px-2.5 py-1"
+                        >Desarrollo (Neon DB)</span
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       }
     </div>

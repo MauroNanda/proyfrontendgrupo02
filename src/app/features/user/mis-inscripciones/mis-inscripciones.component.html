@@ -1,0 +1,218 @@
+<div class="container py-5 min-vh-100">
+  <!-- Header -->
+  <div class="mb-4">
+    <h1 class="h2 fw-bold text-dark-blue cv-serif mb-1">Mis Inscripciones</h1>
+    <p class="text-muted small mb-0">
+      Historial y pases de acceso a los eventos en los que estás registrado.
+    </p>
+  </div>
+
+  <!-- Spinner de carga -->
+  <div *ngIf="cargando()" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Cargando inscripciones...</span>
+    </div>
+    <p class="text-muted small mt-2 mb-0">Cargando tus inscripciones...</p>
+  </div>
+
+  <!-- Estado de error -->
+  <div *ngIf="!cargando() && error()" class="col-12 text-center py-5">
+    <i class="bi bi-exclamation-triangle text-danger opacity-75 display-5"></i>
+    <p class="text-muted small mt-2 mb-0">
+      No se pudieron cargar tus inscripciones. Intentá de nuevo más tarde.
+    </p>
+  </div>
+
+  <!-- Grid de Inscripciones -->
+  <div *ngIf="!cargando() && !error()" class="row g-4">
+    <!-- Empty State -->
+    <div *ngIf="inscripciones().length === 0" class="col-12 text-center py-5">
+      <i class="bi bi-calendar-x text-muted opacity-50 display-5"></i>
+      <p class="text-muted small mt-3 mb-3">No estás inscripto en ningún evento todavía.</p>
+      <a routerLink="/eventos" class="btn btn-primary btn-sm rounded-pill px-4">
+        Explorar Catálogo
+      </a>
+    </div>
+
+    <!-- Cards -->
+    <div
+      *ngFor="let ins of inscripciones(); trackBy: trackByInscripcionId"
+      class="col-12 col-md-6 col-lg-4"
+    >
+      <div
+        class="card border shadow-xs rounded-4 p-3 bg-white h-100 d-flex flex-column justify-content-between event-card"
+      >
+        <div>
+          <!-- Tag / Estado -->
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <span
+              class="category-badge font-xxs fw-bold text-uppercase"
+              *ngIf="ins.evento.categorias && ins.evento.categorias.length > 0"
+            >
+              <i class="bi bi-bookmark-fill me-1"></i> {{ ins.evento.categorias[0].nombre }}
+            </span>
+            <span
+              class="category-badge font-xxs fw-bold text-uppercase"
+              *ngIf="!ins.evento.categorias || ins.evento.categorias.length === 0"
+            >
+              <i class="bi bi-bookmark-fill me-1"></i> Evento
+            </span>
+            <div [ngSwitch]="ins.estado">
+              <span
+                *ngSwitchCase="'CONFIRMADO'"
+                class="badge bg-asistio text-asistio rounded-pill px-2.5 py-1 font-xxs"
+              >
+                Confirmado
+              </span>
+              <span
+                *ngSwitchCase="'ESPERA'"
+                class="badge bg-espera text-espera rounded-pill px-2.5 py-1 font-xxs"
+              >
+                En Espera
+              </span>
+              <span
+                *ngSwitchCase="'ASISTIO'"
+                class="badge bg-info-subtle text-info rounded-pill px-2.5 py-1 font-xxs"
+                style="
+                  background-color: rgba(13, 202, 240, 0.09) !important;
+                  color: #087990 !important;
+                "
+              >
+                Asistió
+              </span>
+              <span
+                *ngSwitchCase="'CANCELADO'"
+                class="badge bg-cancelado text-cancelado rounded-pill px-2.5 py-1 font-xxs"
+              >
+                Cancelado
+              </span>
+            </div>
+          </div>
+
+          <!-- Título -->
+          <h3 class="h5 fw-bold text-dark-blue cv-serif mb-2">{{ ins.evento.titulo }}</h3>
+
+          <!-- Meta Info -->
+          <div class="d-flex flex-column gap-1.5 text-muted font-xs mb-4">
+            <span>
+              <i class="bi bi-calendar-event text-primary me-1.5"></i>
+              {{ ins.evento.fecha | date: 'dd/MM/yyyy HH:mm' }} hs
+            </span>
+            <span>
+              <i class="bi bi-geo-alt text-primary me-1.5"></i>
+              {{ ins.evento.ubicacion || 'Lugar por definir' }}
+            </span>
+          </div>
+        </div>
+
+        <div>
+          <!-- Acciones alineadas al estilo de la web -->
+          <div class="d-flex gap-2">
+            <!-- CTA Principal: Ver Pase o Ver Detalle -->
+            <button
+              *ngIf="ins.estado === 'CONFIRMADO' || ins.estado === 'ASISTIO'"
+              (click)="abrirModalPase(ins)"
+              class="btn-primary-accent text-decoration-none flex-grow-1 text-center justify-content-center py-2 rounded-3 fw-semibold font-sm"
+            >
+              <i class="bi bi-qr-code-scan me-1.5"></i>Ver Pase
+            </button>
+            <a
+              *ngIf="ins.estado !== 'CONFIRMADO' && ins.estado !== 'ASISTIO'"
+              [routerLink]="['/eventos', ins.eventoId]"
+              class="btn-primary-accent text-decoration-none flex-grow-1 text-center justify-content-center py-2 rounded-3 fw-semibold font-sm"
+            >
+              Ver detalle
+            </a>
+
+            <!-- CTA Secundario: Cancelar inscripción (Solo si es CONFIRMADO o ESPERA en fecha futura) -->
+            <button
+              *ngIf="
+                (ins.estado === 'CONFIRMADO' || ins.estado === 'ESPERA') &&
+                esFechaFutura(ins.evento.fecha)
+              "
+              (click)="cancelarInscripcion(ins.eventoId)"
+              class="btn btn-outline-danger btn-sm px-3 rounded-3 d-flex align-items-center justify-content-center"
+              [disabled]="cancelandoId() === ins.eventoId"
+              title="Cancelar inscripción"
+            >
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Pase de Acceso -->
+<div class="custom-modal-backdrop" *ngIf="mostrarModalPase()" (click)="cerrarModalPase()">
+  <div class="custom-modal-content card p-4 border shadow-lg" (click)="$event.stopPropagation()">
+    <div class="d-flex align-items-center justify-content-between border-bottom pb-2 mb-3">
+      <h5 class="fw-bold text-dark-blue mb-0">Mi Pase de Acceso</h5>
+      <button class="btn btn-close" (click)="cerrarModalPase()"></button>
+    </div>
+
+    <div *ngIf="selectedInscripcion() as ins" class="text-center">
+      <div class="ticket-border p-3 rounded-4 bg-light mb-3">
+        <h5 class="fw-bold text-dark-blue text-truncate mb-2" [title]="ins.evento.titulo">
+          {{ ins.evento.titulo }}
+        </h5>
+        <p class="font-xs text-muted mb-1">
+          <i class="bi bi-calendar-event me-1"></i>
+          {{ ins.evento.fecha | date: 'dd/MM/yyyy HH:mm' }} hs
+        </p>
+        <p class="font-xs text-muted mb-3">
+          <i class="bi bi-geo-alt me-1"></i> {{ ins.evento.ubicacion }}
+        </p>
+
+        <div class="bg-white p-3 rounded-3 d-inline-block border shadow-xs">
+          <img
+            [src]="selectedQrDataUrl()"
+            alt="Código QR de Acceso"
+            class="img-fluid"
+            style="max-width: 180px"
+          />
+        </div>
+        <div class="font-xxs text-muted mt-2">ID: {{ ins.id }}</div>
+      </div>
+
+      <div class="d-flex gap-2">
+        <button class="btn btn-primary btn-sm flex-grow-1" (click)="descargarPdf(ins)">
+          <i class="bi bi-file-earmark-pdf me-1"></i> Descargar PDF
+        </button>
+        <button class="btn btn-outline-secondary btn-sm" (click)="cerrarModalPase()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Elemento oculto/temporal para capturar el ticket PDF -->
+<div *ngIf="selectedInscripcion() as ins" style="position: absolute; left: -9999px; top: -9999px">
+  <div
+    id="ticket-capture"
+    class="bg-white p-4 border rounded-4 shadow-sm"
+    style="width: 380px; font-family: sans-serif; color: #1a2e38"
+  >
+    <div class="text-center border-bottom pb-3 mb-3">
+      <h4 class="fw-bold mb-1" style="color: #243c4c">Convoca</h4>
+      <span class="badge rounded-pill bg-primary px-3 py-1 font-xxs">PASE DE ACCESO</span>
+    </div>
+    <div class="mb-3">
+      <h5 class="fw-bold text-dark mb-2">{{ ins.evento.titulo }}</h5>
+      <div class="small text-muted mb-1">
+        <i class="bi bi-calendar-event me-2"></i
+        >{{ ins.evento.fecha | date: 'dd/MM/yyyy HH:mm' }} hs
+      </div>
+      <div class="small text-muted">
+        <i class="bi bi-geo-alt me-2"></i>{{ ins.evento.ubicacion }}
+      </div>
+    </div>
+    <div class="text-center bg-light p-3 rounded-3 mb-3 border">
+      <img [src]="selectedQrDataUrl()" alt="QR Code" style="width: 180px; height: 180px" />
+      <div class="font-xxs text-muted mt-2">ID: {{ ins.id }}</div>
+    </div>
+    <div class="text-center text-muted small">
+      Presentá este código QR en la entrada del evento.
+    </div>
+  </div>
+</div>

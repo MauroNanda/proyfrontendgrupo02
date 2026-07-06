@@ -1,98 +1,284 @@
 <div class="container py-4">
   <!-- Header -->
   <div class="mb-4">
-    <h1 class="h2 fw-bold text-dark-blue cv-serif mb-1">Depuración de Exportaciones</h1>
+    <h1 class="h2 fw-bold text-dark-blue cv-serif mb-1">Reportes y Exportación</h1>
     <p class="text-muted small mb-0">
-      Verificá la descarga del listado en formato Excel y la exportación de pases oficiales (PDF).
+      Descargá listados de auditoría en formato Excel y generá pases oficiales de acceso en formato
+      PDF.
     </p>
   </div>
 
-  <div class="row g-4">
-    <!-- Panel Control -->
-    <div class="col-lg-5">
-      <div class="card border rounded-4 shadow-xs bg-white p-4 h-100">
-        <h3 class="h5 fw-bold text-dark-blue cv-serif mb-3">Acciones de Prueba</h3>
-        <p class="text-muted font-xs mb-4">
-          Hacé clic en los botones para descargar archivos autogenerados con datos simulados.
-        </p>
-
-        <div class="d-flex flex-column gap-3">
+  <div class="row g-4 animate-fade-in">
+    <!-- Columna Izquierda: Controles de Reporte -->
+    <div class="col-lg-6">
+      <div class="d-flex flex-column gap-4">
+        <!-- Tarjeta 1: Reporte General de Eventos -->
+        <div class="card border rounded-4 shadow-xs bg-white p-4">
+          <div class="d-flex align-items-center gap-3 mb-3">
+            <div
+              class="icon-box bg-success-light text-success rounded-3 p-2 d-flex align-items-center justify-content-center"
+              style="width: 40px; height: 40px"
+            >
+              <i class="bi bi-calendar-check fs-5"></i>
+            </div>
+            <div>
+              <h3 class="h6 fw-bold text-dark-blue cv-serif mb-0">Reporte General de Eventos</h3>
+              <small class="text-muted font-xxs">INVENTARIO COMPLETO</small>
+            </div>
+          </div>
+          <p class="text-muted font-xs mb-4">
+            Generá una planilla Excel con todos los eventos registrados en el sistema, incluyendo
+            cupos, ubicaciones, fechas y estado de publicación.
+          </p>
           <button
-            class="btn btn-excel w-100 py-2.5 rounded-3 fw-semibold font-sm text-start px-3 d-flex align-items-center justify-content-between"
-            (click)="testExcel()"
+            class="btn btn-excel py-2.5 rounded-3 fw-semibold font-sm text-start px-3 d-flex align-items-center justify-content-between w-100"
+            [disabled]="cargandoEventos() || eventos().length === 0"
+            (click)="exportarEventosExcel()"
           >
-            <span><i class="bi bi-file-earmark-excel me-2"></i> Exportar a Excel</span>
+            <span>
+              <span
+                *ngIf="cargandoEventos()"
+                class="spinner-border spinner-border-sm me-2"
+                role="status"
+              ></span>
+              <i *ngIf="!cargandoEventos()" class="bi bi-file-earmark-excel me-2"></i>
+              Exportar Catálogo de Eventos
+            </span>
             <i class="bi bi-download"></i>
           </button>
+        </div>
 
-          <button
-            class="btn btn-pdf w-100 py-2.5 rounded-3 fw-semibold font-sm text-start px-3 d-flex align-items-center justify-content-between"
-            (click)="testPdf()"
-          >
-            <span><i class="bi bi-file-earmark-pdf me-2"></i> Descargar Ticket (PDF)</span>
-            <i class="bi bi-download"></i>
-          </button>
+        <!-- Tarjeta 2: Listado de Asistentes por Evento -->
+        <div class="card border rounded-4 shadow-xs bg-white p-4">
+          <div class="d-flex align-items-center gap-3 mb-3">
+            <div
+              class="icon-box bg-primary-light text-primary rounded-3 p-2 d-flex align-items-center justify-content-center"
+              style="width: 40px; height: 40px"
+            >
+              <i class="bi bi-people fs-5"></i>
+            </div>
+            <div>
+              <h3 class="h6 fw-bold text-dark-blue cv-serif mb-0">Asistentes por Evento</h3>
+              <small class="text-muted font-xxs">AUDITORÍA Y CHECK-IN</small>
+            </div>
+          </div>
+          <p class="text-muted font-xs mb-4">
+            Seleccioná un evento para obtener el desglose de inscripciones y exportar la lista de
+            asistentes a Excel.
+          </p>
+
+          <div class="mb-4">
+            <label class="form-label font-xxs fw-bold text-muted text-uppercase mb-2"
+              >Seleccionar Evento</label
+            >
+            <select
+              class="form-select font-sm rounded-3 py-2"
+              [disabled]="cargandoEventos()"
+              (change)="onEventoSeleccionado($event)"
+            >
+              <option value="">-- Elegí un evento --</option>
+              <option *ngFor="let ev of eventos()" [value]="ev.id">
+                {{ ev.titulo }} ({{ ev.estado }})
+              </option>
+            </select>
+          </div>
+
+          <!-- Spinner cargando asistentes -->
+          <div *ngIf="cargandoInscriptos()" class="text-center py-3">
+            <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+            <p class="text-muted font-xxs mt-1 mb-0">Consultando inscripciones en BD...</p>
+          </div>
+
+          <!-- Resumen de estadísticas e inscriptos -->
+          <div *ngIf="!cargandoInscriptos() && eventoSeleccionadoId()" class="animate-fade-in">
+            <div
+              *ngIf="inscriptos().length === 0"
+              class="alert alert-light border rounded-3 p-3 text-center mb-4"
+            >
+              <i class="bi bi-info-circle text-muted mb-1 d-block fs-5"></i>
+              <span class="font-xs text-muted d-block"
+                >Este evento no posee asistentes inscriptos aún.</span
+              >
+            </div>
+
+            <div *ngIf="inscriptos().length > 0" class="mb-4">
+              <div class="border rounded-3 p-3 bg-light-gray">
+                <h4 class="font-xxs fw-bold text-muted text-uppercase mb-3">
+                  Métricas de Inscripción
+                </h4>
+                <div class="row g-2 text-center">
+                  <div class="col-3">
+                    <span
+                      class="badge bg-success-subtle text-success w-100 py-1.5 font-xxs rounded-2"
+                    >
+                      {{ stats().confirmados }} Conf.
+                    </span>
+                  </div>
+                  <div class="col-3">
+                    <span
+                      class="badge bg-warning-subtle text-warning w-100 py-1.5 font-xxs rounded-2"
+                    >
+                      {{ stats().espera }} Espera
+                    </span>
+                  </div>
+                  <div class="col-3">
+                    <span
+                      class="badge bg-primary-subtle text-primary w-100 py-1.5 font-xxs rounded-2"
+                    >
+                      {{ stats().asistio }} Asistió
+                    </span>
+                  </div>
+                  <div class="col-3">
+                    <span
+                      class="badge bg-danger-subtle text-danger w-100 py-1.5 font-xxs rounded-2"
+                    >
+                      {{ stats().cancelado }} Canc.
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <button
+              class="btn btn-excel py-2.5 rounded-3 fw-semibold font-sm text-start px-3 d-flex align-items-center justify-content-between w-100"
+              [disabled]="inscriptos().length === 0"
+              (click)="exportarAsistentesExcel()"
+            >
+              <span>
+                <i class="bi bi-file-earmark-excel-fill me-2"></i>
+                Descargar Lista de Asistentes ({{ totalInscriptos() }})
+              </span>
+              <i class="bi bi-download"></i>
+            </button>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Ticket Preview -->
-    <div class="col-lg-7">
-      <div class="card border rounded-4 shadow-xs bg-white p-4">
-        <h3 class="h5 fw-bold text-dark-blue cv-serif mb-3">Vista Previa del Pase</h3>
+    <!-- Columna Derecha: Vista Previa e Interactividad de Pases -->
+    <div class="col-lg-6">
+      <div class="card border rounded-4 shadow-xs bg-white p-4 h-100 d-flex flex-column">
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <div
+            class="icon-box bg-pdf-light text-primary rounded-3 p-2 d-flex align-items-center justify-content-center"
+            style="width: 40px; height: 40px; background-color: rgba(82, 137, 173, 0.09)"
+          >
+            <i class="bi bi-qr-code-scan fs-5" style="color: #5289ad"></i>
+          </div>
+          <div>
+            <h3 class="h6 fw-bold text-dark-blue cv-serif mb-0">Vista Previa de Credenciales</h3>
+            <small class="text-muted font-xxs">PDF DE PRUEBA INTERACTIVO</small>
+          </div>
+        </div>
         <p class="text-muted font-xs mb-4">
-          Este contenedor se convertirá en imagen con escala 2x para evitar pixelado en el PDF.
+          Modificá los campos a continuación para previsualizar cómo se renderizará el pase oficial
+          de acceso (ticket PDF) y descargá una muestra.
         </p>
 
-        <div class="d-flex justify-content-center bg-light-gray p-4 rounded-4 border border-dashed">
-          <!-- Ticket Enterprise Box -->
+        <!-- Inputs de edición rápida del ticket -->
+        <div class="row g-3 mb-4">
+          <div class="col-md-6">
+            <label class="form-label font-xxs fw-bold text-muted text-uppercase mb-1"
+              >Nombre Asistente</label
+            >
+            <input
+              type="text"
+              class="form-control font-sm rounded-3 py-1.5"
+              [(ngModel)]="previewNombre"
+              placeholder="Ej. Sebastian Villalba"
+            />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label font-xxs fw-bold text-muted text-uppercase mb-1"
+              >Nombre Evento</label
+            >
+            <input
+              type="text"
+              class="form-control font-sm rounded-3 py-1.5"
+              [(ngModel)]="previewEvento"
+              placeholder="Ej. Hackathon 2026"
+            />
+          </div>
+        </div>
+
+        <!-- Renderizador del ticket para exportación -->
+        <div
+          class="flex-grow-1 d-flex align-items-center justify-content-center bg-light-gray p-3 rounded-4 border border-dashed mb-4"
+        >
           <div
             id="ticket-enterprise-preview"
-            class="ticket-box bg-white shadow-sm border rounded-4 p-4"
+            class="ticket-box bg-white shadow border rounded-4 p-4"
+            style="width: 100%; max-width: 420px"
           >
             <!-- Cabecera Ticket -->
-            <div class="text-center border-bottom pb-3 mb-4">
+            <div class="text-center border-bottom pb-3 mb-3">
               <span class="ticket-badge font-xxs fw-bold text-uppercase tracking-wider"
-                >PASE OFICIAL</span
+                >PASE OFICIAL DE ACCESO</span
               >
-              <h4 class="h4 fw-bold text-dark-blue cv-serif m-0 mt-1">
-                Convocatoria Universitaria
+              <h4
+                class="h5 fw-bold text-dark-blue cv-serif m-0 mt-2 text-truncate"
+                [title]="previewEvento()"
+              >
+                {{ previewEvento() }}
               </h4>
-              <small class="text-muted-blue font-xxs">Gestión Global de Eventos S.A.</small>
+              <small
+                class="text-muted-blue font-xxs text-truncate d-block mt-0.5"
+                [title]="previewOrganizador()"
+              >
+                Organiza: {{ previewOrganizador() }}
+              </small>
             </div>
 
             <!-- Contenido Ticket -->
-            <div class="row align-items-center mb-4">
+            <div class="row align-items-center mb-3">
               <div class="col-7">
                 <div class="mb-3">
-                  <span class="ticket-label">EVENTO</span>
-                  <span class="ticket-value">Conferencia Anual de Tech 2026</span>
+                  <span class="ticket-label">TIPO DE ENTRADA</span>
+                  <span
+                    class="badge bg-success-subtle text-success font-xxs rounded-pill px-2 py-0.5"
+                    >Acceso Completo</span
+                  >
                 </div>
-
                 <div>
                   <span class="ticket-label">ASISTENTE</span>
-                  <span class="ticket-value">Sebastian Villalba</span>
+                  <span class="ticket-value text-truncate d-block" [title]="previewNombre()">
+                    {{ previewNombre() }}
+                  </span>
                 </div>
               </div>
-
               <div class="col-5 d-flex justify-content-end">
                 <div
                   class="qr-placeholder d-flex flex-column align-items-center justify-content-center gap-1"
                 >
-                  <i class="bi bi-qr-code"></i>
-                  <span class="font-xxs tracking-wider fw-bold text-uppercase">QR SCAN</span>
+                  <i class="bi bi-qr-code" style="font-size: 2rem"></i>
+                  <span
+                    class="font-xxs tracking-wider fw-bold text-uppercase"
+                    style="font-size: 8px !important"
+                    >TICKET QR</span
+                  >
                 </div>
               </div>
             </div>
 
             <!-- Código barra / UUID -->
             <div class="ticket-footer text-center rounded-3 p-2 bg-light-gray border">
-              <span class="font-xxs text-muted-blue text-uppercase tracking-wider">
-                Código Único de Entrada: <strong class="text-dark-blue">UUID-943CC9-2026</strong>
+              <span
+                class="font-xxs text-muted-blue text-uppercase tracking-wider"
+                style="font-size: 9px !important"
+              >
+                Código de Ingreso: <strong class="text-dark-blue">{{ previewUuid() }}</strong>
               </span>
             </div>
           </div>
         </div>
+
+        <button
+          class="btn btn-pdf py-2.5 rounded-3 fw-semibold font-sm text-start px-3 d-flex align-items-center justify-content-between w-100"
+          (click)="descargarPasePdf()"
+        >
+          <span><i class="bi bi-file-earmark-pdf-fill me-2"></i> Descargar Credencial PDF</span>
+          <i class="bi bi-download"></i>
+        </button>
       </div>
     </div>
   </div>

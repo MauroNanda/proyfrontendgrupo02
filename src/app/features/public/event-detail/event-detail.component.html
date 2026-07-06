@@ -25,9 +25,17 @@
       <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-glass">
         <!-- Badge de estado de publicación -->
         <span
-          class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-2 fs-7 fw-semibold align-self-start mb-3"
+          class="badge rounded-pill px-3 py-2 fs-7 fw-semibold align-self-start mb-3"
+          [ngClass]="{
+            'bg-success-subtle text-success border border-success-subtle':
+              evento()!.estado === 'PUBLICADO',
+            'bg-warning-subtle text-warning border border-warning-subtle':
+              evento()!.estado === 'BORRADOR',
+            'bg-secondary-subtle text-secondary border border-secondary-subtle':
+              evento()!.estado === 'CANCELADO',
+          }"
         >
-          {{ evento()!.estado }}
+          {{ evento()!.estado | titlecase }}
         </span>
 
         <!-- Título -->
@@ -136,9 +144,12 @@
 
           <!-- Botones de Acción -->
           <div class="d-grid gap-2 mb-4">
-            <!-- Caso: No inscripto / Cancelado -->
+            <!-- Caso: No inscripto / Cancelado (Evento Activo) -->
             <button
-              *ngIf="!inscripcion().inscrito || inscripcion().estado === 'CANCELADO'"
+              *ngIf="
+                (!inscripcion().inscrito || inscripcion().estado === 'CANCELADO') &&
+                evento()!.estado !== 'CANCELADO'
+              "
               (click)="inscribirse()"
               [disabled]="actionLoading()"
               class="btn btn-primary btn-lg rounded-3 shadow-sm d-flex align-items-center justify-content-center gap-2"
@@ -151,6 +162,16 @@
               ></span>
               <i *ngIf="!actionLoading()" class="bi bi-plus-circle"></i>
               <span>Inscribirme al evento</span>
+            </button>
+
+            <!-- Caso: Evento Cancelado -->
+            <button
+              *ngIf="evento()!.estado === 'CANCELADO'"
+              [disabled]="true"
+              class="btn btn-secondary btn-lg rounded-3 d-flex align-items-center justify-content-center gap-2"
+            >
+              <i class="bi bi-x-circle"></i>
+              <span>Inscripción no disponible (Cancelado)</span>
             </button>
 
             <!-- Caso: Confirmado o Lista de Espera -->
