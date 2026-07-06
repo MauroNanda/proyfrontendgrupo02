@@ -6,6 +6,7 @@ export interface Categoria {
   id: string;
   nombre: string;
   descripcion?: string;
+  Eventos?: any[];
   createdAt?: string;
   updatedAt?: string;
 }

@@ -40,7 +40,7 @@
         class="row mx-0 py-2 px-4 bg-light-gray border-bottom font-xs fw-bold text-muted text-uppercase tracking-wider"
       >
         <div class="col-4 ps-0">Nombre</div>
-        <div class="col-5">Descripción</div>
+        <div class="col-5 text-center">Eventos Asociados</div>
         <div class="col-3 text-end pe-0">Acciones</div>
       </div>
 
@@ -54,9 +54,12 @@
           <span class="fw-semibold text-dark-blue font-sm">{{ cat.nombre }}</span>
         </div>
 
-        <!-- Descripción -->
-        <div class="col-5 font-xs text-muted">
-          {{ cat.descripcion || 'Sin descripción' }}
+        <!-- Eventos Asociados -->
+        <div
+          class="col-5 text-center font-xs text-muted fw-medium cursor-help"
+          [title]="obtenerNombresEventos(cat)"
+        >
+          {{ cat.Eventos?.length || 0 }} {{ cat.Eventos?.length === 1 ? 'evento' : 'eventos' }}
         </div>
 
         <!-- Acciones -->
@@ -84,6 +87,111 @@
             ></span>
             <i *ngIf="eliminandoId() !== cat.id" class="bi bi-trash"></i>
           </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detalle Visual y Listados de Eventos por Categoría -->
+  <div *ngIf="!loading() && categorias().length > 0" class="mt-5 animate-fade-in">
+    <div class="border-bottom pb-2 mb-4">
+      <h3 class="h4 fw-bold text-dark-blue cv-serif mb-1">Distribución y Mapeo Temático</h3>
+      <p class="text-muted small mb-0">
+        Visualización de la cobertura de eventos por cada categoría activa.
+      </p>
+    </div>
+
+    <!-- Gráfico de distribución horizontal (Segmented progress bar) -->
+    <div class="card border shadow-xs rounded-4 p-4 bg-white mb-4">
+      <h4 class="font-xs fw-bold text-muted text-uppercase tracking-wider mb-3">
+        Cobertura Relativa de Eventos
+      </h4>
+
+      <div
+        class="progress rounded-pill mb-3"
+        style="height: 20px; background-color: #f1f5f9; overflow: hidden; display: flex"
+      >
+        <div
+          *ngFor="let cat of categorias(); let i = index"
+          [style.width.%]="obtenerPorcentaje(cat)"
+          [style.background-color]="obtenerColorCategoria(i)"
+          class="progress-bar-segment"
+          [title]="
+            cat.nombre +
+            ': ' +
+            (cat.Eventos?.length || 0) +
+            ' eventos (' +
+            obtenerPorcentaje(cat) +
+            '%)'
+          "
+          style="height: 100%; transition: width 0.4s ease"
+        ></div>
+      </div>
+
+      <!-- Leyenda de colores -->
+      <div class="d-flex flex-wrap gap-3 justify-content-start">
+        <div
+          *ngFor="let cat of categorias(); let i = index"
+          class="d-flex align-items-center gap-2 font-xs text-muted"
+        >
+          <span
+            class="rounded-circle"
+            [style.background-color]="obtenerColorCategoria(i)"
+            style="width: 10px; height: 10px; display: inline-block"
+          ></span>
+          <span class="fw-semibold text-dark-blue">{{ cat.nombre }}:</span>
+          <span
+            >{{ cat.Eventos?.length || 0 }}
+            {{ cat.Eventos?.length === 1 ? 'evento' : 'eventos' }} ({{
+              obtenerPorcentaje(cat)
+            }}%)</span
+          >
+        </div>
+      </div>
+    </div>
+
+    <!-- Desglose Completo (Grid de tarjetas) -->
+    <h4 class="font-xs fw-bold text-muted text-uppercase tracking-wider mb-3">
+      Detalle de Eventos Asignados
+    </h4>
+    <div class="row g-3">
+      <div *ngFor="let cat of categorias(); let i = index" class="col-12 col-md-4">
+        <div
+          class="card border shadow-xs rounded-4 h-100 bg-white p-3 hover-shadow transition-all duration-200"
+        >
+          <div
+            class="d-flex align-items-center justify-content-between gap-2 mb-2 border-bottom pb-2"
+          >
+            <div class="d-flex align-items-center gap-2">
+              <span
+                class="rounded-circle"
+                [style.background-color]="obtenerColorCategoria(i)"
+                style="width: 12px; height: 12px; display: inline-block"
+              ></span>
+              <h4 class="font-sm fw-bold text-dark-blue mb-0">{{ cat.nombre }}</h4>
+            </div>
+            <span class="badge bg-light text-muted font-xxs rounded px-2 py-0.5">
+              {{ cat.Eventos?.length || 0 }}
+            </span>
+          </div>
+
+          <!-- Listado de títulos de eventos -->
+          <ul
+            *ngIf="cat.Eventos && cat.Eventos.length > 0"
+            class="list-unstyled mb-0 font-xs d-flex flex-column gap-2"
+          >
+            <li *ngFor="let ev of cat.Eventos" class="d-flex align-items-start gap-2 text-muted">
+              <i class="bi bi-circle-fill text-primary-accent mt-1.5" style="font-size: 5px"></i>
+              <span class="lh-sm">{{ ev.titulo }}</span>
+            </li>
+          </ul>
+
+          <p
+            *ngIf="!cat.Eventos || cat.Eventos.length === 0"
+            class="text-muted font-xs italic text-center py-3 mb-0"
+          >
+            <i class="bi bi-tag opacity-40 me-1"></i> No hay eventos vinculados.
+          </p>
         </div>
       </div>
     </div>

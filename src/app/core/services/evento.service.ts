@@ -11,6 +11,7 @@ export interface Evento {
   cupo_maximo: number;
   estado: 'BORRADOR' | 'PUBLICADO' | 'CANCELADO';
   categorias?: any[];
+  inscripciones?: any[];
   createdAt: string;
   updatedAt: string;
 }

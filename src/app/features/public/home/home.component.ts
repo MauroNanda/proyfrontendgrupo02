@@ -50,68 +50,143 @@ type HealthResponse = {
             }
           </div>
           <div class="d-flex gap-4 mt-4 flex-wrap text-muted small">
-            <span><b class="cv-serif text-dark-blue font-md">+2.400</b> estudiantes</span>
-            <span><b class="cv-serif text-dark-blue font-md">180</b> eventos / año</span>
-            <span><b class="cv-serif text-dark-blue font-md">98%</b> asistencia</span>
+            <span><i class="bi bi-qr-code-scan text-primary me-1.5"></i> Acreditación por QR</span>
+            <span
+              ><i class="bi bi-hourglass-split text-primary me-1.5"></i> Lista de espera
+              automática</span
+            >
+            <span><i class="bi bi-bell text-primary me-1.5"></i> Avisos al instante</span>
           </div>
         </div>
 
-        <!-- Columna del Estado de la API -->
-        <div class="status-panel">
-          <div class="status-header">ESTADO DEL SISTEMA</div>
-
-          <div class="card border-0 shadow-xs rounded-3 p-3 bg-white mt-3">
-            <div class="d-flex align-items-center gap-2 mb-3">
-              <i
-                class="bi"
-                [class.bi-check-circle-fill]="health() && !error()"
-                [class.bi-x-circle-fill]="error()"
-                [class.bi-arrow-repeat]="loading()"
-                [class.text-success]="health() && !error()"
-                [class.text-danger]="error()"
-                [class.text-muted]="loading()"
-                [class.spin]="loading()"
-                style="font-size: 1.2rem;"
-              ></i>
-              <h3 class="h6 mb-0 text-dark-blue fw-semibold">Operatividad</h3>
+        <!-- Columna del Calendario Académico Ilustrativo -->
+        <div class="calendar-preview-panel">
+          <div class="calendar-widget-card animate-fade-in">
+            <!-- Encabezado del widget -->
+            <div
+              class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom border-light"
+            >
+              <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-calendar-event text-primary fs-5"></i>
+                <span class="widget-title-text fw-bold text-dark-blue">Próximos Eventos</span>
+              </div>
+              <span
+                class="badge bg-primary-subtle text-primary rounded-pill px-2.5 py-1 font-xxs fw-semibold"
+              >
+                Agenda Activa
+              </span>
             </div>
 
-            @if (loading()) {
-              <div>
-                <p class="text-muted mb-0 small">Verificando conexión...</p>
-              </div>
-            }
-            @if (error()) {
-              <div>
-                <div class="alert alert-danger py-2 px-3 mb-0 small border-0 font-xs">
-                  {{ error() }}
+            <!-- Lista de eventos ilustrativos -->
+            <div class="d-flex flex-column gap-3">
+              <!-- Evento 1 -->
+              <div
+                class="event-item-widget d-flex align-items-center gap-3 py-2 px-2.5 rounded-3 bg-light-hover"
+              >
+                <!-- Date column (clean typography, no nested borders) -->
+                <div
+                  class="text-center flex-shrink-0 d-flex flex-column justify-content-center"
+                  style="width: 50px;"
+                >
+                  <span
+                    class="text-primary-accent fw-bold text-uppercase"
+                    style="font-size: 0.65rem; letter-spacing: 1px;"
+                    >Ago</span
+                  >
+                  <span class="fw-bold text-dark-blue fs-4 lh-1 mt-0.5">10</span>
+                </div>
+                <div class="flex-grow-1 min-w-0">
+                  <h4 class="font-xs fw-bold text-dark-blue text-truncate mb-1">
+                    Taller de Git & GitHub Avanzado
+                  </h4>
+                  <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                    <span class="text-muted font-xxs text-truncate">
+                      <i class="bi bi-geo-alt me-1"></i>Lab. de Sistemas
+                    </span>
+                    <span
+                      class="badge bg-success-subtle text-success rounded-pill font-xxs px-2.5 py-0.5"
+                    >
+                      Cupos Libres
+                    </span>
+                  </div>
                 </div>
               </div>
-            }
-            @if (health()) {
-              <div class="d-flex flex-column gap-2 small">
-                <div class="d-flex justify-content-between border-bottom pb-2 border-light">
-                  <span class="text-muted">API</span>
-                  <span class="fw-semibold text-dark-blue">{{ health()!.status }}</span>
+
+              <!-- Evento 2 -->
+              <div
+                class="event-item-widget d-flex align-items-center gap-3 py-2 px-2.5 rounded-3 bg-light-hover"
+              >
+                <div
+                  class="text-center flex-shrink-0 d-flex flex-column justify-content-center"
+                  style="width: 50px;"
+                >
+                  <span
+                    class="text-primary-accent fw-bold text-uppercase"
+                    style="font-size: 0.65rem; letter-spacing: 1px;"
+                    >Ago</span
+                  >
+                  <span class="fw-bold text-dark-blue fs-4 lh-1 mt-0.5">28</span>
                 </div>
-                <div class="d-flex justify-content-between border-bottom pb-2 border-light">
-                  <span class="text-muted">Base de datos</span>
-                  <span class="fw-semibold text-dark-blue">{{ health()!.database }}</span>
-                </div>
-                <div class="d-flex justify-content-between pb-0.5">
-                  <span class="text-muted">Entorno</span>
-                  <span class="fw-semibold text-dark-blue">{{ health()!.environment }}</span>
+                <div class="flex-grow-1 min-w-0">
+                  <h4 class="font-xs fw-bold text-dark-blue text-truncate mb-1">
+                    Torneo E-Sports: League of Legends
+                  </h4>
+                  <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                    <span class="text-muted font-xxs text-truncate">
+                      <i class="bi bi-geo-alt me-1"></i>Auditorio Central
+                    </span>
+                    <span
+                      class="badge bg-primary-subtle text-primary rounded-pill font-xxs px-2.5 py-0.5"
+                    >
+                      Inscripciones
+                    </span>
+                  </div>
                 </div>
               </div>
-            }
+
+              <!-- Evento 3 -->
+              <div
+                class="event-item-widget d-flex align-items-center gap-3 py-2 px-2.5 rounded-3 bg-light-hover"
+              >
+                <div
+                  class="text-center flex-shrink-0 d-flex flex-column justify-content-center"
+                  style="width: 50px;"
+                >
+                  <span
+                    class="text-primary-accent fw-bold text-uppercase"
+                    style="font-size: 0.65rem; letter-spacing: 1px;"
+                    >Sep</span
+                  >
+                  <span class="fw-bold text-dark-blue fs-4 lh-1 mt-0.5">02</span>
+                </div>
+                <div class="flex-grow-1 min-w-0">
+                  <h4 class="font-xs fw-bold text-dark-blue text-truncate mb-1">
+                    Seminario Python & Data Science
+                  </h4>
+                  <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                    <span class="text-muted font-xxs text-truncate">
+                      <i class="bi bi-geo-alt me-1"></i>Aula Magna
+                    </span>
+                    <span
+                      class="badge bg-warning-subtle text-warning rounded-pill font-xxs px-2.5 py-0.5"
+                    >
+                      Pocos Cupos
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Footer decorativo -->
+            <div class="mt-3.5 pt-3 border-top text-center">
+              <a
+                routerLink="/eventos"
+                class="text-decoration-none font-xs fw-bold text-primary hover-primary d-inline-flex align-items-center gap-1"
+              >
+                Ver calendario completo <i class="bi bi-chevron-right"></i>
+              </a>
+            </div>
           </div>
-
-          @if (health() && !error()) {
-            <div class="d-flex align-items-center gap-2 mt-3 text-success font-xs fw-semibold">
-              <span class="status-pulse-dot"></span>
-              Servicios listos · inscripciones abiertas
-            </div>
-          }
         </div>
       </div>
     </header>
@@ -206,18 +281,37 @@ type HealthResponse = {
         }
       }
 
-      .status-panel {
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 14px;
-        padding: 24px;
+      .calendar-preview-panel {
+        display: flex;
+        justify-content: center;
+        align-items: center;
       }
 
-      .status-header {
-        font-size: 11px;
-        font-weight: 700;
-        color: #94a9b6;
-        letter-spacing: 0.8px;
+      .calendar-widget-card {
+        width: 100%;
+        max-width: 440px;
+        background: #ffffff;
+        border: 1px solid #cbd8e0;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(36, 60, 76, 0.04);
+        padding: 24px 28px;
+      }
+
+      .widget-title-text {
+        font-size: 0.95rem;
+        font-family: 'Space Grotesk', sans-serif;
+      }
+
+      .event-item-widget {
+        transition: all 0.2s ease;
+        border: 1px solid transparent !important;
+      }
+
+      .bg-light-hover:hover {
+        background-color: #f8fafc;
+        border-color: #cbd8e0 !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(36, 60, 76, 0.02);
       }
 
       .text-dark-blue {
@@ -230,42 +324,6 @@ type HealthResponse = {
 
       .font-xs {
         font-size: 0.8125rem !important;
-      }
-
-      .border-light {
-        border-color: #f1f5f9 !important;
-      }
-
-      .status-pulse-dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background-color: #22c55e;
-        display: inline-block;
-        animation: pulse 2s infinite;
-      }
-
-      @keyframes pulse {
-        0%,
-        100% {
-          box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.45);
-        }
-        50% {
-          box-shadow: 0 0 0 5px rgba(34, 197, 94, 0);
-        }
-      }
-
-      .spin {
-        animation: spin 1s linear infinite;
-      }
-
-      @keyframes spin {
-        from {
-          transform: rotate(0deg);
-        }
-        to {
-          transform: rotate(360deg);
-        }
       }
 
       .cv-serif {

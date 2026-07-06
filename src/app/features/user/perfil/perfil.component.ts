@@ -77,9 +77,21 @@ import { ToastService } from '../../../core/services/toast.service';
           <div class="font-xs d-flex flex-column gap-3">
             <div>
               <span class="text-muted d-block font-xxs fw-semibold">CORREO ELECTRÓNICO</span>
-              <span class="fw-semibold text-dark-blue font-sm">{{
-                authService.currentUser()?.email
-              }}</span>
+              <div class="d-flex align-items-center gap-2">
+                <span class="fw-semibold text-dark-blue font-sm">{{
+                  mostrarCorreo()
+                    ? authService.currentUser()?.email
+                    : enmascararCorreo(authService.currentUser()?.email)
+                }}</span>
+                <button
+                  (click)="toggleMostrarCorreo()"
+                  class="btn btn-link p-0 text-muted-blue hover-primary d-flex align-items-center"
+                  style="border: none; background: transparent;"
+                  [title]="mostrarCorreo() ? 'Ocultar correo' : 'Mostrar correo'"
+                >
+                  <i class="bi" [ngClass]="mostrarCorreo() ? 'bi-eye-slash' : 'bi-eye'"></i>
+                </button>
+              </div>
             </div>
             <div *ngIf="authService.currentUser()?.username">
               <span class="text-muted d-block font-xxs fw-semibold">USUARIO DE SISTEMA</span>
@@ -175,6 +187,24 @@ export class PerfilComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
 
   is2FAEnabled = signal<boolean>(false);
+
+  // Privacidad de correo
+  mostrarCorreo = signal(false);
+
+  toggleMostrarCorreo() {
+    this.mostrarCorreo.update((v) => !v);
+  }
+
+  enmascararCorreo(email: string | undefined): string {
+    if (!email) return '—';
+    const partes = email.split('@');
+    if (partes.length !== 2) return '••••••••';
+    const [local, dominio] = partes;
+    if (local.length <= 1) {
+      return `•@${dominio}`;
+    }
+    return `${local.charAt(0)}${'•'.repeat(local.length - 1)}@${dominio}`;
+  }
 
   // Edición de nombre
   editandoNombre = signal(false);

@@ -13,7 +13,7 @@
     </a>
   </div>
 
-  <!-- Spinner -->
+  <!-- Spinner de Carga -->
   <div *ngIf="loading()" class="text-center py-5">
     <div class="spinner-border text-primary spinner-border-sm" role="status">
       <span class="visually-hidden">Cargando...</span>
@@ -21,98 +21,179 @@
     <p class="text-muted small mt-2 mb-0">Cargando eventos...</p>
   </div>
 
-  <!-- Tabla -->
-  <div *ngIf="!loading()" class="card border shadow-xs rounded-4 overflow-hidden bg-white">
-    <!-- Empty state -->
-    <div *ngIf="eventos().length === 0" class="text-center py-5">
-      <i class="bi bi-calendar4-week text-muted opacity-50 display-5"></i>
-      <p class="text-muted small mt-2 mb-0">No tenés eventos creados todavía.</p>
-      <a routerLink="/admin/eventos/crear" class="btn btn-sm btn-primary mt-3 px-4 rounded-3"
-        >Crear primer evento</a
-      >
+  <!-- Contenido del Listado -->
+  <div *ngIf="!loading()">
+    <!-- Barra de Filtros y Búsqueda -->
+    <div class="card border shadow-xs rounded-4 p-3 bg-white mb-4 animate-fade-in">
+      <div class="row g-3 align-items-center">
+        <!-- Buscador -->
+        <div class="col-12 col-md-4">
+          <div class="input-group">
+            <span class="input-group-text bg-white border-end-0 text-muted">
+              <i class="bi bi-search"></i>
+            </span>
+            <input
+              type="text"
+              class="form-control border-start-0 font-sm"
+              placeholder="Buscar por título o lugar..."
+              [ngModel]="buscarTexto()"
+              (ngModelChange)="actualizarBuscar($event)"
+            />
+          </div>
+        </div>
+
+        <!-- Filtro por Estado -->
+        <div class="col-6 col-md-3">
+          <div class="d-flex align-items-center gap-2">
+            <label class="font-xxs fw-bold text-muted text-uppercase mb-0 text-nowrap"
+              >Estado:</label
+            >
+            <select
+              class="form-select font-sm rounded-3 py-1.5"
+              [ngModel]="filtroEstado()"
+              (ngModelChange)="actualizarEstado($event)"
+            >
+              <option value="TODOS">Todos</option>
+              <option value="PUBLICADO">Publicados</option>
+              <option value="BORRADOR">Borradores</option>
+              <option value="CANCELADO">Cancelados</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Ordenación -->
+        <div class="col-6 col-md-5">
+          <div class="d-flex align-items-center gap-2 justify-content-md-end">
+            <label class="font-xxs fw-bold text-muted text-uppercase mb-0 text-nowrap"
+              >Ordenar por:</label
+            >
+            <select
+              class="form-select font-sm rounded-3 py-1.5"
+              style="max-width: 240px"
+              [ngModel]="criterioOrden()"
+              (ngModelChange)="actualizarOrden($event)"
+            >
+              <option value="FECHA_ASC">Fecha (Más próximos primero)</option>
+              <option value="FECHA_DESC">Fecha (Más lejanos primero)</option>
+              <option value="TITULO_ASC">Título (A-Z)</option>
+              <option value="OCUPACION_DESC">Ocupación / Popularidad (%)</option>
+              <option value="CREACION_DESC">Más recientes (Fecha de creación)</option>
+            </select>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div *ngIf="eventos().length > 0">
-      <!-- Cabecera -->
-      <div
-        class="row mx-0 py-2 px-4 bg-light-gray border-bottom font-xs fw-bold text-muted text-uppercase tracking-wider"
-      >
-        <div class="col-4 ps-0">Título</div>
-        <div class="col-2">Fecha</div>
-        <div class="col-1 text-center">Cupo</div>
-        <div class="col-2">Estado</div>
-        <div class="col-3 text-end pe-0">Acciones</div>
+    <!-- Contenedor Principal de la Tabla -->
+    <div class="card border shadow-xs rounded-4 overflow-hidden bg-white">
+      <!-- Caso 1: No hay ningún evento creado en absoluto -->
+      <div *ngIf="eventos().length === 0" class="text-center py-5">
+        <i class="bi bi-calendar4-week text-muted opacity-50 display-5"></i>
+        <p class="text-muted small mt-2 mb-0">No tenés eventos creados todavía.</p>
+        <a routerLink="/admin/eventos/crear" class="btn btn-sm btn-primary mt-3 px-4 rounded-3"
+          >Crear primer evento</a
+        >
       </div>
 
-      <!-- Filas -->
-      <div
-        *ngFor="let evento of eventos()"
-        class="row mx-0 py-3 px-4 border-bottom align-items-center table-row"
-      >
-        <!-- Título -->
-        <div class="col-4 ps-0">
-          <span class="fw-semibold text-dark-blue font-sm">{{ evento.titulo }}</span>
-          <div class="text-muted font-xxs mt-0.5">{{ evento.ubicacion || 'Sin ubicación' }}</div>
+      <!-- Caso 2: Hay eventos creados pero ninguno coincide con los filtros actuales -->
+      <div *ngIf="eventos().length > 0 && eventosFiltrados().length === 0" class="text-center py-5">
+        <i class="bi bi-funnel text-muted opacity-50 display-5"></i>
+        <p class="text-muted small mt-2 mb-0">
+          Ningún evento coincide con los filtros de búsqueda.
+        </p>
+        <button
+          (click)="actualizarBuscar(''); actualizarEstado('TODOS'); actualizarOrden('FECHA_ASC')"
+          class="btn btn-sm btn-outline-secondary mt-3 px-4 rounded-3"
+        >
+          Limpiar filtros
+        </button>
+      </div>
+
+      <!-- Caso 3: Listado de Eventos -->
+      <div *ngIf="eventosFiltrados().length > 0">
+        <!-- Cabecera -->
+        <div
+          class="row mx-0 py-2 px-4 bg-light-gray border-bottom font-xs fw-bold text-muted text-uppercase tracking-wider"
+        >
+          <div class="col-4 ps-0">Título</div>
+          <div class="col-2">Fecha</div>
+          <div class="col-2 text-center">Inscriptos / Cupo</div>
+          <div class="col-2">Estado</div>
+          <div class="col-2 text-end pe-0">Acciones</div>
         </div>
 
-        <!-- Fecha -->
-        <div class="col-2 font-xs text-muted">
-          {{ evento.fecha | date: 'dd/MM/yyyy' }}
-        </div>
+        <!-- Filas -->
+        <div
+          *ngFor="let evento of eventosFiltrados()"
+          class="row mx-0 py-3 px-4 border-bottom align-items-center table-row animate-fade-in"
+        >
+          <!-- Título -->
+          <div class="col-4 ps-0">
+            <span class="fw-semibold text-dark-blue font-sm">{{ evento.titulo }}</span>
+            <div class="text-muted font-xxs mt-0.5">{{ evento.ubicacion || 'Sin ubicación' }}</div>
+          </div>
 
-        <!-- Cupo -->
-        <div class="col-1 text-center">
-          <span class="fw-semibold text-dark-blue font-sm">{{ evento.cupo_maximo }}</span>
-        </div>
+          <!-- Fecha -->
+          <div class="col-2 font-xs text-muted">
+            {{ evento.fecha | date: 'dd/MM/yyyy HH:mm hs' }}
+          </div>
 
-        <!-- Estado badge -->
-        <div class="col-2">
-          <span
-            class="badge rounded-pill px-2 py-1 font-xxs fw-semibold"
-            [ngClass]="{
-              'bg-asistio text-asistio': evento.estado === 'PUBLICADO',
-              'bg-espera text-espera': evento.estado === 'BORRADOR',
-              'bg-cancelado text-cancelado': evento.estado === 'CANCELADO',
-            }"
-          >
-            {{ evento.estado }}
-          </span>
-        </div>
+          <!-- Inscriptos / Cupo -->
+          <div class="col-2 text-center">
+            <span class="fw-semibold text-dark-blue font-sm">
+              {{ obtenerCantidadInscriptos(evento) }} / {{ evento.cupo_maximo }}
+            </span>
+          </div>
 
-        <!-- Acciones -->
-        <div class="col-3 text-end pe-0 d-flex justify-content-end gap-2">
-          <!-- Ver inscriptos -->
-          <a
-            [routerLink]="['/admin/eventos', evento.id, 'inscriptos']"
-            class="btn btn-sm btn-outline-secondary rounded-3 font-xs px-2 py-1"
-            title="Ver inscriptos"
-          >
-            <i class="bi bi-people"></i>
-          </a>
-
-          <!-- Editar -->
-          <a
-            [routerLink]="['/admin/eventos/editar', evento.id]"
-            class="btn btn-sm btn-outline-primary rounded-3 font-xs px-2 py-1"
-            title="Editar"
-          >
-            <i class="bi bi-pencil"></i>
-          </a>
-
-          <!-- Eliminar -->
-          <button
-            class="btn btn-sm btn-outline-danger rounded-3 font-xs px-2 py-1"
-            title="Eliminar"
-            [disabled]="eliminandoId() === evento.id"
-            (click)="confirmarEliminar(evento)"
-          >
+          <!-- Estado badge -->
+          <div class="col-2">
             <span
-              *ngIf="eliminandoId() === evento.id"
-              class="spinner-border spinner-border-sm"
-              role="status"
-            ></span>
-            <i *ngIf="eliminandoId() !== evento.id" class="bi bi-trash"></i>
-          </button>
+              class="badge rounded-pill px-2 py-1 font-xxs fw-semibold"
+              [ngClass]="{
+                'bg-asistio text-asistio': evento.estado === 'PUBLICADO',
+                'bg-espera text-espera': evento.estado === 'BORRADOR',
+                'bg-cancelado text-cancelado': evento.estado === 'CANCELADO',
+              }"
+            >
+              {{ evento.estado | titlecase }}
+            </span>
+          </div>
+
+          <!-- Acciones -->
+          <div class="col-2 text-end pe-0 d-flex justify-content-end gap-2">
+            <!-- Ver inscriptos -->
+            <a
+              [routerLink]="['/admin/eventos', evento.id, 'inscriptos']"
+              class="btn btn-sm btn-outline-secondary rounded-3 font-xs px-2 py-1"
+              title="Ver inscriptos"
+            >
+              <i class="bi bi-people"></i>
+            </a>
+
+            <!-- Editar -->
+            <a
+              [routerLink]="['/admin/eventos/editar', evento.id]"
+              class="btn btn-sm btn-outline-primary rounded-3 font-xs px-2 py-1"
+              title="Editar"
+            >
+              <i class="bi bi-pencil"></i>
+            </a>
+
+            <!-- Eliminar -->
+            <button
+              class="btn btn-sm btn-outline-danger rounded-3 font-xs px-2 py-1"
+              title="Eliminar"
+              [disabled]="eliminandoId() === evento.id"
+              (click)="confirmarEliminar(evento)"
+            >
+              <span
+                *ngIf="eliminandoId() === evento.id"
+                class="spinner-border spinner-border-sm"
+                role="status"
+              ></span>
+              <i *ngIf="eliminandoId() !== evento.id" class="bi bi-trash"></i>
+            </button>
+          </div>
         </div>
       </div>
     </div>
