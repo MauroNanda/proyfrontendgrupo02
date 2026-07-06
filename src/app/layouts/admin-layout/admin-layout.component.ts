@@ -16,7 +16,7 @@ import { AuthService } from '../../core/services/auth.service';
       <aside class="sidebar d-flex flex-column">
         <!-- Logo -->
         <a class="sidebar-header text-decoration-none text-white" routerLink="/admin/dashboard">
-          <span class="sidebar-logo">C</span>
+          <img src="/assets/brand/logo.svg" alt="Convoca" class="sidebar-logo-img" height="36" />
           <div>
             <div class="sidebar-brand">convoca</div>
             <div class="sidebar-label">ORGANIZADOR</div>
@@ -105,18 +105,11 @@ import { AuthService } from '../../core/services/auth.service';
         margin-bottom: 0.75rem;
       }
 
-      .sidebar-logo {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 36px;
+      .sidebar-logo-img {
         height: 36px;
-        border-radius: 10px;
-        background-color: rgba(255, 255, 255, 0.12);
-        color: white;
-        font-weight: 700;
-        font-size: 18px;
-        font-family: 'Space Grotesk', sans-serif;
+        width: auto;
+        display: block;
+        flex-shrink: 0;
       }
 
       .sidebar-brand {

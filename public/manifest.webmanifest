@@ -1,0 +1,16 @@
+{
+  "name": "Convoca",
+  "short_name": "Convoca",
+  "description": "Eventos universitarios — UNJu",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#5289ad",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}

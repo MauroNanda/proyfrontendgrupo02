@@ -6,6 +6,8 @@ import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
 import { AuthService } from '../../core/services/auth.service';
 import { NotificacionService, Notificacion } from '../../core/services/notificacion.service';
 import { EventoService, Evento } from '../../core/services/evento.service';
+import { PushService } from '../../core/services/push.service';
+import { ToastService } from '../../core/services/toast.service';
 
 // Layout PÚBLICO — envuelve las rutas del Asistente.
 // Navbar con logo, búsqueda, notificaciones y acciones de auth.
@@ -18,7 +20,7 @@ import { EventoService, Evento } from '../../core/services/evento.service';
       <div class="container">
         <!-- Logo -->
         <a class="navbar-brand d-flex align-items-center gap-2" routerLink="/">
-          <span class="navbar-logo">C</span>
+          <img src="/assets/brand/logo.svg" alt="Convoca" class="navbar-logo-img" height="36" />
           <span class="brand-text">convoca</span>
         </a>
 
@@ -184,6 +186,26 @@ import { EventoService, Evento } from '../../core/services/evento.service';
                     </div>
                   </div>
                 </div>
+
+                <div class="border-top pt-2 mt-2">
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline-primary w-100 d-flex align-items-center justify-content-center gap-2"
+                    [disabled]="activandoPush()"
+                    (click)="activarNotificacionesPush()"
+                  >
+                    @if (activandoPush()) {
+                      <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                      Activando...
+                    } @else {
+                      <i class="bi bi-bell-fill"></i>
+                      Alertas del navegador
+                    }
+                  </button>
+                  <p class="font-xxs text-muted mb-0 mt-2 text-center">
+                    Recibí avisos aunque no tengas la pestaña abierta.
+                  </p>
+                </div>
               </div>
             </div>
 
@@ -229,18 +251,10 @@ import { EventoService, Evento } from '../../core/services/evento.service';
   `,
   styles: [
     `
-      .navbar-logo {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 32px;
-        height: 32px;
-        border-radius: 8px;
-        background-color: #5289ad;
-        color: white;
-        font-weight: 700;
-        font-size: 16px;
-        font-family: 'Space Grotesk', sans-serif;
+      .navbar-logo-img {
+        height: 36px;
+        width: auto;
+        display: block;
       }
 
       .brand-text {
@@ -491,11 +505,14 @@ export class PublicLayoutComponent implements OnInit, OnDestroy {
   readonly authService = inject(AuthService);
   private readonly notifService = inject(NotificacionService);
   private readonly eventoService = inject(EventoService);
+  private readonly pushService = inject(PushService);
+  private readonly toastService = inject(ToastService);
 
   readonly showNotifications = signal(false);
   readonly notificaciones = signal<Notificacion[]>([]);
   readonly unreadCount = signal(0);
   readonly loadingNotifs = signal(false);
+  readonly activandoPush = signal(false);
 
   // Autocomplete Signals y RxJS
   readonly queryText = signal('');
@@ -616,5 +633,23 @@ export class PublicLayoutComponent implements OnInit, OnDestroy {
       },
       error: (err) => console.error('Error al marcar todas leídas:', err),
     });
+  }
+
+  async activarNotificacionesPush(): Promise<void> {
+    if (!this.pushService.navegadorCompatible()) {
+      this.toastService.error('Tu navegador no soporta notificaciones push.');
+      return;
+    }
+
+    this.activandoPush.set(true);
+    try {
+      await this.pushService.activarNotificaciones();
+      this.toastService.success('Alertas del navegador activadas correctamente.');
+    } catch (err) {
+      const mensaje = err instanceof Error ? err.message : 'No se pudieron activar las alertas.';
+      this.toastService.error(mensaje);
+    } finally {
+      this.activandoPush.set(false);
+    }
   }
 }
