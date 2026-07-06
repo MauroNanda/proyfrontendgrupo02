@@ -175,4 +175,35 @@ export class EventDetailComponent implements OnInit {
     );
     this.toastService.success('Pase descargado en PDF');
   }
+
+  private formatearFechaGoogle(fecha: string): string {
+    return new Date(fecha)
+      .toISOString()
+      .replace(/[-:]/g, '')
+      .replace(/\.\d{3}Z$/, 'Z');
+  }
+
+  agregarAGoogleCalendar(): void {
+    const evento = this.evento();
+
+    if (!evento?.fecha) {
+      this.toastService.warning('Este evento no tiene una fecha definida.');
+      return;
+    }
+
+    const inicio = new Date(evento.fecha);
+
+    // Duración estimada de 2 horas
+    const fin = new Date(inicio);
+    fin.setHours(fin.getHours() + 2);
+
+    const url =
+      'https://calendar.google.com/calendar/render?action=TEMPLATE' +
+      `&text=${encodeURIComponent(evento.titulo)}` +
+      `&dates=${this.formatearFechaGoogle(inicio.toISOString())}/${this.formatearFechaGoogle(fin.toISOString())}` +
+      `&details=${encodeURIComponent(evento.descripcion ?? '')}` +
+      `&location=${encodeURIComponent(evento.ubicacion ?? '')}`;
+
+    window.open(url, '_blank');
+  }
 }
