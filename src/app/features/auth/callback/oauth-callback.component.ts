@@ -14,27 +14,22 @@ export class OAuthCallbackComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
 
   ngOnInit() {
-    // El backend manda el token en el fragment (#token=...), NO en la query:
-    // el fragment no viaja al servidor, así que no queda en logs de acceso ni
-    // en el header Referer. (El flujo con 2FA no llega acá: redirige a /auth/2fa.)
+    // El backend ya dejó la cookie httpOnly en su redirect 302; acá solo
+    // preguntamos "¿quién soy?" (con la cookie) para poblar currentUser.
     const hash = new URLSearchParams(window.location.hash.slice(1));
-    const token = hash.get('token');
     const error = hash.get('error');
 
-    if (error || !token) {
-      this.router.navigate(['/login'], { queryParams: error ? { error } : {} });
+    if (error) {
+      this.router.navigate(['/login'], { queryParams: { error } });
       return;
     }
 
-    // El callback solo trae el token; pedimos el perfil para poblar currentUser
-    // (sin esto la UI no muestra nombre/rol y el guard de admin no funciona).
-    this.authService.guardarToken(token);
     this.authService
       .cargarPerfil()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => this.authService.redirigirPostAuth(),
-        error: () => this.router.navigate(['/']),
+        error: () => this.router.navigate(['/login'], { queryParams: { error: 'oauth' } }),
       });
   }
 }

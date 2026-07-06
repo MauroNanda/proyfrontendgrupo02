@@ -38,18 +38,19 @@ export class TestLoginComponent {
   private readonly router = inject(Router);
 
   loginComoJuan() {
-    const token =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImM5YjBlMjcxLWUwYzItNDA0NS04MTY3LTM3Mjk5OGE0NDI3NCIsIm5vbWJyZSI6Ikp1YW4gUMOpcmV6IiwiZW1haWwiOiJqdWFuLnBlcmV6LnY0QGZpLnVuanUuZWR1LmFyIiwiaWF0IjoxNzgyNjkzMzUwLCJleHAiOjE3ODI3Nzk3NTB9.byMNiU4TW10kfczBEkmrKo9FZvmM2ks9mzkTG_KayDk';
+    // NOTA: desde C-22 la sesión se autentica por una cookie httpOnly que solo
+    // puede emitir el backend, así que este simulador ya no puede falsear un
+    // login real (las llamadas protegidas darían 401). Se deja solo el usuario
+    // cacheado para probar la UI; ya NO se escribe ningún token en localStorage.
     const usuario = {
       id: 'c9b0e271-e0c2-4045-8167-372998a44274',
       nombre: 'Juan Pérez',
       email: 'juan.perez.v4@fi.unju.edu.ar',
     };
 
-    localStorage.setItem('token', token);
     localStorage.setItem('usuario', JSON.stringify(usuario));
 
-    alert('Sesión simulada con éxito. Redirigiendo al evento...');
+    alert('Usuario de prueba cargado (solo UI; la sesión real requiere login).');
     this.router.navigate(['/eventos/a6e11cf8-17a4-4f9e-a0de-e2e01314995f']);
   }
 }

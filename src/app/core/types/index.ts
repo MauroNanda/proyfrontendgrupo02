@@ -8,9 +8,11 @@ export interface Usuario {
 }
 
 export interface AuthResponse {
-  token: string;
+  // El token ya NO se usa en el front (la sesión va por cookie httpOnly); el
+  // backend lo sigue mandando en transición, por eso queda opcional.
+  token?: string;
   usuario: Usuario;
-  // Presentes solo cuando el login dispara el segundo factor (no hay token aún).
+  // Presentes solo cuando el login dispara el segundo factor (no hay usuario aún).
   requiere2FA?: boolean;
   email?: string;
   mensaje?: string;

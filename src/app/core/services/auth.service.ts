@@ -14,12 +14,12 @@ export class AuthService {
 
   private apiUrl = `${environment.apiUrl}/auth`;
 
-  // Signals para estado de autenticación
+  // Estado de autenticación. Ya NO existe el signal `token`: el JWT vive en una
+  // cookie httpOnly que el JS no puede leer (esa es la protección contra XSS).
+  // La sesión se deriva de si hay un `usuario` cargado.
   readonly currentUser = signal<Usuario | null>(null);
-  readonly token = signal<string | null>(null);
 
-  // Signals computadas
-  readonly isLoggedIn = computed(() => !!this.token());
+  readonly isLoggedIn = computed(() => !!this.currentUser());
   readonly isAdmin = computed(() => this.currentUser()?.rol === 'ORGANIZADOR');
 
   constructor() {
@@ -27,19 +27,14 @@ export class AuthService {
   }
 
   /**
-   * Inicia sesión con email y contraseña.
+   * Inicia sesión con email y contraseña. La cookie httpOnly la setea el backend;
+   * acá solo guardamos el usuario. Si la respuesta pide 2FA todavía no hay sesión.
    */
   login(credenciales: LoginCredentials): Observable<AuthResponse> {
-    return (
-      this.http
-        .post<AuthResponse>(`${this.apiUrl}/login`, credenciales)
-        // Solo guardamos sesión si vino token: si la respuesta pide 2FA todavía
-        // no hay token (evita persistir "undefined" en localStorage).
-        .pipe(
-          tap((res) => {
-            if (res.token) this.guardarSesion(res);
-          }),
-        )
+    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credenciales).pipe(
+      tap((res) => {
+        if (res.usuario) this.guardarSesion(res);
+      }),
     );
   }
 
@@ -47,18 +42,20 @@ export class AuthService {
    * Registra un nuevo usuario.
    */
   registro(datos: RegistroCredentials): Observable<AuthResponse> {
-    return this.http
-      .post<AuthResponse>(`${this.apiUrl}/registro`, datos)
-      .pipe(tap((res) => this.guardarSesion(res)));
+    return this.http.post<AuthResponse>(`${this.apiUrl}/registro`, datos).pipe(
+      tap((res) => {
+        if (res.usuario) this.guardarSesion(res);
+      }),
+    );
   }
 
   /**
-   * Cierra la sesión activa.
+   * Cierra la sesión: le pide al backend que borre la cookie httpOnly (el front
+   * no puede borrarla por sí mismo) y limpia el estado local pase lo que pase.
    */
   logout(): void {
-    localStorage.removeItem('token');
+    this.http.post(`${this.apiUrl}/logout`, {}).subscribe({ error: () => {} });
     localStorage.removeItem('usuario');
-    this.token.set(null);
     this.currentUser.set(null);
     this.router.navigate(['/']);
   }
@@ -81,31 +78,27 @@ export class AuthService {
   }
 
   /**
-   * Guarda los datos de sesión en localStorage y actualiza los signals.
+   * Guarda el usuario (dato no sensible) como caché para el próximo arranque.
+   * El token NO se guarda: viaja solo en la cookie httpOnly.
    */
   private guardarSesion(auth: AuthResponse): void {
-    localStorage.setItem('token', auth.token);
     localStorage.setItem('usuario', JSON.stringify(auth.usuario));
-    this.token.set(auth.token);
     this.currentUser.set(auth.usuario);
   }
 
   /**
-   * Carga los datos de sesión almacenados al arrancar el servicio.
+   * Arranque: restaura el usuario cacheado (UI instantánea, guards síncronos) y
+   * revalida la sesión real pidiendo /perfil. Si la cookie venció o no existe,
+   * el 401 lo maneja el errorInterceptor (hace logout).
    */
   private cargarSesion(): void {
-    const token = localStorage.getItem('token');
     const usuarioStr = localStorage.getItem('usuario');
-
-    if (token && usuarioStr) {
-      try {
-        const usuario = JSON.parse(usuarioStr) as Usuario;
-        this.token.set(token);
-        this.currentUser.set(usuario);
-      } catch (err) {
-        console.error('Error cargando sesión persistida:', err);
-        this.logout();
-      }
+    if (!usuarioStr) return;
+    try {
+      this.currentUser.set(JSON.parse(usuarioStr) as Usuario);
+      this.cargarPerfil().subscribe({ error: () => {} }); // revalidación en 2do plano
+    } catch {
+      localStorage.removeItem('usuario');
     }
   }
 
@@ -113,23 +106,16 @@ export class AuthService {
    * Verifica el código 2FA enviado por el usuario.
    */
   verificar2FA(email: string, codigo: string): Observable<AuthResponse> {
-    return this.http
-      .post<AuthResponse>(`${this.apiUrl}/2fa/verify`, { email, codigo })
-      .pipe(tap((res) => this.guardarSesion(res)));
+    return this.http.post<AuthResponse>(`${this.apiUrl}/2fa/verify`, { email, codigo }).pipe(
+      tap((res) => {
+        if (res.usuario) this.guardarSesion(res);
+      }),
+    );
   }
 
   /**
-   * Guarda el token recibido en el callback de Google (el callback solo trae el
-   * token, no el usuario). Para poblar currentUser, llamar luego a cargarPerfil().
-   */
-  guardarToken(token: string): void {
-    localStorage.setItem('token', token);
-    this.token.set(token);
-  }
-
-  /**
-   * Pide el perfil al backend (con el token ya guardado) y puebla currentUser.
-   * Se usa tras el login con Google, donde el callback no devuelve el usuario.
+   * Pide el perfil al backend (autenticado por la cookie) y puebla currentUser.
+   * Se usa al arrancar y tras el login con Google (el callback no devuelve usuario).
    */
   cargarPerfil(): Observable<Usuario> {
     return this.http.get<Usuario>(`${this.apiUrl}/perfil`).pipe(
