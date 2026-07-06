@@ -3,7 +3,7 @@
 
 export const environment = {
   production: true,
-  apiUrl: 'https://api.convoca.app/api', // Reemplazar por la URL real al desplegar.
+  apiUrl: 'https://proybackendgrupo02-t89t.onrender.com/api',
   googleClientId: '',
   vapidPublicKey: '',
 };
