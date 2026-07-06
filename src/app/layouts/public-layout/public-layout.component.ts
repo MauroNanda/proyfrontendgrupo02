@@ -1,5 +1,5 @@
 import { Component, inject, signal, OnInit, OnDestroy } from '@angular/core';
-import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Subject, Subscription, timer } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
@@ -61,8 +61,8 @@ import { ToastService } from '../../core/services/toast.service';
               <div
                 *ngFor="let item of sugerencias()"
                 class="suggestion-item p-2 rounded-3 d-flex align-items-center gap-2"
-                [routerLink]="['/eventos', item.id]"
                 (mousedown)="selectSuggestion(item)"
+                style="cursor: pointer;"
               >
                 <i class="bi bi-calendar-event text-muted-blue font-sm"></i>
                 <div class="flex-grow-1 min-w-0">
@@ -106,7 +106,7 @@ import { ToastService } from '../../core/services/toast.service';
             >
             <a
               *ngIf="authService.isLoggedIn()"
-              routerLink="/perfil"
+              routerLink="/mis-inscripciones"
               routerLinkActive="active"
               class="nav-link nav-item-custom d-none d-lg-block"
               >Mis Inscripciones</a
@@ -221,7 +221,7 @@ import { ToastService } from '../../core/services/toast.service';
             @if (authService.isLoggedIn()) {
               <a
                 routerLink="/perfil"
-                class="text-decoration-none d-flex align-items-center gap-1.5 me-2 text-muted-blue hover-primary"
+                class="text-decoration-none d-flex align-items-center gap-2 me-2 text-muted-blue hover-primary"
                 title="Mi Perfil"
               >
                 <i class="bi bi-person-circle fs-5"></i>
@@ -542,6 +542,7 @@ export class PublicLayoutComponent implements OnInit, OnDestroy {
   private readonly eventoService = inject(EventoService);
   private readonly pushService = inject(PushService);
   private readonly toastService = inject(ToastService);
+  private readonly router = inject(Router);
 
   readonly showNotifications = signal(false);
   readonly notificaciones = signal<Notificacion[]>([]);
@@ -627,6 +628,7 @@ export class PublicLayoutComponent implements OnInit, OnDestroy {
   }
 
   selectSuggestion(item: Evento): void {
+    this.router.navigate(['/eventos', item.id]);
     this.queryText.set('');
     this.sugerencias.set([]);
     this.showSuggestions.set(false);

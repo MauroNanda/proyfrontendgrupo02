@@ -38,13 +38,17 @@ export class EventDetailComponent implements OnInit {
   readonly error = signal<string | null>(null);
 
   ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (!id) {
-      this.error.set('ID de evento no válido');
-      this.loading.set(false);
-      return;
-    }
-    this.cargarDatos(id);
+    this.route.paramMap.subscribe({
+      next: (params) => {
+        const id = params.get('id');
+        if (!id) {
+          this.error.set('ID de evento no válido');
+          this.loading.set(false);
+          return;
+        }
+        this.cargarDatos(id);
+      },
+    });
   }
 
   cargarDatos(eventoId: string): void {
@@ -123,8 +127,7 @@ export class EventDetailComponent implements OnInit {
         this.cargarEstadoInscripcion(evt.id);
         this.actionLoading.set(false);
       },
-      error: (err) => {
-        this.toastService.error(err.error?.error?.message || 'Error al inscribirse');
+      error: () => {
         this.actionLoading.set(false);
       },
     });
@@ -145,8 +148,7 @@ export class EventDetailComponent implements OnInit {
         this.cargarEstadoInscripcion(evt.id);
         this.actionLoading.set(false);
       },
-      error: (err) => {
-        this.toastService.error(err.error?.error?.message || 'Error al cancelar la inscripción');
+      error: () => {
         this.actionLoading.set(false);
       },
     });

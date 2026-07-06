@@ -50,6 +50,14 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/user/perfil/perfil.component').then((m) => m.PerfilComponent),
       },
+      {
+        path: 'mis-inscripciones',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./features/user/mis-inscripciones/mis-inscripciones.component').then(
+            (m) => m.MisInscripcionesComponent,
+          ),
+      },
     ],
   },
   {
