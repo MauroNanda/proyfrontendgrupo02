@@ -83,4 +83,11 @@ export class InscripcionService {
       {},
     );
   }
+
+  /**
+   * Obtiene la lista de inscripciones del asistente logueado con detalles de evento.
+   */
+  obtenerMisInscripciones(): Observable<any[]> {
+    return this.api.get<any[]>('/inscripciones/mis-inscripciones');
+  }
 }

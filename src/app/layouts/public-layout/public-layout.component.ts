@@ -1,7 +1,7 @@
 import { Component, inject, signal, OnInit, OnDestroy } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { Subject, Subscription } from 'rxjs';
+import { Subject, Subscription, timer } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
 import { AuthService } from '../../core/services/auth.service';
 import { NotificacionService, Notificacion } from '../../core/services/notificacion.service';
@@ -244,8 +244,29 @@ import { ToastService } from '../../core/services/toast.service';
     </main>
 
     <footer class="app-footer">
-      <div class="container">
+      <div
+        class="container d-flex flex-column flex-md-row align-items-center justify-content-between gap-3"
+      >
         <span>&copy; 2026 Convoca · Facultad de Ingeniería · UNJu</span>
+        <div class="d-flex align-items-center gap-3">
+          <span class="font-xxs text-muted">Canales de difusión:</span>
+          <a
+            href="https://t.me/+F7z_P689S-0xODQx"
+            target="_blank"
+            class="text-decoration-none text-muted-blue d-flex align-items-center gap-1 font-xxs fw-semibold"
+            title="Telegram"
+          >
+            <i class="bi bi-telegram text-primary fs-6"></i> Telegram
+          </a>
+          <a
+            href="https://discord.gg/g3Uu5YqC"
+            target="_blank"
+            class="text-decoration-none text-muted-blue d-flex align-items-center gap-1 font-xxs fw-semibold"
+            title="Discord"
+          >
+            <i class="bi bi-discord fs-6" style="color: #5865f2;"></i> Discord
+          </a>
+        </div>
       </div>
     </footer>
   `,
@@ -521,11 +542,15 @@ export class PublicLayoutComponent implements OnInit, OnDestroy {
   readonly loadingSuggestions = signal(false);
   private readonly searchSubject = new Subject<string>();
   private searchSubscription?: Subscription;
+  private notifSubscription?: Subscription;
 
   ngOnInit(): void {
-    if (this.authService.isLoggedIn()) {
-      this.cargarNotificaciones();
-    }
+    // Polling de notificaciones cada 30 segundos si está logueado
+    this.notifSubscription = timer(0, 30000).subscribe(() => {
+      if (this.authService.isLoggedIn()) {
+        this.cargarNotificaciones();
+      }
+    });
 
     this.searchSubscription = this.searchSubject
       .pipe(
@@ -556,6 +581,9 @@ export class PublicLayoutComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     if (this.searchSubscription) {
       this.searchSubscription.unsubscribe();
+    }
+    if (this.notifSubscription) {
+      this.notifSubscription.unsubscribe();
     }
   }
 

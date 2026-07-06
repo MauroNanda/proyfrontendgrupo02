@@ -1,6 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  ReactiveFormsModule,
+  Validators,
+  AbstractControl,
+  ValidationErrors,
+  ValidatorFn,
+} from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 
 import { Evento, EventoService } from '../../../../core/services/evento.service';
@@ -28,11 +35,21 @@ export class EventFormComponent implements OnInit {
   formulario = this.fb.group({
     titulo: ['', Validators.required],
     descripcion: [''],
-    fecha: ['', Validators.required],
+    fecha: ['', [Validators.required, (c: AbstractControl) => this.futureDateValidator()(c)]],
     ubicacion: ['', Validators.required],
     cupo_maximo: [1, [Validators.required, Validators.min(1)]],
     estado: ['BORRADOR', Validators.required],
   });
+
+  private futureDateValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (!control.value) return null;
+      if (this.editando()) return null; // Ignorar en modo edición para no bloquear eventos pasados
+      const inputDate = new Date(control.value);
+      const currentDate = new Date();
+      return inputDate < currentDate ? { pastDate: true } : null;
+    };
+  }
 
   ngOnInit(): void {
     this.idEvento = this.route.snapshot.paramMap.get('id') || '';

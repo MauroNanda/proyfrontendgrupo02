@@ -2,6 +2,7 @@ export interface Usuario {
   id: string;
   nombre: string;
   email: string;
+  username?: string;
   rol?: 'ORGANIZADOR' | 'ASISTENTE';
   avatarUrl?: string;
   two_factor_enabled?: boolean;
