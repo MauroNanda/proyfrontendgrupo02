@@ -30,9 +30,17 @@ export class AuthService {
    * Inicia sesión con email y contraseña.
    */
   login(credenciales: LoginCredentials): Observable<AuthResponse> {
-    return this.http
-      .post<AuthResponse>(`${this.apiUrl}/login`, credenciales)
-      .pipe(tap((res) => this.guardarSesion(res)));
+    return (
+      this.http
+        .post<AuthResponse>(`${this.apiUrl}/login`, credenciales)
+        // Solo guardamos sesión si vino token: si la respuesta pide 2FA todavía
+        // no hay token (evita persistir "undefined" en localStorage).
+        .pipe(
+          tap((res) => {
+            if (res.token) this.guardarSesion(res);
+          }),
+        )
+    );
   }
 
   /**
@@ -111,13 +119,25 @@ export class AuthService {
   }
 
   /**
-   * Guarda el token de Google tras el callback.
+   * Guarda el token recibido en el callback de Google (el callback solo trae el
+   * token, no el usuario). Para poblar currentUser, llamar luego a cargarPerfil().
    */
   guardarToken(token: string): void {
-    // Si tu respuesta del callback incluye el usuario, deberías obtenerlo también aquí
     localStorage.setItem('token', token);
     this.token.set(token);
-    // Nota: Si el backend envía el usuario en el callback, deberías guardarlo aquí
+  }
+
+  /**
+   * Pide el perfil al backend (con el token ya guardado) y puebla currentUser.
+   * Se usa tras el login con Google, donde el callback no devuelve el usuario.
+   */
+  cargarPerfil(): Observable<Usuario> {
+    return this.http.get<Usuario>(`${this.apiUrl}/perfil`).pipe(
+      tap((usuario) => {
+        localStorage.setItem('usuario', JSON.stringify(usuario));
+        this.currentUser.set(usuario);
+      }),
+    );
   }
 
   /**
