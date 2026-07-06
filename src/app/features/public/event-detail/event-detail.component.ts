@@ -176,8 +176,9 @@ export class EventDetailComponent implements OnInit {
     this.toastService.success('Pase descargado en PDF');
   }
 
-  private formatearFechaGoogle(fecha: string): string {
-    return new Date(fecha)
+  // Formato que espera Google Calendar en `dates`: YYYYMMDDTHHMMSSZ (UTC).
+  private formatearFechaGoogle(fecha: Date): string {
+    return fecha
       .toISOString()
       .replace(/[-:]/g, '')
       .replace(/\.\d{3}Z$/, 'Z');
@@ -200,10 +201,11 @@ export class EventDetailComponent implements OnInit {
     const url =
       'https://calendar.google.com/calendar/render?action=TEMPLATE' +
       `&text=${encodeURIComponent(evento.titulo)}` +
-      `&dates=${this.formatearFechaGoogle(inicio.toISOString())}/${this.formatearFechaGoogle(fin.toISOString())}` +
+      `&dates=${this.formatearFechaGoogle(inicio)}/${this.formatearFechaGoogle(fin)}` +
       `&details=${encodeURIComponent(evento.descripcion ?? '')}` +
       `&location=${encodeURIComponent(evento.ubicacion ?? '')}`;
 
-    window.open(url, '_blank');
+    // noopener: la pestaña nueva no puede acceder a window.opener (evita tabnabbing).
+    window.open(url, '_blank', 'noopener');
   }
 }
