@@ -259,7 +259,7 @@ import { ToastService } from '../../core/services/toast.service';
             <i class="bi bi-telegram text-primary fs-6"></i> Telegram
           </a>
           <a
-            href="https://discord.gg/g3Uu5YqC"
+            href="https://discord.gg/j9GBq9nKx"
             target="_blank"
             class="text-decoration-none text-muted-blue d-flex align-items-center gap-1 font-xxs fw-semibold"
             title="Discord"
