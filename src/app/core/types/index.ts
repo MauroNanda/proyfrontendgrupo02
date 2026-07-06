@@ -4,11 +4,16 @@ export interface Usuario {
   email: string;
   rol?: 'ORGANIZADOR' | 'ASISTENTE';
   avatarUrl?: string;
+  two_factor_enabled?: boolean;
 }
 
 export interface AuthResponse {
   token: string;
   usuario: Usuario;
+  // Presentes solo cuando el login dispara el segundo factor (no hay token aún).
+  requiere2FA?: boolean;
+  email?: string;
+  mensaje?: string;
 }
 
 export interface LoginCredentials {

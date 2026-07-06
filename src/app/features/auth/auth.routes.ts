@@ -12,4 +12,13 @@ export const authRoutes: Routes = [
     canActivate: [guestGuard],
     loadComponent: () => import('./registro/registro.component').then((m) => m.RegistroComponent),
   },
+  {
+    path: 'auth/callback',
+    loadComponent: () =>
+      import('./callback/oauth-callback.component').then((m) => m.OAuthCallbackComponent),
+  },
+  {
+    path: 'auth/2fa',
+    loadComponent: () => import('./2fa/2fa.component').then((m) => m.TwoFaComponent),
+  },
 ];
