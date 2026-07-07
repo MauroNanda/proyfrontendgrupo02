@@ -105,25 +105,28 @@ import { ToastService } from '../../core/services/toast.service';
               routerLinkActive="active"
               class="nav-link nav-item-custom nav-mobile-link"
               (click)="cerrarMenuMobile()"
-              >Eventos</a
             >
+              <i class="bi bi-calendar-event d-lg-none"></i><span>Eventos</span>
+            </a>
             <a
               *ngIf="authService.isLoggedIn()"
               routerLink="/mis-inscripciones"
               routerLinkActive="active"
               class="nav-link nav-item-custom nav-mobile-link"
               (click)="cerrarMenuMobile()"
-              >Mis Inscripciones</a
             >
+              <i class="bi bi-ticket-perforated d-lg-none"></i><span>Mis Inscripciones</span>
+            </a>
 
             <!-- Contenedor Campana + Dropdown -->
             <div class="position-relative" *ngIf="authService.isLoggedIn()">
               <button
-                class="btn btn-icon position-relative"
+                class="btn btn-icon nav-mobile-item position-relative"
                 title="Notificaciones"
                 (click)="toggleNotifications()"
               >
                 <i class="bi bi-bell"></i>
+                <span class="d-lg-none font-xs fw-semibold">Notificaciones</span>
                 <span *ngIf="unreadCount() > 0" class="notification-count-badge">
                   {{ unreadCount() }}
                 </span>
@@ -225,7 +228,7 @@ import { ToastService } from '../../core/services/toast.service';
             @if (authService.isLoggedIn()) {
               <a
                 routerLink="/perfil"
-                class="text-decoration-none d-flex align-items-center gap-2 me-2 text-muted-blue hover-primary"
+                class="nav-mobile-item text-decoration-none d-flex align-items-center gap-2 me-2 text-muted-blue hover-primary"
                 title="Mi Perfil"
                 (click)="cerrarMenuMobile()"
               >
@@ -233,6 +236,7 @@ import { ToastService } from '../../core/services/toast.service';
                 <span class="user-greeting d-none d-lg-inline small font-xs fw-semibold">
                   {{ authService.currentUser()?.nombre }}
                 </span>
+                <span class="d-lg-none font-xs fw-semibold">Mi perfil</span>
               </a>
               @if (authService.isAdmin()) {
                 <a
@@ -564,17 +568,74 @@ import { ToastService } from '../../core/services/toast.service';
           align-items: stretch !important;
           width: 100%;
           margin-left: 0 !important;
-          gap: 0.5rem !important;
+          gap: 0.25rem !important;
         }
 
-        .nav-mobile-link {
-          display: block;
-          padding: 0.5rem 0;
+        /* Items del menú (links, campana, perfil) como lista uniforme */
+        .navbar-collapse.show .nav-mobile-link,
+        .navbar-collapse.show .nav-mobile-item {
+          display: flex;
+          align-items: center;
+          justify-content: flex-start;
+          gap: 0.6rem;
+          width: 100%;
+          margin: 0;
+          padding: 0.7rem 0.5rem;
+          border-radius: 8px;
+          color: #243c4c;
+          text-align: left;
         }
 
+        .navbar-collapse.show .nav-mobile-link:hover,
+        .navbar-collapse.show .nav-mobile-item:hover {
+          background-color: #f1f5f9;
+        }
+
+        /* Íconos alineados en columna: mismo ancho y tamaño para todos */
+        .navbar-collapse.show .nav-mobile-link > i,
+        .navbar-collapse.show .nav-mobile-item > i {
+          font-size: 1.15rem !important;
+          width: 1.5rem;
+          text-align: center;
+          flex-shrink: 0;
+          color: #698696;
+        }
+
+        /* El texto de cada item comparte tipografía y peso */
+        .navbar-collapse.show .nav-mobile-link,
+        .navbar-collapse.show .nav-mobile-item {
+          font-size: 0.9rem;
+          font-weight: 600;
+        }
+
+        /* La campana en desktop es un ícono; en mobile ocupa toda la fila */
+        .navbar-collapse.show .btn-icon.nav-mobile-item {
+          border: none;
+          background: transparent;
+        }
+
+        /* El contador de notificaciones no se posiciona absoluto en mobile */
+        .navbar-collapse.show .nav-mobile-item .notification-count-badge {
+          position: static;
+          margin-left: auto;
+        }
+
+        /* El panel de notificaciones se muestra dentro del menú (no flotante),
+           así al tocar "Notificaciones" la lista aparece debajo, en el flujo. */
+        .navbar-collapse.show .notifications-dropdown {
+          position: static;
+          width: 100%;
+          top: auto;
+          right: auto;
+          margin: 0.25rem 0 0.5rem;
+          box-shadow: none !important;
+        }
+
+        /* Separador antes de los botones de acción */
         .navbar-collapse.show .btn-sm {
           width: 100%;
           justify-content: center;
+          margin-top: 0.25rem;
         }
       }
     `,
@@ -706,9 +767,10 @@ export class PublicLayoutComponent implements OnInit, OnDestroy {
   }
 
   toggleNotifications(): void {
+    // No se cierra el menú mobile: el panel se muestra dentro de él (inline).
+    // Cerrarlo colapsaba el contenedor y el panel quedaba oculto.
     this.showNotifications.update((val) => !val);
     if (this.showNotifications()) {
-      this.menuMobileAbierto.set(false);
       this.cargarNotificaciones();
     }
   }
