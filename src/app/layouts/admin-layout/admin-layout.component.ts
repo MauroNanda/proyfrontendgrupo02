@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../core/services/auth.service';
@@ -11,11 +11,51 @@ import { AuthService } from '../../core/services/auth.service';
   selector: 'app-admin-layout',
   imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule],
   template: `
-    <div class="d-flex" style="min-height: 100vh;">
+    <div class="admin-shell d-flex flex-column flex-lg-row" style="min-height: 100vh;">
+      <!-- Barra superior solo en mobile (sidebar oculta por defecto) -->
+      <header
+        class="admin-mobile-bar d-flex d-lg-none align-items-center gap-3 px-3 py-2 border-bottom bg-white"
+      >
+        <button
+          type="button"
+          class="btn btn-outline-secondary btn-sm"
+          (click)="abrirSidebar()"
+          aria-label="Abrir menú del panel"
+        >
+          <i class="bi bi-list fs-5"></i>
+        </button>
+        <span class="fw-semibold text-dark-blue small">Panel Organizador</span>
+      </header>
+
+      @if (sidebarAbierto()) {
+        <button
+          type="button"
+          class="sidebar-backdrop d-lg-none"
+          aria-label="Cerrar menú"
+          (click)="cerrarSidebar()"
+        ></button>
+      }
+
       <!-- Sidebar -->
-      <aside class="sidebar d-flex flex-column">
+      <aside class="sidebar d-flex flex-column" [class.sidebar-open]="sidebarAbierto()">
+        <div class="d-flex d-lg-none align-items-center justify-content-between px-3 pt-3">
+          <span class="small fw-semibold text-white-50">Menú</span>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-light"
+            (click)="cerrarSidebar()"
+            aria-label="Cerrar menú"
+          >
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+
         <!-- Logo -->
-        <a class="sidebar-header text-decoration-none text-white" routerLink="/admin/dashboard">
+        <a
+          class="sidebar-header text-decoration-none text-white"
+          routerLink="/admin/dashboard"
+          (click)="cerrarSidebar()"
+        >
           <img src="/assets/brand/logo.svg" alt="Convoca" class="sidebar-logo-img" height="36" />
           <div>
             <div class="sidebar-brand">convoca</div>
@@ -30,6 +70,7 @@ import { AuthService } from '../../core/services/auth.service';
             class="nav-link d-flex align-items-center gap-2"
             routerLink="/admin/dashboard"
             routerLinkActive="active"
+            (click)="cerrarSidebar()"
           >
             <i class="bi bi-speedometer2"></i> Dashboard
           </a>
@@ -39,6 +80,7 @@ import { AuthService } from '../../core/services/auth.service';
             class="nav-link d-flex align-items-center gap-2"
             routerLink="/admin/eventos"
             routerLinkActive="active"
+            (click)="cerrarSidebar()"
           >
             <i class="bi bi-calendar-event"></i> Mis Eventos
           </a>
@@ -46,6 +88,7 @@ import { AuthService } from '../../core/services/auth.service';
             class="nav-link d-flex align-items-center gap-2"
             routerLink="/admin/categorias"
             routerLinkActive="active"
+            (click)="cerrarSidebar()"
           >
             <i class="bi bi-tags"></i> Categorías
           </a>
@@ -53,6 +96,7 @@ import { AuthService } from '../../core/services/auth.service';
             class="nav-link d-flex align-items-center gap-2"
             routerLink="/admin/eventos/crear"
             routerLinkActive="active"
+            (click)="cerrarSidebar()"
           >
             <i class="bi bi-plus-lg"></i> Crear Evento
           </a>
@@ -62,12 +106,17 @@ import { AuthService } from '../../core/services/auth.service';
             class="nav-link d-flex align-items-center gap-2"
             routerLink="/admin/test-export"
             routerLinkActive="active"
+            (click)="cerrarSidebar()"
           >
             <i class="bi bi-graph-up"></i> Reportes
           </a>
 
           <span class="sidebar-section-title mt-3">Sitio</span>
-          <a class="nav-link d-flex align-items-center gap-2" routerLink="/">
+          <a
+            class="nav-link d-flex align-items-center gap-2"
+            routerLink="/"
+            (click)="cerrarSidebar()"
+          >
             <i class="bi bi-arrow-left-square"></i> Volver al Sitio
           </a>
         </nav>
@@ -89,13 +138,42 @@ import { AuthService } from '../../core/services/auth.service';
       </aside>
 
       <!-- Contenido principal -->
-      <main class="flex-grow-1 p-4" style="background-color: #f1f5f9;">
+      <main class="flex-grow-1 p-3 p-lg-4" style="background-color: #f1f5f9;">
         <router-outlet />
       </main>
     </div>
   `,
   styles: [
     `
+      .admin-mobile-bar {
+        position: sticky;
+        top: 0;
+        z-index: 1020;
+      }
+
+      .sidebar-backdrop {
+        position: fixed;
+        inset: 0;
+        border: 0;
+        background: rgba(15, 23, 42, 0.45);
+        z-index: 1030;
+      }
+
+      @media (max-width: 991.98px) {
+        .sidebar {
+          position: fixed;
+          top: 0;
+          left: 0;
+          z-index: 1040;
+          transform: translateX(-100%);
+          transition: transform 0.25s ease;
+        }
+
+        .sidebar.sidebar-open {
+          transform: translateX(0);
+        }
+      }
+
       .sidebar-header {
         display: flex;
         align-items: center;
@@ -167,6 +245,15 @@ import { AuthService } from '../../core/services/auth.service';
 })
 export class AdminLayoutComponent {
   protected readonly authService = inject(AuthService);
+  readonly sidebarAbierto = signal(false);
+
+  abrirSidebar(): void {
+    this.sidebarAbierto.set(true);
+  }
+
+  cerrarSidebar(): void {
+    this.sidebarAbierto.set(false);
+  }
 
   obtenerInicial(nombre: string | undefined): string {
     if (!nombre) return 'U';
