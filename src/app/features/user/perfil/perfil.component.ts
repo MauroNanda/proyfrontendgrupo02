@@ -22,7 +22,7 @@ import { ToastService } from '../../../core/services/toast.service';
         </div>
 
         <!-- Card de Datos de Usuario -->
-        <div class="card border shadow-xs rounded-4 p-4 bg-white mb-4">
+        <div class="card border shadow-xs rounded-4 p-4 bg-body-tertiary mb-4">
           <div class="text-center pb-3 border-bottom mb-3">
             <div class="avatar-large mx-auto mb-3">
               {{ obtenerInicial(authService.currentUser()?.nombre) }}
@@ -103,7 +103,7 @@ import { ToastService } from '../../../core/services/toast.service';
         </div>
 
         <!-- Card de Seguridad (2FA) -->
-        <div class="card border shadow-xs rounded-4 p-4 bg-white">
+        <div class="card border shadow-xs rounded-4 p-4 bg-body-tertiary">
           <h5 class="fw-bold text-dark-blue mb-3 pb-2 border-bottom font-sm">
             <i class="bi bi-shield-lock-fill text-primary me-2"></i>Seguridad de Cuenta
           </h5>
@@ -141,7 +141,7 @@ import { ToastService } from '../../../core/services/toast.service';
       }
 
       .text-dark-blue {
-        color: #243c4c !important;
+        color: var(--cv-text) !important;
       }
 
       .font-xxs {
@@ -160,7 +160,7 @@ import { ToastService } from '../../../core/services/toast.service';
         width: 80px;
         height: 80px;
         border-radius: 50%;
-        background-color: #5289ad;
+        background-color: var(--cv-primary);
         color: white;
         font-weight: 700;
         font-size: 32px;
@@ -171,12 +171,12 @@ import { ToastService } from '../../../core/services/toast.service';
       }
 
       .card {
-        border-color: #e2e8f0 !important;
+        border-color: var(--cv-border) !important;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02) !important;
       }
 
       .hover-primary:hover {
-        color: #5289ad !important;
+        color: var(--cv-primary) !important;
       }
     `,
   ],

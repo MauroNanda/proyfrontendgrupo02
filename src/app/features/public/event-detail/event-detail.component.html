@@ -208,7 +208,7 @@
           <!-- Valoración del evento (post-asistencia o evento finalizado) -->
           <div
             *ngIf="puedeValorar()"
-            class="valoracion-section mt-4 p-3 bg-white rounded-4 border border-light shadow-sm"
+            class="valoracion-section mt-4 p-3 bg-body-tertiary rounded-4 border border-light shadow-sm"
           >
             <h4 class="h6 fw-bold mb-3 text-dark-blue">
               <i class="bi bi-star-fill me-1 text-warning"></i>
@@ -260,7 +260,7 @@
           <div
             *ngIf="inscripcion().estado === 'CONFIRMADO' || inscripcion().estado === 'ASISTIO'"
             id="ticket-access-pass"
-            class="qr-section mt-4 p-3 bg-white rounded-4 border border-light shadow-sm animate-scale-up"
+            class="qr-section mt-4 p-3 bg-body-tertiary rounded-4 border border-light shadow-sm animate-scale-up"
           >
             <h4 class="h6 fw-bold mb-3 text-dark-blue">
               <i class="bi bi-qr-code-scan me-1 text-primary"></i>

@@ -3,15 +3,15 @@
 }
 
 .text-dark-blue {
-  color: #243c4c !important;
+  color: var(--cv-text) !important;
 }
 
 .text-muted-blue {
-  color: #698696 !important;
+  color: var(--cv-text-muted) !important;
 }
 
 .bg-light-gray {
-  background-color: #f8fafc !important;
+  background-color: var(--cv-hover) !important;
 }
 
 .shadow-xs {
@@ -35,11 +35,11 @@
 }
 
 .card {
-  border-color: #e2e8f0 !important;
+  border-color: var(--cv-border) !important;
 }
 
 .btn-excel {
-  background-color: #107c41;
+  background-color: #107c41; // verde Excel (marca), igual en ambos temas
   color: #ffffff;
   border: none;
   transition: background-color 0.15s ease;
@@ -50,24 +50,24 @@
 }
 
 .btn-pdf {
-  background-color: #5289ad;
+  background-color: var(--cv-primary);
   color: #ffffff;
   border: none;
   transition: background-color 0.15s ease;
   &:hover {
-    background-color: #437190;
+    background-color: var(--cv-primary-hover);
     color: #ffffff;
   }
 }
 
 .ticket-box {
   width: 440px;
-  border-color: #e2e8f0 !important;
+  border-color: var(--cv-border) !important;
 }
 
 .ticket-badge {
-  background-color: rgba(82, 137, 173, 0.09) !important;
-  color: #5289ad !important;
+  background-color: rgba(var(--cv-primary-rgb), 0.12) !important;
+  color: var(--cv-primary) !important;
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
 }
@@ -76,7 +76,7 @@
   display: block;
   font-size: 0.65rem;
   font-weight: 700;
-  color: #698696;
+  color: var(--cv-text-muted);
   letter-spacing: 0.05em;
   margin-bottom: 0.15rem;
 }
@@ -85,16 +85,16 @@
   display: block;
   font-size: 0.85rem;
   font-weight: 600;
-  color: #243c4c;
+  color: var(--cv-text);
 }
 
 .qr-placeholder {
   width: 90px;
   height: 90px;
-  border: 1px dashed #cbd5e1;
+  border: 1px dashed var(--cv-border-strong);
   border-radius: 8px;
-  background-color: #f8fafc;
-  color: #698696;
+  background-color: var(--cv-hover);
+  color: var(--cv-text-muted);
   i {
     font-size: 1.75rem;
   }

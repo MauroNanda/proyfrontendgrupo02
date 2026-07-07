@@ -25,7 +25,8 @@
     </div>
     <button
       (click)="exportarExcel()"
-      class="btn btn-outline-secondary rounded-3 px-3 py-2 d-flex align-items-center gap-2 font-sm shadow-xs bg-white"
+      class="btn btn-outline-secondary rounded-3 px-3 py-2 d-flex align-items-center gap-2 font-sm shadow-xs"
+      style="background-color: var(--cv-card)"
     >
       <i class="bi bi-file-earmark-excel"></i> Exportar a Excel
     </button>
@@ -35,7 +36,10 @@
   <div class="row g-3 mb-4">
     <!-- Inscriptos Totales -->
     <div class="col-12 col-sm-6 col-md-3">
-      <div class="card border-light shadow-xs rounded-4 p-3 bg-white">
+      <div
+        class="card border-light shadow-xs rounded-4 p-3"
+        style="background-color: var(--cv-card)"
+      >
         <div class="d-flex align-items-center gap-2 text-muted font-sm fw-semibold mb-2">
           <i class="bi bi-people text-primary font-md"></i>
           Inscriptos totales
@@ -46,7 +50,10 @@
 
     <!-- Aforo -->
     <div class="col-12 col-sm-6 col-md-3">
-      <div class="card border-light shadow-xs rounded-4 p-3 bg-white">
+      <div
+        class="card border-light shadow-xs rounded-4 p-3"
+        style="background-color: var(--cv-card)"
+      >
         <div class="d-flex align-items-center gap-2 text-muted font-sm fw-semibold mb-2">
           <i class="bi bi-door-closed text-primary font-md"></i>
           Aforo
@@ -71,7 +78,10 @@
 
     <!-- Check-in -->
     <div class="col-12 col-sm-6 col-md-3">
-      <div class="card border-light shadow-xs rounded-4 p-3 bg-white">
+      <div
+        class="card border-light shadow-xs rounded-4 p-3"
+        style="background-color: var(--cv-card)"
+      >
         <div class="d-flex align-items-center gap-2 text-muted font-sm fw-semibold mb-2">
           <i class="bi bi-patch-check text-success font-md"></i>
           Check-in
@@ -96,7 +106,10 @@
 
     <!-- En Espera -->
     <div class="col-12 col-sm-6 col-md-3">
-      <div class="card border-light shadow-xs rounded-4 p-3 bg-white">
+      <div
+        class="card border-light shadow-xs rounded-4 p-3"
+        style="background-color: var(--cv-card)"
+      >
         <div class="d-flex align-items-center gap-2 text-muted font-sm fw-semibold mb-2">
           <i class="bi bi-hourglass-split text-warning font-md"></i>
           En espera
@@ -108,7 +121,10 @@
   </div>
 
   <!-- Contenedor Tabla / Filtros -->
-  <div class="card border-light shadow-xs rounded-4 overflow-hidden bg-white mb-4">
+  <div
+    class="card border-light shadow-xs rounded-4 overflow-hidden mb-4"
+    style="background-color: var(--cv-card)"
+  >
     <!-- Barra de Filtros / Pestañas (Chips) -->
     <div class="p-3 border-bottom d-flex align-items-center gap-3 flex-wrap">
       <!-- Buscador -->
@@ -133,7 +149,9 @@
           Todos
           <span
             class="badge rounded-pill font-xxs bg-chip-count"
-            [ngClass]="estadoFiltro() === '' ? 'text-bg-light text-primary' : 'text-bg-secondary'"
+            [ngClass]="
+              estadoFiltro() === '' ? 'bg-primary-subtle text-primary' : 'text-bg-secondary'
+            "
             >{{ inscriptosTotales() }}</span
           >
         </button>
@@ -148,7 +166,9 @@
           <span
             class="badge rounded-pill font-xxs bg-chip-count"
             [ngClass]="
-              estadoFiltro() === 'CONFIRMADO' ? 'text-bg-light text-primary' : 'text-bg-secondary'
+              estadoFiltro() === 'CONFIRMADO'
+                ? 'bg-primary-subtle text-primary'
+                : 'text-bg-secondary'
             "
             >{{ stats().CONFIRMADO || 0 }}</span
           >
@@ -162,7 +182,7 @@
           <span
             class="badge rounded-pill font-xxs bg-chip-count"
             [ngClass]="
-              estadoFiltro() === 'ESPERA' ? 'text-bg-light text-primary' : 'text-bg-secondary'
+              estadoFiltro() === 'ESPERA' ? 'bg-primary-subtle text-primary' : 'text-bg-secondary'
             "
             >{{ stats().ESPERA || 0 }}</span
           >
@@ -178,7 +198,7 @@
           <span
             class="badge rounded-pill font-xxs bg-chip-count"
             [ngClass]="
-              estadoFiltro() === 'ASISTIO' ? 'text-bg-light text-primary' : 'text-bg-secondary'
+              estadoFiltro() === 'ASISTIO' ? 'bg-primary-subtle text-primary' : 'text-bg-secondary'
             "
             >{{ stats().ASISTIO || 0 }}</span
           >
@@ -194,7 +214,9 @@
           <span
             class="badge rounded-pill font-xxs bg-chip-count"
             [ngClass]="
-              estadoFiltro() === 'CANCELADO' ? 'text-bg-light text-primary' : 'text-bg-secondary'
+              estadoFiltro() === 'CANCELADO'
+                ? 'bg-primary-subtle text-primary'
+                : 'text-bg-secondary'
             "
             >{{ stats().CANCELADO || 0 }}</span
           >
@@ -323,7 +345,8 @@
         <ul class="pagination pagination-sm mb-0 rounded-3 overflow-hidden border-light shadow-xs">
           <li class="page-item" [class.disabled]="page() === 1">
             <button
-              class="page-link py-1.5 px-2.5 bg-white border-light text-muted"
+              class="page-link py-1.5 px-2.5 border-light text-muted"
+              style="background-color: var(--cv-card)"
               (click)="cambiarPagina(page() - 1)"
             >
               <i class="bi bi-chevron-left"></i>
@@ -343,7 +366,8 @@
           </li>
           <li class="page-item" [class.disabled]="page() === totalPages">
             <button
-              class="page-link py-1.5 px-2.5 bg-white border-light text-muted"
+              class="page-link py-1.5 px-2.5 border-light text-muted"
+              style="background-color: var(--cv-card)"
               (click)="cambiarPagina(page() + 1)"
             >
               <i class="bi bi-chevron-right"></i>

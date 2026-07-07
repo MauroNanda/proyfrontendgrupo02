@@ -40,7 +40,7 @@
       class="col-12 col-md-6 col-lg-4"
     >
       <div
-        class="card border shadow-xs rounded-4 p-3 bg-white h-100 d-flex flex-column justify-content-between event-card"
+        class="card border shadow-xs rounded-4 p-3 bg-body-tertiary h-100 d-flex flex-column justify-content-between event-card"
       >
         <div>
           <!-- Tag / Estado -->
@@ -146,7 +146,7 @@
           <i class="bi bi-geo-alt me-1"></i> {{ ins.evento.ubicacion }}
         </p>
 
-        <div class="bg-white p-3 rounded-3 d-inline-block border shadow-xs">
+        <div class="bg-body-tertiary p-3 rounded-3 d-inline-block border shadow-xs">
           <img
             [src]="selectedQrDataUrl()"
             alt="Código QR de Acceso"
@@ -171,11 +171,11 @@
 <div *ngIf="selectedInscripcion() as ins" style="position: absolute; left: -9999px; top: -9999px">
   <div
     id="ticket-capture"
-    class="bg-white p-4 border rounded-4 shadow-sm"
-    style="width: 380px; font-family: sans-serif; color: #1a2e38"
+    class="bg-body-tertiary p-4 border rounded-4 shadow-sm"
+    style="width: 380px; font-family: sans-serif; color: var(--cv-text)"
   >
     <div class="text-center border-bottom pb-3 mb-3">
-      <h4 class="fw-bold mb-1" style="color: #243c4c">Convoca</h4>
+      <h4 class="fw-bold mb-1" style="color: var(--cv-text)">Convoca</h4>
       <span class="badge rounded-pill bg-primary px-3 py-1 font-xxs">PASE DE ACCESO</span>
     </div>
     <div class="mb-3">

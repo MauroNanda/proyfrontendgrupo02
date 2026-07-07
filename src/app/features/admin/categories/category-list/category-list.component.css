@@ -3,11 +3,11 @@
 }
 
 .text-dark-blue {
-  color: #243c4c !important;
+  color: var(--cv-text) !important;
 }
 
 .bg-light-gray {
-  background-color: #f8fafc !important;
+  background-color: var(--cv-hover) !important;
 }
 
 .shadow-xs {
@@ -27,14 +27,14 @@
 }
 
 .btn-primary-accent {
-  background-color: #5289ad;
+  background-color: var(--cv-primary);
   color: #ffffff;
   border: none;
   transition: background-color 0.15s ease;
 }
 
 .btn-primary-accent:hover {
-  background-color: #437190;
+  background-color: var(--cv-primary-hover);
   color: #ffffff;
 }
 
@@ -43,19 +43,19 @@
 }
 
 .table-row:hover {
-  background-color: #f8fafc !important;
+  background-color: var(--cv-hover) !important;
 }
 
 .card {
-  border-color: #e2e8f0 !important;
+  border-color: var(--cv-border) !important;
 }
 
 .btn-outline-primary {
-  color: #5289ad;
-  border-color: #5289ad;
+  color: var(--cv-primary);
+  border-color: var(--cv-primary);
 }
 
 .btn-outline-primary:hover {
-  background-color: #5289ad;
+  background-color: var(--cv-primary);
   color: white;
 }

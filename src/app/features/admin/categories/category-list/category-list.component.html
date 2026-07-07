@@ -24,7 +24,11 @@
   </div>
 
   <!-- Tabla -->
-  <div *ngIf="!loading()" class="card border shadow-xs rounded-4 overflow-hidden bg-white">
+  <div
+    *ngIf="!loading()"
+    class="card border shadow-xs rounded-4 overflow-hidden"
+    style="background-color: var(--cv-card)"
+  >
     <!-- Empty state -->
     <div *ngIf="categorias().length === 0" class="text-center py-5">
       <i class="bi bi-tags text-muted opacity-50 display-5"></i>
@@ -102,14 +106,14 @@
     </div>
 
     <!-- Gráfico de distribución horizontal (Segmented progress bar) -->
-    <div class="card border shadow-xs rounded-4 p-4 bg-white mb-4">
+    <div class="card border shadow-xs rounded-4 p-4 mb-4" style="background-color: var(--cv-card)">
       <h4 class="font-xs fw-bold text-muted text-uppercase tracking-wider mb-3">
         Cobertura Relativa de Eventos
       </h4>
 
       <div
         class="progress rounded-pill mb-3"
-        style="height: 20px; background-color: #f1f5f9; overflow: hidden; display: flex"
+        style="height: 20px; background-color: var(--cv-bg); overflow: hidden; display: flex"
       >
         <div
           *ngFor="let cat of categorias(); let i = index"
@@ -157,7 +161,8 @@
     <div class="row g-3">
       <div *ngFor="let cat of categorias(); let i = index" class="col-12 col-md-4">
         <div
-          class="card border shadow-xs rounded-4 h-100 bg-white p-3 hover-shadow transition-all duration-200"
+          class="card border shadow-xs rounded-4 h-100 p-3 hover-shadow transition-all duration-200"
+          style="background-color: var(--cv-card)"
         >
           <div
             class="d-flex align-items-center justify-content-between gap-2 mb-2 border-bottom pb-2"
@@ -170,7 +175,7 @@
               ></span>
               <h4 class="font-sm fw-bold text-dark-blue mb-0">{{ cat.nombre }}</h4>
             </div>
-            <span class="badge bg-light text-muted font-xxs rounded px-2 py-0.5">
+            <span class="badge bg-body-tertiary text-muted font-xxs rounded px-2 py-0.5">
               {{ cat.Eventos?.length || 0 }}
             </span>
           </div>

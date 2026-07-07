@@ -24,7 +24,11 @@
   </div>
 
   <!-- Formulario -->
-  <div *ngIf="!cargando()" class="card border rounded-4 bg-white p-4 shadow-xs">
+  <div
+    *ngIf="!cargando()"
+    class="card border rounded-4 p-4 shadow-xs"
+    style="background-color: var(--cv-card)"
+  >
     <form [formGroup]="formulario" (ngSubmit)="guardar()" novalidate>
       <div class="row g-3">
         <!-- Nombre -->

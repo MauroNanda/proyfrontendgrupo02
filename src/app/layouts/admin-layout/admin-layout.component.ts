@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../core/services/auth.service';
+import { ThemeService } from '../../core/services/theme.service';
 
 // Layout ADMIN — envuelve las rutas del Organizador (/admin/*).
 // Sidebar fija con navegación + área de contenido principal.
@@ -14,7 +15,8 @@ import { AuthService } from '../../core/services/auth.service';
     <div class="admin-shell d-flex flex-column flex-lg-row" style="min-height: 100vh;">
       <!-- Barra superior solo en mobile (sidebar oculta por defecto) -->
       <header
-        class="admin-mobile-bar d-flex d-lg-none align-items-center gap-3 px-3 py-2 border-bottom bg-white"
+        class="admin-mobile-bar d-flex d-lg-none align-items-center gap-3 px-3 py-2 border-bottom"
+        style="background-color: var(--cv-card);"
       >
         <button
           type="button"
@@ -24,7 +26,7 @@ import { AuthService } from '../../core/services/auth.service';
         >
           <i class="bi bi-list fs-5"></i>
         </button>
-        <span class="fw-semibold text-dark-blue small">Panel Organizador</span>
+        <span class="fw-semibold small" style="color: var(--cv-text);">Panel Organizador</span>
       </header>
 
       @if (sidebarAbierto()) {
@@ -110,8 +112,42 @@ import { AuthService } from '../../core/services/auth.service';
           >
             <i class="bi bi-graph-up"></i> Reportes
           </a>
+          <a
+            class="nav-link d-flex align-items-center gap-2"
+            routerLink="/admin/accesos"
+            routerLinkActive="active"
+            (click)="cerrarSidebar()"
+          >
+            <i class="bi bi-shield-lock"></i> Accesos
+          </a>
 
           <span class="sidebar-section-title mt-3">Sitio</span>
+          <div
+            class="nav-link d-flex align-items-center justify-content-between gap-2 tema-switch-admin"
+          >
+            <label
+              class="d-flex align-items-center gap-2 mb-0 flex-grow-1"
+              for="temaSwitchAdmin"
+              style="cursor: pointer;"
+            >
+              <i
+                class="bi"
+                [ngClass]="theme.tema() === 'dark' ? 'bi-moon-stars-fill' : 'bi-sun-fill'"
+              ></i>
+              Tema
+            </label>
+            <div class="form-check form-switch m-0 p-0">
+              <input
+                class="form-check-input m-0"
+                type="checkbox"
+                role="switch"
+                id="temaSwitchAdmin"
+                [checked]="theme.tema() === 'dark'"
+                (change)="theme.toggle()"
+                style="cursor: pointer;"
+              />
+            </div>
+          </div>
           <a
             class="nav-link d-flex align-items-center gap-2"
             routerLink="/"
@@ -138,7 +174,7 @@ import { AuthService } from '../../core/services/auth.service';
       </aside>
 
       <!-- Contenido principal -->
-      <main class="flex-grow-1 p-3 p-lg-4" style="background-color: #f1f5f9;">
+      <main class="flex-grow-1 p-3 p-lg-4" style="background-color: var(--cv-bg);">
         <router-outlet />
       </main>
     </div>
@@ -230,7 +266,7 @@ import { AuthService } from '../../core/services/auth.service';
         width: 34px;
         height: 34px;
         border-radius: 50%;
-        background-color: rgba(82, 137, 173, 0.7);
+        background-color: rgba(var(--cv-primary-rgb), 0.7);
         color: white;
         font-weight: 600;
         font-size: 13px;
@@ -245,6 +281,7 @@ import { AuthService } from '../../core/services/auth.service';
 })
 export class AdminLayoutComponent {
   protected readonly authService = inject(AuthService);
+  protected readonly theme = inject(ThemeService);
   readonly sidebarAbierto = signal(false);
 
   abrirSidebar(): void {
