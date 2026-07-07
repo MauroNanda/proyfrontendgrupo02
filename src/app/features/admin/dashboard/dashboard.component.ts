@@ -201,7 +201,7 @@ const ESTADO_COLORES: Record<string, string> = {
 
           <!-- Estado del Sistema (Trasladado desde el home público) -->
           <div class="col-12">
-            <div class="card border-0 shadow-sm bg-white">
+            <div class="card border-0 shadow-sm" style="background-color: var(--cv-card);">
               <div class="card-body p-3">
                 <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
                   <div class="d-flex align-items-center gap-2">
@@ -225,7 +225,7 @@ const ESTADO_COLORES: Record<string, string> = {
                     <div class="d-flex align-items-center gap-1.5">
                       <span class="text-muted">Entorno:</span>
                       <span
-                        class="badge bg-light text-dark-blue border font-xxs rounded px-2.5 py-1"
+                        class="badge bg-body-tertiary text-body border font-xxs rounded px-2.5 py-1"
                         >Desarrollo (Neon DB)</span
                       >
                     </div>
@@ -250,7 +250,7 @@ const ESTADO_COLORES: Record<string, string> = {
       }
       .kpi-card:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(42, 92, 138, 0.12) !important;
+        box-shadow: 0 6px 20px rgba(82, 137, 173, 0.12) !important;
       }
       .kpi-icon {
         min-width: 48px;

@@ -84,6 +84,13 @@ export const routes: Routes = [
           import('./features/admin/test-export/test-export/test-export').then((m) => m.TestExport),
       },
       {
+        path: 'accesos',
+        loadComponent: () =>
+          import('./features/admin/accesos/acceso-list.component').then(
+            (m) => m.AccesoListComponent,
+          ),
+      },
+      {
         path: 'categorias',
         loadChildren: () =>
           import('./features/admin/categories/category.routes').then((m) => m.CATEGORY_ROUTES),

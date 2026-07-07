@@ -8,6 +8,7 @@ import { NotificacionService, Notificacion } from '../../core/services/notificac
 import { EventoService, Evento } from '../../core/services/evento.service';
 import { PushService } from '../../core/services/push.service';
 import { ToastService } from '../../core/services/toast.service';
+import { ThemeService } from '../../core/services/theme.service';
 
 // Layout PÚBLICO — envuelve las rutas del Asistente.
 // Navbar con logo, búsqueda, notificaciones y acciones de auth.
@@ -16,7 +17,7 @@ import { ToastService } from '../../core/services/toast.service';
   selector: 'app-public-layout',
   imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule],
   template: `
-    <nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top">
+    <nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom sticky-top">
       <div class="container">
         <!-- Logo -->
         <a class="navbar-brand d-flex align-items-center gap-2" routerLink="/">
@@ -58,7 +59,7 @@ import { ToastService } from '../../core/services/toast.service';
             <!-- Panel de Sugerencias -->
             <div
               *ngIf="showSuggestions() && sugerencias().length > 0"
-              class="suggestions-panel shadow-lg border rounded-4 bg-white p-2"
+              class="suggestions-panel shadow-lg border rounded-4 bg-body-tertiary p-2"
             >
               <div
                 *ngFor="let item of sugerencias()"
@@ -86,13 +87,13 @@ import { ToastService } from '../../core/services/toast.service';
                 sugerencias().length === 0 &&
                 !loadingSuggestions()
               "
-              class="suggestions-panel shadow-lg border rounded-4 bg-white p-3 text-center text-muted font-xs"
+              class="suggestions-panel shadow-lg border rounded-4 bg-body-tertiary p-3 text-center text-muted font-xs"
             >
               No se encontraron eventos.
             </div>
             <div
               *ngIf="showSuggestions() && loadingSuggestions()"
-              class="suggestions-panel shadow-lg border rounded-4 bg-white p-3 text-center text-muted font-xs"
+              class="suggestions-panel shadow-lg border rounded-4 bg-body-tertiary p-3 text-center text-muted font-xs"
             >
               <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
             </div>
@@ -100,6 +101,30 @@ import { ToastService } from '../../core/services/toast.service';
 
           <!-- Acciones -->
           <div class="d-flex align-items-center gap-2 ms-auto">
+            <div
+              class="form-check form-switch tema-switch nav-mobile-item m-0 d-flex align-items-center gap-2"
+            >
+              <input
+                class="form-check-input m-0"
+                type="checkbox"
+                role="switch"
+                id="temaSwitchPublic"
+                [checked]="theme.tema() === 'dark'"
+                (change)="theme.toggle()"
+                [title]="theme.tema() === 'dark' ? 'Modo oscuro activo' : 'Modo claro activo'"
+                style="cursor: pointer;"
+              />
+              <label
+                class="form-check-label d-flex align-items-center mb-0"
+                for="temaSwitchPublic"
+                style="cursor: pointer;"
+              >
+                <i
+                  class="bi"
+                  [ngClass]="theme.tema() === 'dark' ? 'bi-moon-stars-fill' : 'bi-sun-fill'"
+                ></i>
+              </label>
+            </div>
             <a
               routerLink="/eventos"
               routerLinkActive="active"
@@ -135,7 +160,7 @@ import { ToastService } from '../../core/services/toast.service';
               <!-- Panel flotante de notificaciones -->
               <div
                 *ngIf="showNotifications()"
-                class="notifications-dropdown shadow-lg border rounded-4 bg-white p-3"
+                class="notifications-dropdown shadow-lg border rounded-4 bg-body-tertiary p-3"
               >
                 <div
                   class="d-flex align-items-center justify-content-between pb-2 border-bottom mb-2"
@@ -322,26 +347,29 @@ import { ToastService } from '../../core/services/toast.service';
       }
 
       .search-icon {
-        background-color: #e2e8f0;
+        background-color: var(--cv-surface);
         border: none;
-        color: #698696;
+        color: var(--cv-text-muted);
         font-size: 0.8rem;
       }
 
       .search-input {
-        background-color: #e2e8f0;
+        background-color: var(--cv-surface);
         border: none;
         font-size: 0.8125rem;
+        color: var(--cv-text);
+      }
 
-        &::placeholder {
-          color: #acbcbf;
-        }
+      .search-input::placeholder {
+        color: var(--cv-text-muted);
+        opacity: 1;
+      }
 
-        &:focus {
-          background-color: #fff;
-          border: 1px solid rgba(82, 137, 173, 0.3);
-          box-shadow: 0 0 0 3px rgba(82, 137, 173, 0.08);
-        }
+      .search-input:focus {
+        background-color: var(--cv-card);
+        color: var(--cv-text);
+        border: 1px solid rgba(82, 137, 173, 0.3);
+        box-shadow: 0 0 0 3px rgba(82, 137, 173, 0.08);
       }
 
       .app-main {
@@ -357,7 +385,7 @@ import { ToastService } from '../../core/services/toast.service';
       .nav-item-custom {
         font-size: 0.875rem;
         font-weight: 500;
-        color: #698696;
+        color: var(--cv-text-muted);
         padding: 6px 12px;
         border-radius: 6px;
         transition: all 0.15s ease;
@@ -378,7 +406,7 @@ import { ToastService } from '../../core/services/toast.service';
         border-radius: 8px;
         border: none;
         background: transparent;
-        color: #698696;
+        color: var(--cv-text-muted);
         font-size: 1.15rem;
         transition: all 0.15s ease;
 
@@ -425,7 +453,7 @@ import { ToastService } from '../../core/services/toast.service';
         background: none;
         border: none;
         padding: 0;
-        color: #5289ad;
+        color: var(--cv-primary);
         cursor: pointer;
         &:hover {
           text-decoration: underline;
@@ -441,20 +469,20 @@ import { ToastService } from '../../core/services/toast.service';
       }
 
       .text-dark-blue {
-        color: #243c4c;
+        color: var(--cv-text);
       }
 
       .notification-item {
         cursor: pointer;
-        background-color: #f8fafc;
+        background-color: var(--cv-hover);
         border-left: 3px solid transparent;
         transition: background-color 0.15s ease;
         &:hover {
-          background-color: #f1f5f9;
+          background-color: var(--cv-bg);
         }
         &.unread {
-          background-color: #ffffff;
-          border-left-color: #5289ad;
+          background-color: var(--cv-card);
+          border-left-color: var(--cv-primary);
           box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
         }
       }
@@ -503,7 +531,7 @@ import { ToastService } from '../../core/services/toast.service';
       .nav-separator {
         width: 1px;
         height: 24px;
-        background-color: #acbcbf;
+        background-color: var(--cv-border-strong);
         opacity: 0.4;
         margin: 0 4px;
       }
@@ -520,8 +548,8 @@ import { ToastService } from '../../core/services/toast.service';
         padding: 1.25rem 0;
         text-align: center;
         font-size: 0.8125rem;
-        color: #698696;
-        background-color: white;
+        color: var(--cv-text-muted);
+        background-color: var(--cv-card);
         margin-top: auto;
       }
 
@@ -543,12 +571,12 @@ import { ToastService } from '../../core/services/toast.service';
         transition: background-color 0.15s ease;
         text-decoration: none;
         &:hover {
-          background-color: #f1f5f9;
+          background-color: var(--cv-bg);
         }
       }
 
       .text-muted-blue {
-        color: #698696;
+        color: var(--cv-text-muted);
       }
 
       /* En mobile el menú colapsado apila links y botones de auth */
@@ -582,13 +610,13 @@ import { ToastService } from '../../core/services/toast.service';
           margin: 0;
           padding: 0.7rem 0.5rem;
           border-radius: 8px;
-          color: #243c4c;
+          color: var(--cv-text);
           text-align: left;
         }
 
         .navbar-collapse.show .nav-mobile-link:hover,
         .navbar-collapse.show .nav-mobile-item:hover {
-          background-color: #f1f5f9;
+          background-color: var(--cv-bg);
         }
 
         /* Íconos alineados en columna: mismo ancho y tamaño para todos */
@@ -598,7 +626,7 @@ import { ToastService } from '../../core/services/toast.service';
           width: 1.5rem;
           text-align: center;
           flex-shrink: 0;
-          color: #698696;
+          color: var(--cv-text-muted);
         }
 
         /* El texto de cada item comparte tipografía y peso */
@@ -643,6 +671,7 @@ import { ToastService } from '../../core/services/toast.service';
 })
 export class PublicLayoutComponent implements OnInit, OnDestroy {
   readonly authService = inject(AuthService);
+  readonly theme = inject(ThemeService);
   private readonly notifService = inject(NotificacionService);
   private readonly eventoService = inject(EventoService);
   private readonly pushService = inject(PushService);

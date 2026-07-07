@@ -1,5 +1,5 @@
 // Variables locales inspiradas en la estética moderna
-$primary-color: #5289ad;
+$primary-color: var(--cv-primary);
 $primary-light: rgba(82, 137, 173, 0.08);
 $success-color: #2ec4b6;
 $success-light: rgba(46, 196, 182, 0.08);
@@ -9,9 +9,9 @@ $secondary-light: rgba(105, 134, 150, 0.08);
 $dark-blue: #1e293b;
 
 .bg-glass {
-  background: rgba(255, 255, 255, 0.85);
+  background: var(--cv-card);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(226, 232, 240, 0.8);
+  border: 1px solid var(--cv-border);
 }
 
 .border-highlight {
@@ -19,7 +19,7 @@ $dark-blue: #1e293b;
 }
 
 .text-dark-blue {
-  color: $dark-blue;
+  color: var(--cv-text);
 }
 
 .uppercase-track {
@@ -111,13 +111,13 @@ $dark-blue: #1e293b;
 }
 
 .btn-primary {
-  background-color: #5289ad !important;
-  border-color: #5289ad !important;
+  background-color: var(--cv-primary) !important;
+  border-color: var(--cv-primary) !important;
   color: #ffffff !important;
   transition: all 0.15s ease;
 
   &:hover {
-    background-color: #437190 !important;
-    border-color: #437190 !important;
+    background-color: var(--cv-primary-hover) !important;
+    border-color: var(--cv-primary-hover) !important;
   }
 }

@@ -136,8 +136,8 @@ import { AuthService } from '../../../core/services/auth.service';
   styles: [
     `
       .hero-header {
-        border-bottom: 1px solid #e2e8f0;
-        background: #ffffff;
+        border-bottom: 1px solid var(--cv-border);
+        background: var(--cv-card);
       }
 
       .hero-container {
@@ -184,7 +184,7 @@ import { AuthService } from '../../../core/services/auth.service';
           gap: 0.65rem !important;
           margin-top: 1.5rem;
           padding-top: 1.25rem;
-          border-top: 1px solid #e2e8f0;
+          border-top: 1px solid var(--cv-border);
         }
 
         .hero-features span {
@@ -216,7 +216,7 @@ import { AuthService } from '../../../core/services/auth.service';
         font-weight: 700;
         letter-spacing: -0.5px;
         margin: 0;
-        color: #243c4c;
+        color: var(--cv-text);
       }
 
       .hero-description-text {
@@ -224,11 +224,11 @@ import { AuthService } from '../../../core/services/auth.service';
         margin: 20px 0 0;
         font-size: 1.05rem;
         line-height: 1.6;
-        color: #698696;
+        color: var(--cv-text-muted);
       }
 
       .btn-primary-accent {
-        background-color: #5289ad;
+        background-color: var(--cv-primary);
         color: #ffffff;
         font-weight: 600;
         font-size: 0.925rem;
@@ -240,14 +240,14 @@ import { AuthService } from '../../../core/services/auth.service';
         transition: background 0.15s ease;
 
         &:hover {
-          background-color: #437190;
+          background-color: var(--cv-primary-hover);
         }
       }
 
       .btn-outline-accent {
-        background-color: #ffffff;
-        border: 1px solid #cbd8e0;
-        color: #243c4c;
+        background-color: var(--cv-card);
+        border: 1px solid var(--cv-border-strong);
+        color: var(--cv-text);
         font-weight: 600;
         font-size: 0.925rem;
         border-radius: 8px;
@@ -258,8 +258,8 @@ import { AuthService } from '../../../core/services/auth.service';
         transition: all 0.15s ease;
 
         &:hover {
-          background-color: #f8fafc;
-          border-color: #acbcbf;
+          background-color: var(--cv-hover);
+          border-color: var(--cv-border-strong);
         }
       }
 
@@ -272,8 +272,8 @@ import { AuthService } from '../../../core/services/auth.service';
       .calendar-widget-card {
         width: 100%;
         max-width: 440px;
-        background: #ffffff;
-        border: 1px solid #cbd8e0;
+        background: var(--cv-card);
+        border: 1px solid var(--cv-border-strong);
         border-radius: 16px;
         box-shadow: 0 10px 30px rgba(36, 60, 76, 0.04);
         padding: 24px 28px;
@@ -290,14 +290,14 @@ import { AuthService } from '../../../core/services/auth.service';
       }
 
       .bg-light-hover:hover {
-        background-color: #f8fafc;
-        border-color: #cbd8e0 !important;
+        background-color: var(--cv-hover);
+        border-color: var(--cv-border-strong) !important;
         transform: translateY(-1px);
         box-shadow: 0 4px 12px rgba(36, 60, 76, 0.02);
       }
 
       .text-dark-blue {
-        color: #243c4c !important;
+        color: var(--cv-text) !important;
       }
 
       .font-md {

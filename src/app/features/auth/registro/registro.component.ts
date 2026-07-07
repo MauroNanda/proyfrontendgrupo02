@@ -168,7 +168,7 @@ function passwordsMatch(control: AbstractControl): ValidationErrors | null {
           <!-- Google OAuth Button -->
           <button
             type="button"
-            class="btn btn-outline-secondary w-100 py-2 rounded-3 d-flex align-items-center justify-content-center gap-2 font-sm fw-semibold bg-white border-light text-dark-blue shadow-xs"
+            class="btn btn-outline-secondary w-100 py-2 rounded-3 d-flex align-items-center justify-content-center gap-2 font-sm fw-semibold bg-body-tertiary border-light text-dark-blue shadow-xs"
           >
             <i class="bi bi-google text-danger"></i>
             Registrarse con Google
@@ -190,9 +190,9 @@ function passwordsMatch(control: AbstractControl): ValidationErrors | null {
       }
 
       .auth-card {
-        border-color: #e2e8f0 !important;
+        border-color: var(--cv-border) !important;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
-        background-color: #ffffff;
+        background-color: var(--cv-card);
       }
 
       .auth-title {
@@ -200,20 +200,20 @@ function passwordsMatch(control: AbstractControl): ValidationErrors | null {
         font-size: 1.75rem;
         font-weight: 700;
         margin-bottom: 0.25rem;
-        color: #243c4c;
+        color: var(--cv-text);
       }
 
       .auth-subtitle {
-        color: #698696;
+        color: var(--cv-text-muted);
         font-size: 0.875rem;
         margin-bottom: 1.5rem;
       }
 
       .auth-link {
         font-weight: 600;
-        color: #5289ad;
+        color: var(--cv-primary);
         &:hover {
-          color: #437190;
+          color: var(--cv-primary-hover);
         }
       }
 
@@ -230,7 +230,7 @@ function passwordsMatch(control: AbstractControl): ValidationErrors | null {
       }
 
       .text-dark-blue {
-        color: #1a2e38 !important;
+        color: var(--cv-text) !important;
       }
 
       .shadow-xs {
@@ -238,26 +238,26 @@ function passwordsMatch(control: AbstractControl): ValidationErrors | null {
       }
 
       .border-light {
-        border-color: #e2e8f0 !important;
+        border-color: var(--cv-border) !important;
       }
 
       .form-control {
-        border: 1px solid #cbd5e1;
+        border: 1px solid var(--cv-border-strong);
         transition:
           border-color 0.15s ease,
           box-shadow 0.15s ease;
         &:focus {
-          border-color: #5289ad;
+          border-color: var(--cv-primary);
           box-shadow: 0 0 0 3px rgba(82, 137, 173, 0.15);
         }
       }
 
       .btn-primary {
-        background-color: #5289ad;
-        border-color: #5289ad;
+        background-color: var(--cv-primary);
+        border-color: var(--cv-primary);
         &:hover {
-          background-color: #437190;
-          border-color: #437190;
+          background-color: var(--cv-primary-hover);
+          border-color: var(--cv-primary-hover);
         }
       }
 

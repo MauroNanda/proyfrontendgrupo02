@@ -6,6 +6,40 @@
 @use 'bootstrap/scss/bootstrap';
 @import 'bootstrap-icons/font/bootstrap-icons.css';
 
+// ── Tokens de color en runtime (modo claro / oscuro) ──
+// Se usan como var(--cv-*) en los componentes. El tema se cambia poniendo
+// data-bs-theme="dark" en <html> (ThemeService); Bootstrap 5.3 usa el mismo
+// atributo para sus propios componentes, así que un solo switch controla todo.
+:root {
+  --cv-bg: #f1f5f9; // fondo de la app
+  --cv-surface: #e2e8f0; // superficies suaves (encabezados de tabla, chips)
+  --cv-card: #ffffff; // tarjetas y paneles
+  --cv-hover: #f8fafc; // fondo de hover
+  --cv-text: #243c4c; // texto principal
+  --cv-text-muted: #698696; // texto secundario
+  --cv-border: #e2e8f0; // bordes
+  --cv-border-strong: #cbd8e0; // bordes marcados
+  --cv-primary: #5289ad; // color de marca
+  --cv-primary-rgb: 82, 137, 173; // para rgba(var(--cv-primary-rgb), a)
+  --cv-primary-hover: #437190;
+  --cv-accent: #e8a838; // ámbar
+}
+
+:root[data-bs-theme='dark'] {
+  --cv-bg: #0f172a;
+  --cv-surface: #1e293b;
+  --cv-card: #1e293b;
+  --cv-hover: #263449;
+  --cv-text: #e2e8f0;
+  --cv-text-muted: #94a3b8;
+  --cv-border: #334155;
+  --cv-border-strong: #3f4f66;
+  --cv-primary: #6ba3c7;
+  --cv-primary-rgb: 107, 163, 199;
+  --cv-primary-hover: #85b6d4;
+  --cv-accent: #e8a838;
+}
+
 // ── Tipografía (Google Fonts importado en index.html) ──
 
 h1,
@@ -16,7 +50,7 @@ h3,
 .display-3 {
   font-family: 'Space Grotesk', sans-serif;
   font-weight: 700;
-  color: $convoca-text-dark;
+  color: var(--cv-text);
 }
 
 h4,
@@ -24,7 +58,7 @@ h5,
 h6 {
   font-family: 'Space Grotesk', sans-serif;
   font-weight: 600;
-  color: $convoca-text-dark;
+  color: var(--cv-text);
 }
 
 // ── Layout base ──
@@ -36,17 +70,20 @@ body {
 
 body {
   margin: 0;
-  background-color: $convoca-background;
-  color: $convoca-text-dark;
+  background-color: var(--cv-bg);
+  color: var(--cv-text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
 // ── Selección de texto ──
 
 ::selection {
   background-color: rgba($convoca-primary, 0.15);
-  color: $convoca-text-dark;
+  color: var(--cv-text);
 }
 
 // ── Links ──
@@ -60,15 +97,15 @@ a {
 // ── Utilidades propias ──
 
 .text-muted {
-  color: $convoca-text-muted !important;
+  color: var(--cv-text-muted) !important;
 }
 
 .bg-surface {
-  background-color: $convoca-surface;
+  background-color: var(--cv-surface);
 }
 
 .border-convoca {
-  border-color: $convoca-border !important;
+  border-color: var(--cv-border) !important;
 }
 
 .transition-base {
@@ -107,14 +144,64 @@ a {
   box-shadow: 0 0 0 3px rgba($convoca-primary, 0.12);
 }
 
+// ── Switches (color de marca al activar) ──
+
+.form-switch .form-check-input {
+  cursor: pointer;
+
+  &:checked {
+    background-color: var(--cv-primary);
+    border-color: var(--cv-primary);
+  }
+
+  &:focus {
+    box-shadow: 0 0 0 3px rgba(var(--cv-primary-rgb), 0.15);
+  }
+}
+
+// Switch dentro del sidebar admin (fondo oscuro): track visible al estar apagado
+.tema-switch-admin .form-check-input:not(:checked) {
+  background-color: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+// ── Badges de estado en modo oscuro ──
+// Las clases .text-* / .bg-* de estado (asistió, espera, cancelado, confirmado)
+// viven en varios componentes con texto oscuro fijo sobre tinte claro. En modo
+// oscuro ese texto queda ilegible: aquí se aclara y se refuerza el tinte.
+:root[data-bs-theme='dark'] {
+  .text-confirmado {
+    color: #93c5fd !important;
+  }
+  .text-espera {
+    color: #fcd34d !important;
+  }
+  .text-asistio {
+    color: #86efac !important;
+  }
+  .text-cancelado {
+    color: #cbd5e1 !important;
+  }
+
+  // Badge "asistió" con fondo sólido claro → variante oscura para que el
+  // texto aclarado siga siendo legible.
+  .bg-asistio-badge {
+    background-color: rgba(34, 197, 94, 0.18) !important;
+    border-color: rgba(34, 197, 94, 0.35) !important;
+  }
+}
+
 // ── Cards ──
 
 .card {
-  border: 1px solid rgba($convoca-border, 0.5);
+  border: 1px solid var(--cv-border);
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-  background-color: #ffffff;
-  transition: box-shadow 0.2s ease;
+  background-color: var(--cv-card);
+  transition:
+    box-shadow 0.2s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease;
 
   &:hover {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
@@ -124,15 +211,15 @@ a {
 // ── Tables ──
 
 .table {
-  --bs-table-border-color: #{rgba($convoca-border, 0.4)};
+  --bs-table-border-color: var(--cv-border);
 
   thead th {
-    background-color: $convoca-surface;
+    background-color: var(--cv-surface);
     font-weight: 600;
     font-size: 0.8125rem;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    color: $convoca-text-muted;
+    color: var(--cv-text-muted);
     border-bottom-width: 1px;
   }
 

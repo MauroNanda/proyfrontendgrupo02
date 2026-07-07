@@ -3,7 +3,7 @@
 }
 
 .text-dark-blue {
-  color: #243c4c !important;
+  color: var(--cv-text) !important;
 }
 
 .shadow-xs {
@@ -11,7 +11,7 @@
 }
 
 .card {
-  border-color: #e2e8f0 !important;
+  border-color: var(--cv-border) !important;
 }
 
 .font-sm {
@@ -21,23 +21,23 @@
 .label-corporate {
   font-size: 0.8125rem;
   font-weight: 600;
-  color: #475569;
+  color: var(--cv-text-muted);
   margin-bottom: 0.35rem;
   letter-spacing: 0.01em;
 }
 
 .input-corporate {
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--cv-border);
   border-radius: 0.5rem;
   font-size: 0.875rem;
-  color: #243c4c;
-  background-color: #fff;
+  color: var(--cv-text);
+  background-color: var(--cv-card);
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
   padding: 0.55rem 0.85rem;
 }
 
 .input-corporate:focus {
-  border-color: #5289ad;
+  border-color: var(--cv-primary);
   box-shadow: 0 0 0 3px rgba(82, 137, 173, 0.15);
   outline: none;
 }
@@ -47,14 +47,14 @@
 }
 
 .btn-primary-accent {
-  background-color: #5289ad;
+  background-color: var(--cv-primary);
   color: #ffffff;
   border: none;
   transition: background-color 0.15s ease;
 }
 
 .btn-primary-accent:hover:not(:disabled) {
-  background-color: #437190;
+  background-color: var(--cv-primary-hover);
   color: #ffffff;
 }
 
@@ -64,14 +64,14 @@
 }
 
 .btn-back {
-  color: #698696;
+  color: var(--cv-text-muted);
   transition: color 0.15s ease;
 }
 
 .btn-back:hover {
-  color: #5289ad;
+  color: var(--cv-primary);
 }
 
 .border-top {
-  border-color: #f1f5f9 !important;
+  border-color: var(--cv-bg) !important;
 }

@@ -3,11 +3,11 @@
 }
 
 .text-dark-blue {
-  color: #243c4c !important;
+  color: var(--cv-text) !important;
 }
 
 .text-muted-blue {
-  color: #698696 !important;
+  color: var(--cv-text-muted) !important;
 }
 
 .shadow-xs {
@@ -27,43 +27,43 @@
 }
 
 .btn-light-chip {
-  background-color: #f8fafc;
-  border: 1px solid #e2e8f0;
-  color: #698696;
+  background-color: var(--cv-hover);
+  border: 1px solid var(--cv-border);
+  color: var(--cv-text-muted);
   transition: all 0.15s ease;
 }
 
 .btn-light-chip:hover {
-  background-color: #f1f5f9;
-  border-color: #cbd5e1;
-  color: #1a2e38;
+  background-color: var(--cv-bg);
+  border-color: var(--cv-border-strong);
+  color: var(--cv-text);
 }
 
 .btn-primary {
-  background-color: #5289ad !important;
-  border-color: #5289ad !important;
+  background-color: var(--cv-primary) !important;
+  border-color: var(--cv-primary) !important;
   color: #ffffff !important;
 }
 
 .category-badge {
   display: inline-flex;
   align-items: center;
-  background: #e8f0f5;
-  color: #3f6f8f;
+  background: rgba(var(--cv-primary-rgb), 0.12);
+  color: var(--cv-primary);
   padding: 4px 9px;
   border-radius: 6px;
   letter-spacing: 0.4px;
 }
 
 .event-card {
-  border-color: #e2e8f0 !important;
+  border-color: var(--cv-border) !important;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02) !important;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .event-card:hover {
   transform: translateY(-4px);
-  border-color: #5289ad !important;
+  border-color: var(--cv-primary) !important;
   box-shadow: 0 12px 24px -10px rgba(82, 137, 173, 0.25) !important;
 }
 
@@ -92,7 +92,7 @@
 }
 
 .btn-primary-accent {
-  background-color: #5289ad;
+  background-color: var(--cv-primary);
   color: #ffffff;
   border: none;
   display: inline-flex;
@@ -101,15 +101,15 @@
 }
 
 .btn-primary-accent:hover {
-  background-color: #437190;
+  background-color: var(--cv-primary-hover);
   color: #ffffff;
 }
 
 .bg-primary-accent {
-  background-color: #5289ad !important;
+  background-color: var(--cv-primary) !important;
 }
 
 .progress {
-  background-color: #eef2f6;
+  background-color: var(--cv-surface);
   border-radius: 4px;
 }

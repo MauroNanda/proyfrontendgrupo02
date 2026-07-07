@@ -24,12 +24,18 @@
   <!-- Contenido del Listado -->
   <div *ngIf="!loading()">
     <!-- Barra de Filtros y Búsqueda -->
-    <div class="card border shadow-xs rounded-4 p-3 bg-white mb-4 animate-fade-in">
+    <div
+      class="card border shadow-xs rounded-4 p-3 mb-4 animate-fade-in"
+      style="background-color: var(--cv-card)"
+    >
       <div class="row g-3 align-items-center">
         <!-- Buscador -->
         <div class="col-12 col-md-4">
           <div class="input-group">
-            <span class="input-group-text bg-white border-end-0 text-muted">
+            <span
+              class="input-group-text border-end-0 text-muted"
+              style="background-color: var(--cv-card)"
+            >
               <i class="bi bi-search"></i>
             </span>
             <input
@@ -85,7 +91,10 @@
     </div>
 
     <!-- Contenedor Principal de la Tabla -->
-    <div class="card border shadow-xs rounded-4 overflow-hidden bg-white">
+    <div
+      class="card border shadow-xs rounded-4 overflow-hidden"
+      style="background-color: var(--cv-card)"
+    >
       <!-- Caso 1: No hay ningún evento creado en absoluto -->
       <div *ngIf="eventos().length === 0" class="text-center py-5">
         <i class="bi bi-calendar4-week text-muted opacity-50 display-5"></i>
@@ -111,42 +120,49 @@
 
       <!-- Caso 3: Listado de Eventos -->
       <div *ngIf="eventosFiltrados().length > 0">
-        <!-- Cabecera -->
+        <!-- Cabecera (solo desktop) -->
         <div
-          class="row mx-0 py-2 px-4 bg-light-gray border-bottom font-xs fw-bold text-muted text-uppercase tracking-wider"
+          class="row mx-0 py-2 px-4 bg-light-gray border-bottom font-xs fw-bold text-muted text-uppercase tracking-wider d-none d-lg-flex"
         >
-          <div class="col-4 ps-0">Título</div>
-          <div class="col-2">Fecha</div>
-          <div class="col-2 text-center">Inscriptos / Cupo</div>
-          <div class="col-2">Estado</div>
-          <div class="col-2 text-end pe-0">Acciones</div>
+          <div class="col-lg-4 ps-0">Título</div>
+          <div class="col-lg-2">Fecha</div>
+          <div class="col-lg-2 text-center">Inscriptos / Cupo</div>
+          <div class="col-lg-2">Estado</div>
+          <div class="col-lg-2 text-end pe-0">Acciones</div>
         </div>
 
         <!-- Filas -->
         <div
           *ngFor="let evento of eventosFiltrados()"
-          class="row mx-0 py-3 px-4 border-bottom align-items-center table-row animate-fade-in"
+          class="row mx-0 py-3 px-4 border-bottom align-items-lg-center table-row animate-fade-in"
         >
           <!-- Título -->
-          <div class="col-4 ps-0">
+          <div class="col-12 col-lg-4 ps-lg-0 mb-2 mb-lg-0">
             <span class="fw-semibold text-dark-blue font-sm">{{ evento.titulo }}</span>
             <div class="text-muted font-xxs mt-0.5">{{ evento.ubicacion || 'Sin ubicación' }}</div>
           </div>
 
           <!-- Fecha -->
-          <div class="col-2 font-xs text-muted">
-            {{ evento.fecha | date: 'dd/MM/yyyy HH:mm hs' }}
+          <div class="col-6 col-lg-2 font-xs text-muted mb-2 mb-lg-0">
+            <span class="d-lg-none text-uppercase fw-semibold font-xxs d-block">Fecha</span>
+            {{ evento.fecha | date: 'dd/MM/yyyy HH:mm' }} hs
           </div>
 
           <!-- Inscriptos / Cupo -->
-          <div class="col-2 text-center">
+          <div class="col-6 col-lg-2 text-lg-center mb-2 mb-lg-0">
+            <span class="d-lg-none text-uppercase fw-semibold font-xxs d-block text-muted"
+              >Inscriptos / Cupo</span
+            >
             <span class="fw-semibold text-dark-blue font-sm">
               {{ obtenerCantidadInscriptos(evento) }} / {{ evento.cupo_maximo }}
             </span>
           </div>
 
           <!-- Estado badge -->
-          <div class="col-2">
+          <div class="col-6 col-lg-2 mb-2 mb-lg-0">
+            <span class="d-lg-none text-uppercase fw-semibold font-xxs d-block text-muted"
+              >Estado</span
+            >
             <span
               class="badge rounded-pill px-2 py-1 font-xxs fw-semibold"
               [ngClass]="{
@@ -160,7 +176,9 @@
           </div>
 
           <!-- Acciones -->
-          <div class="col-2 text-end pe-0 d-flex justify-content-end gap-2">
+          <div
+            class="col-6 col-lg-2 text-end pe-lg-0 d-flex justify-content-end align-items-center gap-2"
+          >
             <!-- Ver inscriptos -->
             <a
               [routerLink]="['/admin/eventos', evento.id, 'inscriptos']"
