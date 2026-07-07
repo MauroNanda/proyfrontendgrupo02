@@ -1,19 +1,22 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { EventoService, Evento } from '../../../core/services/evento.service';
 import { InscripcionService, InscripcionEstado } from '../../../core/services/inscripcion.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { ExportService } from '../../../core/services/export.service';
+import { ValoracionService, Valoracion } from '../../../core/services/valoracion.service';
 
 import { CountdownComponent } from '../../../shared/components/countdown/countdown.component';
+import { EstadoEventoPipe } from '../../../shared/pipes/estado-evento.pipe';
 import * as QRCode from 'qrcode';
 
 @Component({
   selector: 'app-event-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule, CountdownComponent],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, CountdownComponent, EstadoEventoPipe],
   templateUrl: './event-detail.component.html',
   styleUrls: ['./event-detail.component.scss'],
 })
@@ -25,6 +28,8 @@ export class EventDetailComponent implements OnInit {
   protected authService = inject(AuthService);
   private toastService = inject(ToastService);
   private exportService = inject(ExportService);
+  private valoracionService = inject(ValoracionService);
+  private fb = inject(FormBuilder);
 
   readonly evento = signal<Evento | null>(null);
   readonly inscripcion = signal<InscripcionEstado>({
@@ -36,6 +41,22 @@ export class EventDetailComponent implements OnInit {
   readonly loading = signal(true);
   readonly actionLoading = signal(false);
   readonly error = signal<string | null>(null);
+  readonly valoracion = signal<Valoracion | null>(null);
+  readonly guardandoValoracion = signal(false);
+
+  readonly valoracionForm = this.fb.nonNullable.group({
+    puntuacion: [5, [Validators.required, Validators.min(1), Validators.max(5)]],
+    comentario: ['', Validators.maxLength(500)],
+  });
+
+  readonly puedeValorar = computed(() => {
+    const evt = this.evento();
+    const ins = this.inscripcion();
+    if (!evt || !ins.inscrito || !this.authService.isLoggedIn()) return false;
+
+    const finalizado = evt.fecha ? new Date(evt.fecha) < new Date() : false;
+    return ins.estado === 'ASISTIO' || (ins.estado === 'CONFIRMADO' && finalizado);
+  });
 
   ngOnInit(): void {
     this.route.paramMap.subscribe({
@@ -78,6 +99,7 @@ export class EventDetailComponent implements OnInit {
       next: (estado) => {
         this.inscripcion.set(estado);
         this.generarQrLocal(estado.qr_token);
+        this.cargarValoracion(eventoId);
         this.loading.set(false);
       },
       error: (err) => {
@@ -85,6 +107,53 @@ export class EventDetailComponent implements OnInit {
         this.loading.set(false);
       },
     });
+  }
+
+  private cargarValoracion(eventoId: string): void {
+    if (!this.authService.isLoggedIn()) return;
+
+    this.valoracionService.obtenerMiValoracion(eventoId).subscribe({
+      next: (valoracion) => {
+        this.valoracion.set(valoracion);
+        if (valoracion) {
+          this.valoracionForm.patchValue({
+            puntuacion: valoracion.puntuacion,
+            comentario: valoracion.comentario ?? '',
+          });
+        }
+      },
+      error: () => {
+        this.valoracion.set(null);
+      },
+    });
+  }
+
+  enviarValoracion(): void {
+    const evt = this.evento();
+    if (!evt || this.valoracionForm.invalid) {
+      this.valoracionForm.markAllAsTouched();
+      return;
+    }
+
+    this.guardandoValoracion.set(true);
+    const { puntuacion, comentario } = this.valoracionForm.getRawValue();
+
+    this.valoracionService
+      .guardar({
+        evento_id: evt.id,
+        puntuacion,
+        comentario: comentario.trim() || undefined,
+      })
+      .subscribe({
+        next: (valoracion) => {
+          this.valoracion.set(valoracion);
+          this.toastService.success('¡Gracias por tu valoración!');
+          this.guardandoValoracion.set(false);
+        },
+        error: () => {
+          this.guardandoValoracion.set(false);
+        },
+      });
   }
 
   cargarMock(eventoId: string): void {
