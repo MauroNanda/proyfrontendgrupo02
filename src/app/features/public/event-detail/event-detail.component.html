@@ -35,7 +35,7 @@
               evento()!.estado === 'CANCELADO',
           }"
         >
-          {{ evento()!.estado | titlecase }}
+          {{ evento()!.estado | estadoEvento }}
         </span>
 
         <!-- Título -->
@@ -203,6 +203,57 @@
               <i class="bi bi-check-lg"></i>
               <span>¡Asististe al evento!</span>
             </button>
+          </div>
+
+          <!-- Valoración del evento (post-asistencia o evento finalizado) -->
+          <div
+            *ngIf="puedeValorar()"
+            class="valoracion-section mt-4 p-3 bg-white rounded-4 border border-light shadow-sm"
+          >
+            <h4 class="h6 fw-bold mb-3 text-dark-blue">
+              <i class="bi bi-star-fill me-1 text-warning"></i>
+              {{ valoracion() ? 'Tu valoración' : 'Valorá este evento' }}
+            </h4>
+
+            <form [formGroup]="valoracionForm" (ngSubmit)="enviarValoracion()" class="text-start">
+              <label class="form-label small fw-semibold" for="puntuacion">Puntuación</label>
+              <select
+                id="puntuacion"
+                class="form-select form-select-sm mb-3"
+                formControlName="puntuacion"
+              >
+                <option [ngValue]="5">5 — Excelente</option>
+                <option [ngValue]="4">4 — Muy bueno</option>
+                <option [ngValue]="3">3 — Bueno</option>
+                <option [ngValue]="2">2 — Regular</option>
+                <option [ngValue]="1">1 — Malo</option>
+              </select>
+
+              <label class="form-label small fw-semibold" for="comentario"
+                >Comentario (opcional)</label
+              >
+              <textarea
+                id="comentario"
+                class="form-control form-control-sm mb-3"
+                rows="3"
+                maxlength="500"
+                formControlName="comentario"
+                placeholder="Contanos qué te pareció..."
+              ></textarea>
+
+              <button
+                type="submit"
+                class="btn btn-primary btn-sm w-100"
+                [disabled]="guardandoValoracion() || valoracionForm.invalid"
+              >
+                <span
+                  *ngIf="guardandoValoracion()"
+                  class="spinner-border spinner-border-sm me-1"
+                  aria-hidden="true"
+                ></span>
+                {{ valoracion() ? 'Actualizar valoración' : 'Enviar valoración' }}
+              </button>
+            </form>
           </div>
 
           <!-- Pase de Ingreso (QR) si está CONFIRMADO o ASISTIO -->

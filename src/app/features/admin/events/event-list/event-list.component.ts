@@ -5,11 +5,12 @@ import { FormsModule } from '@angular/forms';
 
 import { Evento, EventoService } from '../../../../core/services/evento.service';
 import { ToastService } from '../../../../core/services/toast.service';
+import { EstadoEventoPipe } from '../../../../shared/pipes/estado-evento.pipe';
 
 @Component({
   selector: 'app-event-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, EstadoEventoPipe],
   templateUrl: './event-list.component.html',
   styleUrl: './event-list.component.css',
 })

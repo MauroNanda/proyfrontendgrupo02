@@ -5,12 +5,13 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { InscripcionService } from '../../../core/services/inscripcion.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { ExportService } from '../../../core/services/export.service';
+import { EstadoInscripcionPipe } from '../../../shared/pipes/estado-inscripcion.pipe';
 import * as QRCode from 'qrcode';
 
 @Component({
   selector: 'app-mis-inscripciones',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, EstadoInscripcionPipe],
   templateUrl: './mis-inscripciones.component.html',
   styleUrl: './mis-inscripciones.component.css',
 })
