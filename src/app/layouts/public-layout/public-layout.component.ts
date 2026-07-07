@@ -24,18 +24,20 @@ import { ToastService } from '../../core/services/toast.service';
           <span class="brand-text">convoca</span>
         </a>
 
-        <!-- Toggler mobile -->
+        <!-- Toggler mobile: Bootstrap JS no está cargado en Angular, usamos signal -->
         <button
           class="navbar-toggler border-0"
           type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarPublic"
+          (click)="toggleMenuMobile()"
+          [attr.aria-expanded]="menuMobileAbierto()"
+          aria-controls="navbarPublic"
+          aria-label="Abrir menú de navegación"
         >
           <i class="bi bi-list fs-4"></i>
         </button>
 
         <!-- Nav items -->
-        <div class="collapse navbar-collapse" id="navbarPublic">
+        <div class="collapse navbar-collapse" id="navbarPublic" [class.show]="menuMobileAbierto()">
           <!-- Buscador central -->
           <div class="mx-auto search-wrapper position-relative">
             <div class="input-group input-group-sm">
@@ -101,14 +103,16 @@ import { ToastService } from '../../core/services/toast.service';
             <a
               routerLink="/eventos"
               routerLinkActive="active"
-              class="nav-link nav-item-custom d-none d-lg-block"
+              class="nav-link nav-item-custom nav-mobile-link"
+              (click)="cerrarMenuMobile()"
               >Eventos</a
             >
             <a
               *ngIf="authService.isLoggedIn()"
               routerLink="/mis-inscripciones"
               routerLinkActive="active"
-              class="nav-link nav-item-custom d-none d-lg-block"
+              class="nav-link nav-item-custom nav-mobile-link"
+              (click)="cerrarMenuMobile()"
               >Mis Inscripciones</a
             >
 
@@ -223,6 +227,7 @@ import { ToastService } from '../../core/services/toast.service';
                 routerLink="/perfil"
                 class="text-decoration-none d-flex align-items-center gap-2 me-2 text-muted-blue hover-primary"
                 title="Mi Perfil"
+                (click)="cerrarMenuMobile()"
               >
                 <i class="bi bi-person-circle fs-5"></i>
                 <span class="user-greeting d-none d-lg-inline small font-xs fw-semibold">
@@ -233,6 +238,7 @@ import { ToastService } from '../../core/services/toast.service';
                 <a
                   class="btn btn-outline-primary btn-sm d-flex align-items-center gap-2"
                   routerLink="/admin"
+                  (click)="cerrarMenuMobile()"
                 >
                   <i class="bi bi-speedometer2"></i> Panel
                 </a>
@@ -240,13 +246,20 @@ import { ToastService } from '../../core/services/toast.service';
               <button
                 type="button"
                 class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-2"
-                (click)="authService.logout()"
+                (click)="cerrarMenuMobile(); authService.logout()"
               >
                 <i class="bi bi-box-arrow-right"></i> Salir
               </button>
             } @else {
-              <a class="btn btn-outline-secondary btn-sm" routerLink="/login">Ingresar</a>
-              <a class="btn btn-primary btn-sm" routerLink="/registro">Registrarme</a>
+              <a
+                class="btn btn-outline-secondary btn-sm"
+                routerLink="/login"
+                (click)="cerrarMenuMobile()"
+                >Ingresar</a
+              >
+              <a class="btn btn-primary btn-sm" routerLink="/registro" (click)="cerrarMenuMobile()"
+                >Registrarme</a
+              >
             }
           </div>
         </div>
@@ -533,6 +546,37 @@ import { ToastService } from '../../core/services/toast.service';
       .text-muted-blue {
         color: #698696;
       }
+
+      /* En mobile el menú colapsado apila links y botones de auth */
+      @media (max-width: 991.98px) {
+        .navbar-collapse.show {
+          padding-top: 0.75rem;
+          padding-bottom: 0.75rem;
+        }
+
+        .navbar-collapse.show .search-wrapper {
+          max-width: 100%;
+          margin-bottom: 0.75rem;
+        }
+
+        .navbar-collapse.show .d-flex.align-items-center.gap-2.ms-auto {
+          flex-direction: column;
+          align-items: stretch !important;
+          width: 100%;
+          margin-left: 0 !important;
+          gap: 0.5rem !important;
+        }
+
+        .nav-mobile-link {
+          display: block;
+          padding: 0.5rem 0;
+        }
+
+        .navbar-collapse.show .btn-sm {
+          width: 100%;
+          justify-content: center;
+        }
+      }
     `,
   ],
 })
@@ -544,6 +588,7 @@ export class PublicLayoutComponent implements OnInit, OnDestroy {
   private readonly toastService = inject(ToastService);
   private readonly router = inject(Router);
 
+  readonly menuMobileAbierto = signal(false);
   readonly showNotifications = signal(false);
   readonly notificaciones = signal<Notificacion[]>([]);
   readonly unreadCount = signal(0);
@@ -649,9 +694,21 @@ export class PublicLayoutComponent implements OnInit, OnDestroy {
     });
   }
 
+  toggleMenuMobile(): void {
+    this.menuMobileAbierto.update((abierto) => !abierto);
+    if (this.menuMobileAbierto()) {
+      this.showNotifications.set(false);
+    }
+  }
+
+  cerrarMenuMobile(): void {
+    this.menuMobileAbierto.set(false);
+  }
+
   toggleNotifications(): void {
     this.showNotifications.update((val) => !val);
     if (this.showNotifications()) {
+      this.menuMobileAbierto.set(false);
       this.cargarNotificaciones();
     }
   }
