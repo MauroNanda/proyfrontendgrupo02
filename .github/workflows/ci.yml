@@ -1,20 +1,21 @@
-name: Frontend CI
+name: Frontend CI/CD
 
 on:
   push:
-    branches: [ main ]
+    branches: [ "main", "develop" ]
   pull_request:
-    branches: [ main ]
+    branches: [ "main", "develop" ]
 
 jobs:
   build-and-test:
+    name: Integración Continua (CI)
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
+      - name: Set up Node.js 22
         uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -23,8 +24,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Run linter
+        run: npm run lint --if-present
+
+      - name: Run tests
+        run: npm run test --if-present
+
       - name: Build application
         run: npm run build
 
-      - name: Run tests
-        run: npm run test
+      - name: Build Docker Image (Validación Actividad 7)
+        run: docker build -t app-frontend:latest .
