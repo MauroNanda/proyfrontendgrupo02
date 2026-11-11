@@ -1,0 +1,21 @@
+services:
+  backend:
+    build:
+      context: ../../proybackendgrupo02
+      dockerfile: Dockerfile
+    container_name: convoca-backend
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - CORS_ORIGIN=http://localhost:5173,http://localhost:4200
+
+  frontend:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: convoca-frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
