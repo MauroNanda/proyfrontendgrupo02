@@ -1,0 +1,17 @@
+
+services:
+  frontend:
+    build:
+      context: ..
+      dockerfile: Dockerfile.production
+    image: convoca-frontend:production
+    container_name: convoca-frontend-production
+    ports:
+      - "127.0.0.1:8080:80"
+    networks:
+      - convoca-publicacion
+    restart: unless-stopped
+
+networks:
+  convoca-publicacion:
+    external: true
