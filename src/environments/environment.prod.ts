@@ -3,7 +3,7 @@
 
 export const environment = {
   production: true,
-  apiUrl: 'https://proybackendgrupo02-t89t.onrender.com/api',
+  apiUrl: 'http://localhost:3000/api',
   googleClientId: '',
   vapidPublicKey: '',
 };
