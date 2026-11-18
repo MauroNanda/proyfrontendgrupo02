@@ -3,6 +3,7 @@ const fs=require('node:fs');
 const path=require('node:path');
 const root=path.resolve(__dirname,'..');
 const source='https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz';
+// SHA-512 fijado del paquete oficial: npm tambien verifica la integridad al instalar.
 const expected='sha512-oLDq3jw7AcLqKWH2AhCpVTZl8mf6X2YReP+Neh0SJUzV/BdZYjth94tG5toiMB1PPrYtxOCfaoUCkvtuH+3AJA==';
 const manifest=JSON.parse(fs.readFileSync(path.join(root,'package.json')));
 const lock=JSON.parse(fs.readFileSync(path.join(root,'package-lock.json')));
@@ -11,6 +12,7 @@ for(const group of ['dependencies','devDependencies']) {
     if(/^(https?:|git|file:)/.test(value) && (name!=='xlsx'||value!==source)) throw new Error('Origen de dependencia no autorizado: '+name);
   }
 }
+// La excepcion corresponde solo a xlsx; no autoriza URLs de otras dependencias.
 for(const [name,data] of Object.entries(lock.packages)) {
   if(data.resolved && !data.resolved.startsWith('https://registry.npmjs.org/')) {
     if(name!=='node_modules/xlsx'||data.resolved!==source||data.version!=='0.20.3'||data.integrity!==expected) throw new Error('Integridad u origen no autorizado: '+name);

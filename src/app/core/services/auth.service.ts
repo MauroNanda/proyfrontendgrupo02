@@ -19,6 +19,7 @@ export class AuthService {
   // La sesión se deriva de si hay un `usuario` cargado.
   readonly currentUser = signal<Usuario | null>(null);
 
+  // computed se recalcula cuando cambia el usuario; no verifica por si mismo el JWT.
   readonly isLoggedIn = computed(() => !!this.currentUser());
   readonly isAdmin = computed(() => this.currentUser()?.rol === 'ORGANIZADOR');
 
@@ -82,6 +83,7 @@ export class AuthService {
    * El token NO se guarda: viaja solo en la cookie httpOnly.
    */
   private guardarSesion(auth: AuthResponse): void {
+    // Esta copia sirve para la interfaz: cambiarla no otorga permisos en el backend.
     localStorage.setItem('usuario', JSON.stringify(auth.usuario));
     this.currentUser.set(auth.usuario);
   }

@@ -62,6 +62,7 @@ export const routes: Routes = [
   },
   {
     path: 'admin',
+    // Primero exige sesion y luego rol; los componentes hijos se descargan bajo demanda.
     canActivate: [authGuard, roleGuard],
     loadComponent: () =>
       import('./layouts/admin-layout/admin-layout.component').then((m) => m.AdminLayoutComponent),

@@ -19,6 +19,7 @@ export class ExportService {
     }
 
     // 1. Crear la hoja de trabajo (Worksheet) a partir del JSON
+    // Convierte objetos en celdas; la autorizacion de los datos ocurre antes, en la API.
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(datos);
 
     // 2. Crear el libro de trabajo (Workbook)
@@ -26,6 +27,7 @@ export class ExportService {
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Inscriptos');
 
     // 3. Generar el archivo y forzar la descarga
+    // Genera la descarga en el navegador; no crea un archivo permanente en el servidor.
     XLSX.writeFile(workbook, `${filename}.xlsx`);
   }
 
