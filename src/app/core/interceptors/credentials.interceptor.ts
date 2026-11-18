@@ -7,6 +7,7 @@ import { environment } from '../../../environments/environment';
 // credenciales a hosts de terceros).
 export const credentialsInterceptor: HttpInterceptorFn = (req, next) => {
   if (req.url.startsWith(environment.apiUrl)) {
+    // HttpRequest es inmutable: se crea una copia para adjuntar la cookie de sesion.
     req = req.clone({ withCredentials: true });
   }
   return next(req);

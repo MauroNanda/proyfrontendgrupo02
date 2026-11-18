@@ -6,6 +6,7 @@ export const roleGuard: CanActivateFn = (_route, _state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
+  // isAdmin significa ORGANIZADOR; ocultar una pantalla no reemplaza los permisos del servidor.
   if (authService.isAdmin()) {
     return true;
   }

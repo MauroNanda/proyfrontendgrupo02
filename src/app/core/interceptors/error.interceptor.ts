@@ -33,6 +33,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
       toastService.error(mensajeError);
 
+      // Mostrar el aviso no consume el error: quien hizo la peticion tambien puede manejarlo.
       return throwError(() => error);
     }),
   );
