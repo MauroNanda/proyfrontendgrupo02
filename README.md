@@ -49,3 +49,5 @@ La app corre en `http://localhost:4200`. Para detalles completos ver `docs/SETUP
 
 ## Equipo
 Grupo G02 — 5 integrantes. Materia: Programación y Servicios Web — Facultad de Ingeniería, UNJu.
+
+Instalacion con dependencias verificadas (A14): ver docs/SEGURIDAD_DEPENDENCIAS_A14.md. Antes de npm ci, ejecutar el verificador de origen y usar npm ci --allow-remote=root.
