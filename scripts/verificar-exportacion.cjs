@@ -1,0 +1,11 @@
+'use strict';
+const assert=require('node:assert/strict');
+const XLSX=require('xlsx');
+const data=[{Nombre:'Ensayo academico',Correo:'ensayo@convoca.test'},{Nombre:'=2+2',Correo:'texto@convoca.test'}];
+const sheet=XLSX.utils.json_to_sheet(data);
+assert.equal(sheet.A3.t,'s');assert.equal(sheet.A3.f,undefined);
+const book=XLSX.utils.book_new();XLSX.utils.book_append_sheet(book,sheet,'Inscriptos');
+const bytes=XLSX.write(book,{type:'buffer',bookType:'xlsx'});
+const reopened=XLSX.read(bytes,{type:'buffer'});
+assert.deepEqual(XLSX.utils.sheet_to_json(reopened.Sheets.Inscriptos),data);
+console.log(JSON.stringify({xlsx:XLSX.version,formato:'xlsx',filas:2,contenidoConservado:true,textoNoConvertidoEnFormula:true}));
