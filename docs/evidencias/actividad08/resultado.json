@@ -1,0 +1,56 @@
+{
+  "antes": {
+    "etapa": "antes",
+    "utc": "2026-11-20T02:32:11.878643+00:00",
+    "url": "http://127.0.0.1:8090",
+    "marca": "convoca",
+    "version": {
+      "branch": "demo/a8-despliegue",
+      "commit": "a4ced0dcf9ca4ad31bd99f7a5b59ab0b51a4e2ad",
+      "ciRun": 44661242641
+    },
+    "health": 200
+  },
+  "despues": {
+    "etapa": "despues",
+    "utc": "2026-11-20T02:34:04.050465+00:00",
+    "url": "http://127.0.0.1:8090",
+    "marca": "convoca · Defensa A8",
+    "version": {
+      "branch": "demo/a8-despliegue",
+      "commit": "1384df00841390030419e18a8a8a1b2b70f7ba70",
+      "ciRun": 44661502880
+    },
+    "health": 200
+  },
+  "rollback": {
+    "etapa": "rollback",
+    "utc": "2026-11-20T02:34:08.036743+00:00",
+    "url": "http://127.0.0.1:8090",
+    "marca": "convoca",
+    "version": {
+      "branch": "demo/a8-despliegue",
+      "commit": "a4ced0dcf9ca4ad31bd99f7a5b59ab0b51a4e2ad",
+      "ciRun": 44661242641
+    },
+    "health": 200
+  },
+  "https": {
+    "etapa": "despues",
+    "utc": "2026-11-20T02:34:48.590076+00:00",
+    "marca": "convoca · Defensa A8",
+    "version": {
+      "branch": "demo/a8-despliegue",
+      "commit": "1384df00841390030419e18a8a8a1b2b70f7ba70",
+      "ciRun": 44661502880
+    },
+    "health": 200,
+    "transporte": "HTTPS publico por el tunel temporal del laboratorio"
+  },
+  "espera_ci": {
+    "esperaCI": "in_progress",
+    "commitEnRevision": "1384df00841390030419e18a8a8a1b2b70f7ba70",
+    "commitVisible": "a4ced0dcf9ca4ad31bd99f7a5b59ab0b51a4e2ad",
+    "utc": "2026-11-20T02:33:01.8170361Z"
+  }
+}

@@ -1,5 +1,6 @@
 node_modules
 dist
+.cd-a8
 .git
 .gitignore
 .env*
