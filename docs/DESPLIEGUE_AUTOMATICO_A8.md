@@ -22,6 +22,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/desplegar-cd.ps1 -Ne
 
 `-Once` permite ejecutar un ciclo y exigir que el commit actual tenga CI exitoso. `-Port` permite elegir otro puerto de Windows. El proyecto Compose usa ese puerto en su nombre y conserva su propio registro en `.cd-a8`, excluido de Git.
 
+El archivo `.cd-a8/<puerto>/estado.json` identifica la versión activa, el CI que la aprobó y la versión anterior. Mantener la misma red al reiniciar el proceso o ejecutar un rollback.
+
 ## Prueba para la defensa
 
 1. Con el publicador ya iniciado, abrir la aplicación y consultar `/version.json` para anotar el SHA activo.
