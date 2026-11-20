@@ -1,0 +1,14 @@
+services:
+  frontend:
+    image: ${CONVOCA_CD_IMAGE:?Falta imagen de despliegue}
+    pull_policy: never
+    ports:
+      - "127.0.0.1:${CONVOCA_CD_PORT:?Falta puerto de despliegue}:80"
+    networks:
+      - publicacion
+    restart: unless-stopped
+
+networks:
+  publicacion:
+    name: ${CONVOCA_CD_NETWORK:?Falta red de API}
+    external: true

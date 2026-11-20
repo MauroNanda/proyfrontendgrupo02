@@ -4,7 +4,7 @@ permissions:
 
 on:
   push:
-    branches: [ "main", "develop" ]
+    branches: [ "main", "develop", "demo/a8-despliegue" ]
   pull_request:
     branches: [ "main", "develop" ]
 
