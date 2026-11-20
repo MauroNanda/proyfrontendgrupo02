@@ -22,7 +22,7 @@ import { ThemeService } from '../../core/services/theme.service';
         <!-- Logo -->
         <a class="navbar-brand d-flex align-items-center gap-2" routerLink="/">
           <img src="/assets/brand/logo.svg" alt="Convoca" class="navbar-logo-img" height="36" />
-          <span class="brand-text">convoca · Defensa A8</span>
+          <span class="brand-text">convoca · Demo8</span>
         </a>
 
         <!-- Toggler mobile: Bootstrap JS no está cargado en Angular, usamos signal -->
