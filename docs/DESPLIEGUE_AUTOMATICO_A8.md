@@ -27,9 +27,9 @@ El archivo `.cd-a8/<puerto>/estado.json` identifica la versión activa, el CI qu
 ## Prueba para la defensa
 
 1. Con el publicador ya iniciado, abrir la aplicación y consultar `/version.json` para anotar el SHA activo.
-2. En una rama de trabajo cambiar un texto que se vea en el navegador (por ejemplo, el título de la pestaña en `src/index.html`). Hacer commit y completar el PR a `develop` según el procedimiento del equipo.
-3. Abrir Actions y esperar el CI del push a `develop`. El publicador detecta ese SHA exitoso y actualiza el contenedor. Recargar la página y comprobar el título visible, `/version.json` y `/api/health`.
-4. Para repetir una demostración sin cambiar `develop`, levantar un segundo publicador con `-Demo -Port 8091`. Ese modo acepta únicamente la rama `demo/a8-despliegue` de este repositorio, después de verificar su CI. Los cambios de esa rama se usan solo para el entorno de ensayo.
+2. En una rama de trabajo cambiar un texto que se vea en el navegador, por ejemplo `brand-text` en `src/app/layouts/public-layout/public-layout.component.ts`. Hacer commit y completar el PR a `develop` según el procedimiento del equipo.
+3. Abrir Actions y esperar el CI del push a `develop`. El publicador detecta ese SHA exitoso y actualiza el contenedor. Recargar la página y comprobar el texto visible, `/version.json` y `/api/health`.
+4. Para repetir el ensayo en una rama dedicada, levantar un segundo publicador con `-Demo -Port 8091`. Ese modo acepta únicamente la rama `demo/a8-despliegue` de este repositorio, después de verificar su CI. Mantener el mismo destino API y puerto durante toda la prueba. En esa rama, quien tenga permiso puede hacer y subir un cambio de texto. El efecto queda acotado al publicador iniciado con `-Demo`.
 
 El primer despliegue y la compilación pueden tardar algunos minutos. El registro del publicador identifica el commit y enlaza su ejecución de CI. Un CI fallido o pendiente no sustituye la versión activa.
 
